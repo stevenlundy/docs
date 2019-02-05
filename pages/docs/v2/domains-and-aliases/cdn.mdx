@@ -66,6 +66,8 @@ We recommend leveraging shared caches over client caches. For example, `Cache-Co
 
 If no `Cache-Control` response header is present, the Now routing layer adds `Cache-Control: s-maxage=0`, to ensure that no shared caches will cache content that wasn't explicitly marked as cacheable.
 
+Any request with an `Authorization` or `Pragma` header will bypass the cache.
+
 The cache is also always skipped when an [HTTP cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies) named `_now_no_cache` is present or if a [query string](https://en.wikipedia.org/wiki/Query_string) parameter named `_now_no_cache=1` is present.
 
 ## Notes
