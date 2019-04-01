@@ -4,14 +4,17 @@ import { GenericLink } from '~/components/text/link'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
 import { InlineCode } from '~/components/text/code'
+import Card from '~/components/card'
 
 export const meta = {
   title: 'Deployment URLs',
   description:
-    'The concept of unique deployment URLs on ZEIT Now and how they are composed.'
+    'The concept of unique deployment URLs on ZEIT Now and how they are composed.',
+  editUrl: 'pages/docs/v2/deployments/concepts/urls.mdx',
+  lastEdited: '2019-01-16T15:35:53.000Z'
 }
 
-A deployment is always associated with a unique URL, that has the following fundamental components:
+A deployment is always associated with a unique URL and [a staging alias](/docs/v2/domains-and-aliases/aliasing-a-deployment). The unique URL has the following fundamental components:
 
 - The deployment subdomain, made up of:
   - The deployment name
@@ -24,24 +27,44 @@ height={400/2}
 />
 <Caption>A breakdown of a Now deployment URL structure.</Caption>
 
-#### Subdomain
+### Subdomain
 
 The subdomain can be at most `63` characters.
 
-#### Deployment name
+### Project Name
 
-When a deployment is created, it must [supply a `name`](/docs/v2/deployments/configuration#name). If the user doesn't explicitly provide one, Now CLI will use the directory name.
+When a deployment is created, it must [supply a project `name`](/docs/v2/deployments/configuration#name). If a name is not specified explicitly, Now will use either the directory name or repository name.
 
-The name can take up, at most, `53` characters. It is always followed by a dash `-`.
+The name can take up, at most, `53` characters. It is always followed by a dash `-` and then the [UID](<#uid-(unique-identifier)>).
 
-#### UID (Unique identifier)
+### UID (Unique identifier)
 
 The UID is derived from a large cryptographically random number encoded as 9 alphanumeric characters.
 
-#### Suffix
+### Suffix
 
-The default suffix for all deployments is `now.sh`. It's registered with Mozilla's [Public Suffix List](https://publicsuffix.org/).
+The default suffix for all deployments is, by default, `.now.sh`. It is registered with Mozilla's [Public Suffix List](https://publicsuffix.org/).
 
-For enhanced isolation and security, we recommend configuring a [custom domain suffix](/docs/v2/platform/add-ons#custom-deployment-suffix).
+For enhanced isolation and security, we recommend configuring a [Custom Deployment Suffix](/docs/v2/platform/add-ons#custom-deployment-suffix).
+
+## Read More
+
+The following resources are related to this topic and helpful with any path you would like to take next:
+
+<Card title="Aliasing a Deployment" href="/docs/v2/domains-and-aliases">
+  Learn how to alias your deployments to a custom URL including automatic
+  aliases.
+</Card>
+
+<Card
+  title="Introduction to Domains"
+  href="/docs/v2/domains-and-aliases/introduction"
+>
+  Learn how to add, buy, and utilise domains as aliases for your deployments.
+</Card>
+
+<Card title="Deployment Basics" href="/docs/v2/deployments/basics">
+  Learn how to deploy your applications that you will alias to your domains.
+</Card>
 
 export default ({ children }) => <Doc meta={meta}>{children}</Doc>

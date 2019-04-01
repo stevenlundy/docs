@@ -1,4 +1,5 @@
 import React from 'react'
+import { useAmp } from 'next/amp'
 import PropTypes from 'prop-types'
 import { withRouter } from 'next/router'
 import NextHead from 'next/head'
@@ -39,6 +40,23 @@ function updateTitle(newTitle) {
   title = newTitle
 }
 
+const HeadTags = props => {
+  const isAmp = useAmp()
+  return isAmp ? null : (
+    <>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link
+        rel="canonical"
+        href={
+          props.url ||
+          `https://zeit.co${props.router.asPath}` ||
+          'https://zeit.co/docs'
+        }
+      />
+    </>
+  )
+}
+
 class Head extends React.PureComponent {
   componentDidMount() {
     updateTitle(
@@ -57,10 +75,6 @@ class Head extends React.PureComponent {
       <div>
         <NextHead>
           <title>{titlePrefix + this.props.title + titleSuffix}</title>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@zeithq" />
           <meta property="og:site_name" content="ZEIT Documentation" />
@@ -82,14 +96,7 @@ class Head extends React.PureComponent {
               'https://zeit.co/docs'
             }
           />
-          <link
-            rel="canonical"
-            href={
-              this.props.url ||
-              `https://zeit.co${this.props.router.asPath}` ||
-              'https://zeit.co/docs'
-            }
-          />
+          <HeadTags {...this.props} />
           {this.props.description ? (
             <meta name="description" content={this.props.description} />
           ) : null}
@@ -247,14 +254,10 @@ class Head extends React.PureComponent {
                   'ZEIT Documentation') +
                 titleSuffix}",
               "dateModified": "${
-                this.props.lastEdited
-                  ? this.props.lastEdited.toISOString()
-                  : null
+                this.props.lastEdited ? this.props.lastEdited : null
               }",
               "lastReviewed": "${
-                this.props.lastEdited
-                  ? this.props.lastEdited.toISOString()
-                  : null
+                this.props.lastEdited ? this.props.lastEdited : null
               }",
               "author": {
                 "@type": "Person",
@@ -302,23 +305,19 @@ class Head extends React.PureComponent {
             }
           `}
         </style>
-        <NextHead>
-          <style>
-            {`
+        <style jsx global>
+          {`
             #nprogress .bar {
               background: ${darkBg ? '#fff' : '#000'};
             }
 
             #nprogress .peg {
-              box-shadow: ${
-                darkBg
-                  ? '0 0 10px #fff, 0 0 5px #fff'
-                  : '0 0 10px #ccc, 0 0 5px #ccc'
-              };
+              box-shadow: ${darkBg
+                ? '0 0 10px #fff, 0 0 5px #fff'
+                : '0 0 10px #ccc, 0 0 5px #ccc'};
             }
           `}
-          </style>
-        </NextHead>
+        </style>
       </div>
     )
   }

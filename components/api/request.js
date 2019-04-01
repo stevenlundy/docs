@@ -1,6 +1,7 @@
 import { parse as parseURL } from 'url'
 
 import { Code } from '../text/code'
+import Context from '~/lib/api/slugs-context'
 
 function formatCurl({ url, method = 'GET', headers, body }) {
   let request = `curl ${method !== 'GET' ? `-X ${method} ` : ''}"${url}"`
@@ -21,7 +22,6 @@ function formatCurl({ url, method = 'GET', headers, body }) {
       )}'`
     }
   }
-
   return request
 }
 
@@ -40,7 +40,18 @@ function formatHTTP({ url, method = 'GET', headers, body }) {
   ].join('\n')
 }
 
-export default function Request({ type = 'curl', ...request }) {
+function RequestContent({ auth, req, context, type }) {
+  const request = auth
+    ? {
+        ...req,
+        headers: {
+          // Authorization: `Bearer ${context.testingToken || '<TOKEN>'}`,
+          Authorization: `Bearer <TOKEN>`,
+          ...req.headers
+        }
+      }
+    : { ...req }
+
   if (type === 'fetch' || type === 'js' || type === 'javascript') {
     return <Code lang="javascript">{formatJS(request)}</Code>
   }
@@ -48,4 +59,14 @@ export default function Request({ type = 'curl', ...request }) {
     return <Code lang="plain">{formatHTTP(request)}</Code>
   }
   return <Code lang="bash">{formatCurl(request)}</Code>
+}
+
+export default function Request({ auth, type = 'curl', ...req }) {
+  return (
+    <Context.Consumer>
+      {ctx => (
+        <RequestContent auth={auth} req={req} context={ctx} type={type} />
+      )}
+    </Context.Consumer>
+  )
 }

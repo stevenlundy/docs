@@ -12,7 +12,8 @@ export default class GuidesFeedback extends Component {
     errorMessage: null,
     feedbackOpen: false,
     rating: null,
-    feedbackSent: false
+    feedbackSent: false,
+    value: ''
   }
 
   setError = error => {
@@ -41,11 +42,6 @@ export default class GuidesFeedback extends Component {
   }
 
   onSubmit = () => {
-    if (this.state.value.trim() === '') {
-      this.setError('Your feedback cannot be empty')
-      return
-    }
-
     this.setLoading(true)
 
     fetchAPI(

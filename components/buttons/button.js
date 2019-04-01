@@ -263,15 +263,15 @@ class Button extends React.Component {
           }
 
           .button.disabled {
-            background: #fafafa !important;
-            border-color: #eaeaea !important;
-            color: #ccc !important;
+            background: #fafafa;
+            border-color: #eaeaea;
+            color: #ccc;
             cursor: not-allowed;
           }
           .button.dark.disabled {
-            background: #111 !important;
-            border: 1px solid #333 !important;
-            color: #333 !important;
+            background: #111;
+            border: 1px solid #333;
+            color: #333;
           }
 
           .button.dark {

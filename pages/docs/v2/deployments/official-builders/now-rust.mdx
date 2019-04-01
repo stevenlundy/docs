@@ -1,0 +1,209 @@
+import Doc from '~/components/layout/docs'
+import { TerminalInput } from '~/components/text/terminal'
+import { Code, InlineCode } from '~/components/text/code'
+import { GenericLink } from '~/components/text/link'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+import Note from '~/components/text/note'
+import Example from '~/components/example'
+import Tag from '~/components/text/tag'
+import Card from '~/components/card'
+
+export const meta = {
+  title: 'Rust Builder (@now/rust)',
+  description:
+    'The official Rust Builder for ZEIT Now. Deploy serverless invokable functions with Rust source code.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/now-rust.mdx',
+  lastEdited: '2019-03-12T15:18:33.000Z'
+}
+
+<Tag>Status: Beta</Tag>
+
+This Builder takes in a [Rust](https://www.rust-lang.org) program and outputs it as a [Lambda](/docs/v2/deployments/concepts/lambdas).
+
+## When to Use It
+
+Whenever you want to expose an API or a function written in Rust.
+
+## How to Use It
+
+Define an `index.rs` file inside a folder as follows:
+
+```rust
+use http::{Request, Response, StatusCode, header};
+
+fn handler(request: Request<()>) -> http::Result<Response<String>> {
+    let response = Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "text/html")
+        .body("<!doctype html><html><head><title>A simple deployment with Now!</title></head><body><h1>Welcome to Rust on Now</h1></body></html>".to_string())
+        .expect("failed to render response");
+
+    Ok(response)
+}
+```
+
+Define a `Cargo.toml` like so:
+
+```
+[package]
+name = "rust-project"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+http = "0.1"
+```
+
+<Caption>
+  A <InlineCode>Cargo.toml</InlineCode> file defining the Rust dependencies.
+</Caption>
+
+<Note>
+  Your <InlineCode>Cargo.toml</InlineCode> file should contain the Rust crates
+  used in your application.
+</Note>
+
+And define a `now.json` like:
+
+```json
+{
+  "name": "rust-project",
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.rs",
+      "use": "@now/rust"
+    }
+  ]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file defining the{' '}
+  <GenericLink href="/docs/v2/platform/overview#versioning">
+    Now platform version
+  </GenericLink>{' '}
+  and a build step using the <InlineCode>@now/rust</InlineCode> Builder.
+</Caption>
+
+The example above can be seen live at <https://rust-kit-rm1x19uq8.now.sh/>.
+
+Also, the source code of the deployment can be checked by appending `/_src` e.g. <https://rust-kit-rm1x19uq8.now.sh/_src>.
+
+## Technical Details
+
+### Entry Point
+
+The entry point file can either be a `.rs` source file or a `Cargo.toml` file.
+
+#### `.rs` Entry Point
+
+When you use one or multiple `.rs` files as an entry point for this Builder, Now will setup the serverless environment for you.
+
+The requirements for this entry point is to expose a `handler` function and not to have a `main` function.
+
+The example for [the "How to Use It" section](#how-to-use-it) uses this method.
+
+If a `Cargo.toml` exists in the project relating to the entry point, the dependencies will be installed for the Rust project.
+
+#### `Cargo.toml` Entry Point
+
+When using a `Cargo.toml` file as an entry point for this Builder, Now will use `cargo read-manifest` to build each binary within the project.
+
+This entry point method is an advanced method of using this Builder and requires Rust files to assemble their own runtimes.
+
+Defining a `Cargo.toml` file as an entry point requires a Rust file at `src/main.rs` or files defined [as a \[\[bin\]\]\` target](https://doc.rust-lang.org/cargo/reference/manifest.html#configuring-a-target).
+
+An example `src/main.rs` Rust file within a project including a `Cargo.toml` file acting as the entry point:
+
+```rust
+use http::{StatusCode, header};
+use now_lambda::{error::NowError, lambda, IntoResponse, Request, Response};
+use std::error::Error;
+
+fn handler(request: Request) -> Result<impl IntoResponse, NowError> {
+    let uri = request.uri();
+    let response = Response::builder()
+        .status(StatusCode::OK)
+        .header(header::CONTENT_TYPE, "text/html")
+        .body(format!(
+            "You made a request to the following URL: {}",
+            uri
+        ))
+        .expect("failed to render response");
+
+    Ok(response)
+}
+
+// Start the runtime with the handler
+fn main() -> Result<(), Box<dyn Error>> {
+    Ok(lambda!(handler))
+}
+```
+
+This requires one dependency, with the example above using another dependency, `http`.
+
+The required dependency is [`now_lambda`](https://docs.rs/now_lambda) which provides all of the resources needed to provide the serverless runtime.
+
+The `Cargo.toml` entry point for the example above is the following:
+
+```
+[package]
+name = "rust-project"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+http = "0.1"
+now_lambda = "*"
+```
+
+<Caption>
+  An example <InlineCode>Cargo.toml</InlineCode> entry point defining{' '}
+  <InlineCode>http</InlineCode> and <InlineCode>now_lambda</InlineCode>{' '}
+  dependencies.
+</Caption>
+
+### Dependencies
+
+This Builder supports installing dependencies defined in the `Cargo.toml` file.
+
+Furthermore, more system dependencies can be installed at build time with the presence of a shell `build.sh` file in the same directory as the entry point file.
+
+By default, [`openssl`](https://centos.pkgs.org/7/centos-x86_64/openssl-devel-1.0.2k-16.el7.x86_64.rpm.html) is installed by the Builder due to its common usage with Rust projects.
+
+### Rust Version
+
+The version of Rust that this Builder supports is `1.31.1`
+
+### Maximum Lambda Bundle Size
+
+To help keep cold boot times low, the [maximum output bundle size](/docs/v2/deployments/concepts/lambdas#maximum-bundle-size) for a Rust lambda is, by default, **`25mb`**.
+This [limit is extendable](/docs/v2/deployments/builders/overview#configuring-output-lambda-size) up to **`50mb`**.
+
+<Example>
+  <span>
+    Example <InlineCode>maxLambdaSize</InlineCode> configuration:
+  </span>
+  <Code lang="json">{`{
+  "builds": [
+    { "src": "*.rs", "use": "@now/rust", "config": { "maxLambdaSize": "40mb" } }
+  ]
+}`}</Code>
+</Example>
+
+## Resources
+
+The goal of the ZEIT Docs is to provide you with all the information you need to easily deploy your projects. The following resources can also help you set up other projects:
+
+<Card title="Document: Builds Overview" href="/docs/v2/deployments/builds/">
+  Learn all about build steps and what you can achieve with your Now-deployed
+  projects.
+</Card>
+
+<Card title="Document: Deployment Overview" href="/docs/v2/deployments/basics/">
+  Discover the deployment basics of Now.
+</Card>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>

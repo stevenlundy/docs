@@ -10,7 +10,9 @@ import Card from '~/components/card'
 export const meta = {
   title: 'Next.js Builder (@now/next)',
   description:
-    'The official Next.js Builder for ZEIT Now. Deploy Next.js applications with ease.'
+    'The official Next.js Builder for ZEIT Now. Deploy Next.js applications with ease.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/next-js-now-next.mdx',
+  lastEdited: '2019-03-12T15:18:33.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -19,13 +21,13 @@ The Now Next.js Builder takes a [Next.js application](https://nextjs.org), defin
 
 It features built-in caching of `node_modules` and all compiler artifacts for very fast deployments.
 
-## When to use it
+## When to Use It
 
 `@now/next` is the ideal way to ship a fast, production-ready [Next.js application](https://nextjs.org) that scales automatically.
 
 For more information on why you should use Next.js for your project, see [the Next.js website](https://nextjs.org).
 
-## How to use it
+## How to Use It
 
 The first step is to set up a Next.js project. If you have not yet done so; [the best place to get started is the Next.js documentation](https://nextjs.org/docs/#setup).
 
@@ -66,7 +68,9 @@ Then define a build step in a `now.json` configuration file:
 
 To prevent unintended issues and to speed up the uploading step of the deployment process, make sure to add both the `.next` and `node_modules` directories to [a `.nowignore` file](/docs/v2/deployments/ignoring-source-paths/).
 
-[Upon deployment](/docs/v2/deployments/basics), you will get a URL like the following: https://nextjs-8fnzfb1ci.now.sh
+[Upon deployment](/docs/v2/deployments/basics), you will get a URL like the following: <https://nextjs-8fnzfb1ci.now.sh>
+
+Also, the source code of the deployment can be checked by appending `/_src` e.g. <https://nextjs-8fnzfb1ci.now.sh/_src>.
 
 For a more in-depth guide on setting up and deploying Next.js with caching headers, see our guide:
 

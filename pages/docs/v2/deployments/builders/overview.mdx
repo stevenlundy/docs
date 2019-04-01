@@ -7,7 +7,9 @@ import { GenericLink } from '~/components/text/link'
 export const meta = {
   title: 'Builders Overview',
   description:
-    'A look at what Builders are and how they are used with ZEIT Now deployment Builds to achieve production-ready outputs.'
+    'A look at what Builders are and how they are used with ZEIT Now deployment Builds to achieve production-ready outputs.',
+  editUrl: 'pages/docs/v2/deployments/builders/overview.mdx',
+  lastEdited: '2019-03-12T19:54:30.000Z'
 }
 
 Builders are modules that take a deployment's source and return an output, consisting of [either static files or dynamic Lambdas](/docs/v2/deployments/builds#sources-and-outputs).
@@ -20,7 +22,7 @@ Whether [HTML files need to be minified](/docs/v2/deployments/official-builders/
 
 ## How to Use Builders
 
-Builders can be used in with Now by creating a `now.json` file in a project and then [using a `builds` property](/docs/v2/deployments/builds) within that configuration:
+Builders can be used with Now by creating a `now.json` file in a project and then [using a `builds` property](/docs/v2/deployments/builds) within that configuration:
 
 ```json
 {

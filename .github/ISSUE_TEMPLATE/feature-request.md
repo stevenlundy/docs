@@ -4,7 +4,6 @@ about: A feature request that does not belong to any other issue template
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 **Is your feature request related to a problem? Please describe.**

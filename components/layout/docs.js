@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { useAmp } from 'next/amp'
 import { withRouter } from 'next/router'
 import { MDXProvider } from '@mdx-js/tag'
 
@@ -10,6 +11,7 @@ import Main from '~/components/layout/main'
 import Heading from '~/components/text/linked-heading'
 import Sidebar from '~/components/layout/sidebar'
 import Content from '~/components/layout/content'
+import ContentFooter from '~/components/layout/content-footer'
 import DocsNavbarDesktop from '~/components/layout/navbar/desktop'
 import ToggleGroup, { ToggleItem } from '~/components/toggle-group'
 import { GenericLink } from '~/components/text/link'
@@ -21,48 +23,93 @@ import H4 from '~/components/text/h4'
 import { P } from '~/components/text/paragraph'
 import dataV1 from '~/lib/data/v1/docs'
 import dataV2 from '~/lib/data/v2/docs'
-import lastEdited from '~/lib/data/last-edited.json'
 import Select from '~/components/select'
 import Note from '~/components/text/note'
 
 const DocH2 = ({ children }) => (
-  <div>
+  <>
     <Heading lean offsetTop={175}>
       <H2>{children}</H2>
     </Heading>
     <style jsx>{`
-      div {
+      :global(h2) {
         margin: 40px 0 0 0;
       }
     `}</style>
-  </div>
+  </>
 )
 
 const DocH3 = ({ children }) => (
-  <div>
+  <>
     <Heading lean offsetTop={175}>
       <H3>{children}</H3>
     </Heading>
     <style jsx>{`
-      div {
+      :global(h3) {
         margin: 40px 0 0 0;
       }
     `}</style>
-  </div>
+  </>
 )
 
 const DocH4 = ({ children }) => (
-  <div>
+  <>
     <Heading lean offsetTop={175}>
       <H4>{children}</H4>
     </Heading>
     <style jsx>{`
-      div {
+      :global(h4) {
         margin: 40px 0 0 0;
       }
     `}</style>
-  </div>
+  </>
 )
+
+const AmpScripts = () => {
+  const isAmp = useAmp()
+  if (!isAmp) return null
+  return (
+    <>
+      <script
+        async
+        key="amp-bind"
+        custom-element="amp-bind"
+        src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"
+      />
+      <script
+        async
+        key="amp-form"
+        custom-element="amp-form"
+        src="https://cdn.ampproject.org/v0/amp-form-0.1.js"
+      />
+    </>
+  )
+}
+
+const VersionSelect = ({ onChange, version }) => {
+  const isAmp = useAmp()
+  const href = `/docs/${version === 'v1' ? 'v2' : 'v1'}`
+  const curSelect = (
+    <Select
+      width="100%"
+      onChange={onChange}
+      defaultValue={version}
+      on={
+        isAmp ? `change:AMP.navigateTo(url='${href}', target=_top)` : undefined
+      }
+    >
+      <option value="v1">v1</option>
+      <option value="v2">v2 (Latest)</option>
+    </Select>
+  )
+  if (!isAmp) return curSelect
+  // have to wrap it in a form to use `autoComplete="off"`
+  return (
+    <form action="/" method="GET" autoComplete="off" target="_top">
+      {curSelect}
+    </form>
+  )
+}
 
 class withDoc extends React.Component {
   state = {
@@ -97,10 +144,6 @@ class withDoc extends React.Component {
     const { navigationActive, version } = this.state
     const versionData = version === 'v2' ? dataV2 : dataV1
 
-    const date = lastEdited[meta.editUrl]
-      ? new Date(lastEdited[meta.editUrl])
-      : new Date()
-
     return (
       <MDXProvider
         components={{
@@ -117,9 +160,10 @@ class withDoc extends React.Component {
             title={`${meta.title}`}
             description={meta.description}
             image={meta.image}
-            lastEdited={date}
+            lastEdited={meta.lastEdited}
           >
             {version !== 'v2' && <meta name="robots" content="noindex" />}
+            <AmpScripts />
           </Head>
 
           <Main>
@@ -149,14 +193,12 @@ class withDoc extends React.Component {
                 </ToggleGroup>
               </div>
               <h5 className="platform-select-title">Now Platform Version</h5>
-              <Select
-                width="100%"
-                defaultValue={version}
+
+              <VersionSelect
+                version={version}
                 onChange={this.handleVersionChange}
-              >
-                <option value="v1">v1</option>
-                <option value="v2">v2 (Latest)</option>
-              </Select>
+              />
+
               <div className="navigation">
                 <DocsNavbarDesktop
                   data={versionData}
@@ -166,7 +208,7 @@ class withDoc extends React.Component {
               </div>
             </Sidebar>
             <Content>
-              <div className="heading">
+              <div className="heading content-heading">
                 {version === 'v1' && (
                   <Note>
                     This documentation is for <P.B>version 1</P.B> of the Now
@@ -183,7 +225,13 @@ class withDoc extends React.Component {
                 )}
                 <H1 itemProp="headline">{meta.title}</H1>
               </div>
-              {this.props.children}
+
+              <div className="content">{this.props.children}</div>
+
+              <ContentFooter
+                lastEdited={meta.lastEdited}
+                editUrl={meta.editUrl}
+              />
             </Content>
           </Main>
 

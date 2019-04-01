@@ -42,6 +42,11 @@
       "headers": { "Location": "/docs/v2/domains-and-aliases/dns" }
     },
     {
+      "src": "/docs/v2/domains-and-aliases/introduction-to-domains",
+      "status": 301,
+      "headers": { "Location": "/docs/v2/domains-and-aliases/introduction" }
+    },
+    {
       "src": "/docs/features/(.*)",
       "status": 301,
       "headers": { "Location": "/docs/v1/features/$1" }
@@ -55,6 +60,11 @@
       "src": "/docs/deployment-types/(.*)",
       "status": 301,
       "headers": { "Location": "/docs/v1/deployment-types/$1" }
+    },
+    {
+      "src": "/docs/(v1/)?guides/updating-now-cli/?$",
+      "status": 301,
+      "headers": { "Location": "/guides/updating-now-cli" }
     },
     {
       "src": "/docs/guides/(.*)",
@@ -89,6 +99,11 @@
     { "src": "/docs/sitemap.xml", "dest": "/sitemap.xml" },
     { "src": "/docs/_next(.*)", "dest": "/_next$1" },
     { "src": "/docs/static(.*)", "dest": "/static$1" },
+    {
+      "src": "/examples/nodejs-express",
+      "status": 301,
+      "headers": { "Location": "/examples/express" }
+    },
     { "src": "(.*)", "dest": "$1" }
   ]
 }

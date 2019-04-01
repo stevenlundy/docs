@@ -9,7 +9,8 @@ export const meta = {
   title: 'Scaling',
   description: 'Handling increased traffic by scaling your Now deployments',
   date: '10 August 2017',
-  editUrl: 'pages/docs/getting-started/scaling.mdx'
+  editUrl: 'pages/docs/v1/getting-started/scaling.mdx',
+  lastEdited: '2019-03-13T13:19:27.000Z'
 }
 
 Deploying an app is just the start. We need to scale our app as our user base grows. It could be a linear growth or random spikes in certain times.
@@ -31,7 +32,7 @@ By default, all of the deployments are configured like this:
 
 This means, when your deployment receives some traffic <Now color="#000"/> will start an instance. If your deployment doesn't receive any traffic for a while, <Now color="#000"/> will kill that instance.
 
-There's a fixed number of concurrent instances you can have based on the [plan](https://zeit.co/account/plan) you've chosen. But with this configuration, you can have as many deployments as you want.
+There's a fixed number of concurrent instances you can have based on the [plan](/pricing/v1) you've chosen. But with this configuration, you can have as many deployments as you want.
 
 _Having older deployments which are **not active** will cost you nothing._
 
@@ -77,7 +78,7 @@ If you run `now alias` again, it'll scale the new deployment accordingly and sca
 
 Sometimes, your app may receive sudden traffic spikes and it's pretty hard to predict the pattern. Then you need to scale your app based on the traffic. To do that, you can turn on “auto scaling” by using different `min` and `max` instance values.
 
-> You need to have [the "Pro" plan or a higher plan](https://zeit.co/pricing) to do "auto scaling"
+> You need to have [the "Pro" plan or a higher plan](/pricing/v1) to do "auto scaling"
 
 Here's how to auto scale an app with the URL `hnode.now.sh`
 
@@ -85,7 +86,7 @@ Here's how to auto scale an app with the URL `hnode.now.sh`
 
 Now the deployment behind `hnode.now.sh` runs with a minimum of 2 instances and it can scale up to 15 instances as the traffic increases.
 
-&#8203;<Now color="#000"/> will automatically start and kill instances based on the traffic `hnode.now.sh` receives.
+​<Now color="#000"/> will automatically start and kill instances based on the traffic `hnode.now.sh` receives.
 
 <Image
   src={`${process.env.IMAGE_ASSETS_URL}/docs/scaling/auto-scaling.png`}

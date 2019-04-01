@@ -18,66 +18,51 @@ export default class Page extends Component {
     return (
       <div className="page" itemScope itemType="http://schema.org/WebPage">
         {this.props.children}
-        <Head>
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
-            html {
-              height: 100%;
-              box-sizing: border-box;
-            }
+        <style jsx global>{`
+          html {
+            height: 100%;
+            box-sizing: border-box;
+          }
 
-            *,
-            *:before,
-            *:after {
-              box-sizing: inherit;
-            }
+          *,
+          *:before,
+          *:after {
+            box-sizing: inherit;
+          }
 
-            a {
-              -webkit-tap-highlight-color: rgba(0,0,0,0);
-            }
+          a {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+          }
 
-            body {
-              font-family: ${FONT_FAMILY_SANS};
-              margin: 0;
-              min-height: 100%;
-              position: relative;
-              text-rendering: optimizeLegibility;
-              -webkit-font-smoothing: antialiased;
-            }
+          body {
+            font-family: ${FONT_FAMILY_SANS};
+            margin: 0;
+            min-height: 100%;
+            position: relative;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+          }
 
-            html, body {
-              background-color: ${this.props.darkBg ? '#000' : '#fff'};
-              color: ${this.props.darkBg ? '#fff' : '#000'};
-            }
+          html,
+          body {
+            background-color: ${this.props.darkBg ? '#000' : '#fff'};
+            color: ${this.props.darkBg ? '#fff' : '#000'};
+          }
 
-            .page {
-              margin: 0 auto;
-              max-width: 100%;
-              position: relative;
-            }
+          .page {
+            margin: 0 auto;
+            max-width: 100%;
+            position: relative;
+          }
 
-            ${
-              this.props.darkBg
-                ? `
-              ::selection {
-                background-color: #f81ce5;
-                color: #fff;
-              }
-            `
-                : `
-              ::selection {
-                background-color: #79FFE1;
-                color: #000;
-              }
-            `
-            }
-
-            ${SYNTAX_HIGHLIGHTING}
-          `
-            }}
-          />
-        </Head>
+          ::selection {
+            background-color: #79ffe1;
+            color: #000;
+          }
+        `}</style>
+        <style jsx global>
+          {SYNTAX_HIGHLIGHTING}
+        </style>
       </div>
     )
   }

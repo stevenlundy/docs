@@ -13,6 +13,11 @@ import {
 import Endpoint from '~/components/api/endpoint'
 import Request from '~/components/api/request'
 
+export const meta = {
+  editUrl: 'pages/docs/api/v1/api-docs-mdx/endpoints/dns.mdx',
+  lastEdited: '2019-02-16T22:48:11.000Z'
+}
+
 ## DNS
 
 ### List all the DNS records of a domain
@@ -79,7 +84,7 @@ Get a list of DNS records created for a domain name specified in the URL.
 
 Example successful (**200**) response:
 
-  <Code lang="json">{`{
+<Code lang="json">{`{
     "records": [
       {
         "id": "rec_38OtX1f51szRA03atCybBuZ3",
@@ -183,7 +188,7 @@ field should be set for MX records and left out otherwise.
 
 Example successful (**200**) response:
 
-  <Code lang="json">{`{
+<Code lang="json">{`{
     uid: "rec_V0fra8eEgQwEpFhYG2vTzC3K"
   }`}</Code>
 </Example>
@@ -199,7 +204,7 @@ successfully the endpoint returns with code 200 and an empty body.
 <Example>
   Example request:
 
-  <Request
+<Request
     method="DELETE"
     url="https://api.zeit.co/v2/domains/zeit.rocks/records/rec_V0fra8eEgQwEpFhYG2vTzC3K"
     headers={{

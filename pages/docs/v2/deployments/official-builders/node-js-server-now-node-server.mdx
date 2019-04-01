@@ -11,7 +11,10 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'Node.js Server Builder (@now/node-server)',
   description:
-    'The official Node.js Server Builder for ZEIT Now. Deploy a Node.js server on ZEIT Now.'
+    'The official Node.js Server Builder for ZEIT Now. Deploy a Node.js server on ZEIT Now.',
+  editUrl:
+    'pages/docs/v2/deployments/official-builders/node-js-server-now-node-server.mdx',
+  lastEdited: '2019-03-08T17:46:24.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -27,13 +30,13 @@ export const meta = {
 
 This Builder takes any Node.js [HTTP server](https://nodejs.org/docs/latest-v8.x/api/http.html) and wraps it inside a [lambda](/docs/v2/deployments/concepts/lambdas).
 
-## When to use it
+## When to Use It
 
 To best take advantage of the [granularity of serverless](/docs/v2/deployments/concepts/lambdas/#per-entrypoint-granularity), we recommend focusing on exposing function entrypoints to your APIs.
 
 However, to ease the upgrade process to Now 2.0, porting over old non-serverless applications or testing out the system with an existing app, we created and maintain `@node/node-server`.
 
-## How to use it
+## How to Use It
 
 Point `@now/node-server` to a file that opens a HTTP server that listens on a port.
 
@@ -89,7 +92,7 @@ As a result, our deployment will have two routes:
 - `/express`
 - `/node-http`
 
-You can check them out live here: https://my-express-project-pugp5a7l8.now.sh/
+You can check them out live here: <https://my-express-project-pugp5a7l8.now.sh/>
 
 ## Technical Details
 

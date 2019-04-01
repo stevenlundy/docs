@@ -6,11 +6,14 @@ import { TerminalInput } from '~/components/text/terminal'
 import { InlineCode } from '~/components/text/code'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
+import Card from '~/components/card'
 
 export const meta = {
   title: 'Now for GitHub',
   description:
-    'Deploy each change in your GitHub repositories with Now to share and test with your colleagues. Instant share-able links to your work with each push. Automatically alias your changes to production.'
+    'Deploy each change in your GitHub repositories with Now to share and test with your colleagues. Instant share-able links to your work with each push. Automatically alias your changes to production.',
+  editUrl: 'pages/docs/v2/integrations/now-for-github.mdx',
+  lastEdited: '2019-03-18T17:02:36.000Z'
 }
 
 Now for GitHub is an app for GitHub users or organizations that automatically deploys and aliases changes to repositories with Now.
@@ -92,7 +95,7 @@ With each new push, if Now is already building a previous commit, Now will cance
 
 ### Aliasing the Default Branch
 
-If [an alias is set within the `now.json` file](/docs/features/aliases), pushes and merges to the [default branch](https://help.github.com/articles/setting-the-default-branch/) (commonly "master") will be aliased automatically and made live to those aliases with the latest deployment made with a push.
+If [an alias is set within the `now.json` file](/docs/v2/domains-and-aliases/aliasing-a-deployment), pushes and merges to the [default branch](https://help.github.com/articles/setting-the-default-branch/) (commonly "master") will be aliased automatically and made live to those aliases with the latest deployment made with a push.
 
 For example, the following `now.json` configuration will make Now for GitHub alias the most recent push to `my-zeit-website.com` by default.
 
@@ -188,8 +191,8 @@ In order to support that, Now will deploy your app with following built-in envir
 | `NOW_GITHUB_COMMIT_REPO`         | The repository of which the commit belongs. For example, when submitting a pull request from a forked repository.   |
 | `NOW_GITHUB_COMMIT_REF`          | The branch that the app was deployed using.                                                                         |
 | `NOW_GITHUB_COMMIT_SHA`          | The [sha](https://help.github.com/articles/github-glossary/#commit) of the commit the app was deployed using.       |
-| `NOW_GITHUB_COMMIT_AUTHOR_LOGIN` | The username belonging to the author of the commit that app was deployed using.                                     |
-| `NOW_GITHUB_COMMIT_AUTHOR_NAME`  | The name belonging to the author of the commit that the app was deployed using.                                     |
+| `NOW_GITHUB_COMMIT_AUTHOR_LOGIN` | The username belonging to the author of the commit that the project was deployed using.                             |
+| `NOW_GITHUB_COMMIT_AUTHOR_NAME`  | The name belonging to the author of the commit that the project was deployed using.                                 |
 
 <Note>
   You can access these as{' '}
@@ -198,5 +201,21 @@ In order to support that, Now will deploy your app with following built-in envir
   </GenericLink>{' '}
   also.
 </Note>
+
+## Read Next
+
+Learn more about deploying your apps with Now using the following resources:
+
+<Card title="Deployment Basics" href="/docs/v2/deployments/basics">
+  Learn how to deploy any application with Now.
+</Card>
+
+<Card title="Deployments with Builds" href="/docs/v2/deployments/builds">
+  Builds on Now create a production-ready output from your source files.
+</Card>
+
+<Card title="Control Your Paths with Routes" href="/docs/v2/deployments/routes">
+  Control your deployment's paths in detail with routes.
+</Card>
 
 export default ({ children }) => <Doc meta={meta}>{children}</Doc>

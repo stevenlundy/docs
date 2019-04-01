@@ -10,24 +10,35 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'HTML Minifier Builder (@now/html-minifier)',
   description:
-    'The official HTML Minifier Builder for ZEIT Now. Minify HTML sources when deploying to ZEIT Now.'
+    'The official HTML Minifier Builder for ZEIT Now. Minify HTML sources when deploying to ZEIT Now.',
+  editUrl:
+    'pages/docs/v2/deployments/official-builders/html-minifier-now-html-minifier.mdx',
+  lastEdited: '2019-03-12T15:18:33.000Z'
 }
 
 <Tag>Status: Stable</Tag>
 
 This builder optimizes `.html` files using [html-minifier](https://github.com/kangax/html-minifier).
 
-## When to use it
+## When to Use It
 
 When you want your HTML source files to be minified so they are as small as possible (without any semantic changes) in production.
 
-## How to use it
+## How to Use It
 
 We'll define a `index.html` file:
 
 ```html
 <!DOCTYPE html>
-<h1>Hello there This is intentionally long</h1>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h3>This is very long</h3>
+  </body>
+</html>
 ```
 
 Then we'll define our build step to optimize our images:
@@ -39,12 +50,16 @@ Then we'll define our build step to optimize our images:
 }
 ```
 
-When we deploy with `now` and `curl` the resulting deployment URL, we will notice the HTML has been compressed:
+When we deploy with `now`, the resulting deployment URL will be live as <https://htmlproject-b2u4218wj.now.sh>.
+
+Next, use `curl` to query the deployment URL, you will notice the HTML has been compressed:
 
 ```bash
-▲  curl https://optipng-deployment-f0hz0ny2d.now.sh/
-<!doctype html><h1>Hello there This is intentionally long</h1>
+▲  curl https://htmlproject-mf0azp0cg.now.sh/
+<!doctype html><html lang=en><meta charset=UTF-8><title>Document</title><h3>This is very long</h3>
 ```
+
+The example deployment above is open-source and you can view the code for it here: <https://htmlproject-b2u4218wj.now.sh/_src>.
 
 ## Technical Details
 

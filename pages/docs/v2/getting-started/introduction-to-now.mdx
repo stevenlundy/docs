@@ -11,7 +11,9 @@ import Introduction from '~/components/docs/introduction-deploy'
 export const meta = {
   title: 'Introduction to Now',
   description:
-    'An introduction to the ZEIT Now platform and how to get started deploying any kind of application.'
+    'An introduction to the ZEIT Now platform and how to get started deploying any kind of application.',
+  editUrl: 'pages/docs/v2/getting-started/introduction-to-now.mdx',
+  lastEdited: '2019-03-08T01:12:28.000Z'
 }
 
 ZEIT Now is a cloud platform for serverless deployment. It enables developers to host websites and web services that deploy instantly, scale automatically, and require no supervision, all with minimal configuration.
@@ -22,7 +24,7 @@ This documentation contains all of the resources needed to **get up and running 
   <SectionButton href="/docs/v2/deployments/basics">
     Deploying Applications
   </SectionButton>
-  <SectionButton href="/docs/v2/domains-and-aliases/introduction-to-domains">
+  <SectionButton href="/docs/v2/domains-and-aliases/introduction">
     Domains and Aliases
   </SectionButton>
   <SectionButton href="/docs/v2/integrations/now-for-github">
@@ -33,7 +35,7 @@ This documentation contains all of the resources needed to **get up and running 
 
 ### Try Now
 
-The following example highlights the ease with which you can deploy static assets (like with the `index.html` file below) combined with Now Lambdas (`date.js`) that execute and produce a dynamic response.
+The following example highlights the ease with which you can deploy static assets (like with the `index.html` and `style.css` files below) combined with a Lambda (`date.js`) that executes and produce a dynamic response.
 
 <Introduction />
 

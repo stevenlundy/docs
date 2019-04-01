@@ -1,8 +1,15 @@
+import React from 'react'
+import { useAmp } from 'next/amp'
 import Page from '~/components/layout/page'
 import Header from '~/components/layout/header'
 import { UserContext } from '~/lib/user-context'
 import UseTeamInfo from '~/lib/use-team-info'
 import * as bodyLocker from '~/lib/utils/body-locker'
+
+const WrapForAmp = ({ comp, ...props }) => {
+  const isAmp = useAmp()
+  return React.createElement(comp, { ...props, isAmp })
+}
 
 export default class Layout extends React.Component {
   state = {
@@ -42,7 +49,8 @@ export default class Layout extends React.Component {
             <UseTeamInfo
               user={user}
               render={({ teams }) => (
-                <Header
+                <WrapForAmp
+                  comp={Header}
                   onToggleNavigation={this.handleToggleNavigation}
                   user={user}
                   teams={teams}

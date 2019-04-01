@@ -12,7 +12,9 @@ export const meta = {
     'Migrate from a Next.js application with a custom server to a serverless Next.js application using Now routes.',
   published: '2019-01-23T17:00:00.860Z',
   authors: ['timothy', 'timneutkens'],
-  url: '/guides/custom-next-js-server-to-routes'
+  url: '/guides/custom-next-js-server-to-routes',
+  editUrl: 'pages/guides/custom-next-js-server-to-routes.mdx',
+  lastEdited: '2019-02-01T14:23:29.000Z'
 }
 
 Next.js offers developers [a built-in routing system](https://nextjs.org/docs/#routing) that allows you to link to other pages whilst also giving those pages a custom URL. When a user refreshes the custom URL, however, the browser will not be able to load the link because the page was previously routed client-side. To resolve this, we need to also handle routing server-side.
@@ -165,7 +167,7 @@ Now, clicking the espresso product link will result in the URL path being `/prod
   to get started.
 </Note>
 
-When refreshing the URL with the path of `/product/espresso`, or accessing it directly, you will find that the server will return a 404 response. This is because there is no entry point that exists for that path. Next.js handles the routing to that page internally and client-side. The next step is to provide Now with the context of this path to route to the `/product` page entry point.
+When refreshing the URL with the path of `/product/espresso`, or accessing it directly, you will find that the server will return a 404 response. This is because there is no entry point that exists for that path. Next.js handles the routing to that page internally on the client-side. The next step is to provide Now with the context of this path to route to the `/product` page entry point.
 
 For this context, we can use [the `routes` configuration option](/docs/v2/deployments/configuration#routes) inside of a `now.json` file:
 
@@ -193,7 +195,7 @@ For this context, we can use [the `routes` configuration option](/docs/v2/deploy
   for more information.
 </Note>
 
-The routes property, as exampled above, allows us to define a [named capture group](https://www.pcre.org/original/doc/html/pcrepattern.html#SEC16) that gets the query parameter from the URL path and enables the usage of that parameter in the destination path by using the capture ID prefixed by a dollar sign, in our case; `$name`.
+The routes property, as exampled above, allows us to define a [named capture group](https://www.pcre.org/original/doc/html/pcrepattern.html#SEC16) that gets the query parameter from the URL path and enables the usage of that parameter in the destination path by using the capture ID prefixed by a dollar sign, in our case: `$name`.
 
 ### Step 4: Deploying
 
@@ -203,9 +205,9 @@ With the Next.js application setup complete and Now configured to accept the cus
 
 If you are using [Now for GitHub](/docs/v2/integrations/now-for-github/); pushing your code to your repository is all you need to do for Now to automatically deploy your application.
 
-Once you deploy, you will receive a deployment URL, similar to the following which contains this example with a few styling tweaks for ease on the eyes: https://next-routes-2s2lop08x.now.sh/
+Once you deploy, you will receive a deployment URL, similar to the following which contains this example with a few styling tweaks for ease on the eyes: <https://next-routes-2s2lop08x.now.sh/>
 
-The full source of the deployment is also available here: https://next-routes-2s2lop08x.now.sh/_src
+The full source of the deployment is also available here: <https://next-routes-2s2lop08x.now.sh/_src>
 
 ## Read More
 

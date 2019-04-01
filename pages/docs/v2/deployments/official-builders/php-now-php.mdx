@@ -11,7 +11,9 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'PHP Builder (@now/php)',
   description:
-    'The official PHP Builder for ZEIT Now. Deploy serverless invokable functions with PHP source code.'
+    'The official PHP Builder for ZEIT Now. Deploy serverless invokable functions with PHP source code.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/php-now-php.mdx',
+  lastEdited: '2019-03-12T15:18:33.000Z'
 }
 
 <Tag>Status: Beta</Tag>
@@ -20,9 +22,8 @@ The `@now/php` builder allows you to use any `.php` file.
 
 <Note>
   This builder will only include one PHP source file per{' '}
-  <GenericLink href="/docs/v2/deployments/concepts/lambdas">Lambda</GenericLink>
-  . In the future, it will automatically include its dependencies via static
-  analysis.
+  <GenericLink href="/docs/v2/deployments/concepts/lambdas">Lambda</GenericLink>.
+  In the future, it will automatically include its dependencies via static analysis.
 </Note>
 
 ## When to use it
@@ -46,7 +47,9 @@ And a `now.json` like:
 }
 ```
 
-After running `now`, you'll get a URL like this: https://php-deployment-7z9gyzb8j.now.sh/
+After running `now`, you'll get a URL like this: <https://php-deployment-7z9gyzb8j.now.sh/>
+
+The example deployment above is open-source and you can view the code for it here: <https://php-deployment-7z9gyzb8j.now.sh/_src>
 
 ## Technical Details
 

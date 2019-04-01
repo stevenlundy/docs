@@ -2,18 +2,23 @@ import fetch from 'isomorphic-unfetch'
 import React from 'react'
 import CodeMirror from '@skidding/react-codemirror'
 
+import Cross from '~/components/icons/cross'
 import FileIcon from '~/components/icons/file-icon'
+import FileBrowser from '~/components/icons/file-browser'
 import Button from '~/components/buttons'
+import LoadingDots from '~/components/loading-dots'
 
 const example = {
   name: 'simple-now-deployment',
   files: {
     'index.html':
-      '<!doctype html>\n<html>\n  <head>\n    <title>A simple deployment with the Now API!</title>\n  </head>\n  <body>\n    <h1>Welcome to a simple static file</h1>\n    <p>Deployed with <a href="https://zeit.co/api">ZEIT\'s Now API</a>!</p>\n  </body>\n</html>',
+      '<!doctype html>\n<html>\n  <head>\n    <title>A simple deployment with the Now API!</title>\n    <link rel="stylesheet" href="style.css"> \n </head>\n  <body>\n    <h1>Welcome to a simple static file</h1>\n    <p>Deployed with <a href="https://zeit.co/docs">ZEIT Now</a>!</p>\n    <p>This deployment includes three files. A static index.html file as the homepage, a static style.css file for styling, and a date.js serverless function that returns the date on invocation. Try <a href="/date.js">getting the date here.</a></p> \n</body>\n</html>',
+    'style.css':
+      'h1 {\n margin-top: 70px; \n text-align: center; \n font-size: 45px; \n} \n h1, p {\n font-family: Helvetica; \n} \n a {\n color: #0076FF; \n text-decoration: none; \n} \n p {\n text-align: center; \n font-size: 30px; \n} \n p:nth-child(3) { \n font-size: 25px; \n margin-left: 15%; \n margin-right: 15%; \n}',
     'date.js':
       'module.exports = (req, res) => {\n  res.end(`The time is ${new Date()}`)\n}',
     'now.json':
-      '{\n   "version": 2, \n   "builds": [\n      { "src": "*.js", "use": "@now/node" },\n      { "src": "*.html", "use": "@now/static" }\n   ] \n}'
+      '{\n   "version": 2, \n   "builds": [\n      { "src": "*.js", "use": "@now/node" },\n      { "src": "*.html", "use": "@now/static" },\n      { "src": "*.css", "use": "@now/static" } \n  ] \n}'
   }
 }
 
@@ -77,6 +82,7 @@ class Introduction extends React.PureComponent {
   }
 
   render() {
+    const { deploying } = this.state
     return (
       <div className="introduction-deploy">
         <Editor
@@ -84,13 +90,9 @@ class Introduction extends React.PureComponent {
           files={this.state.files}
           onChange={this.onChange}
           key="1"
+          deployOnClick={this.deploy}
+          deployDisabled={deploying}
         />
-
-        <div className="centered deploy">
-          <Button onClick={this.deploy} disabled={!!this.deploying}>
-            DEPLOY TO NOW
-          </Button>
-        </div>
 
         {this.state.errorMessage ? (
           <div className="error-message" key="2">
@@ -101,16 +103,6 @@ class Introduction extends React.PureComponent {
         <style jsx>{`
           .introduction-deploy {
             margin-bottom: 64px;
-          }
-
-          .centered {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-          }
-
-          .deploy {
-            margin-bottom: 32px;
           }
 
           .error-message {
@@ -198,8 +190,10 @@ export class Editor extends React.PureComponent {
     super(props)
     this.state = {
       deploying: false,
+      fileBrowserOpen: false,
       selectedFilename: 'index.html',
-      vimMode: false
+      vimMode: false,
+      windowWidth: null
     }
     this.codeMirror = null
   }
@@ -223,6 +217,11 @@ export class Editor extends React.PureComponent {
     this.setState({ selectedFilename })
   }
 
+  onFilenameClickMobile = e => {
+    this.onFilenameClick(e)
+    this.toggleFileBrowser()
+  }
+
   componentDidMount() {
     const editor = this.codeMirror.getCodeMirror()
     const charWidth = editor.defaultCharWidth()
@@ -238,62 +237,134 @@ export class Editor extends React.PureComponent {
       elt.style.paddingLeft = basePadding + off + 'px'
     })
     editor.refresh()
+    this.getWindowWidth()
+    window.addEventListener('resize', this.getWindowWidth)
+  }
+
+  componentDidUpdate() {
+    if (this.state.windowWidth > 699) this.setState({ fileBrowserOpen: false })
+  }
+
+  getWindowWidth = () => {
+    this.setState({ windowWidth: window.innerWidth })
+  }
+
+  toggleFileBrowser = () => {
+    this.setState(prevState => ({
+      fileBrowserOpen: !prevState.fileBrowserOpen
+    }))
   }
 
   render() {
-    const { selectedFilename } = this.state
+    const { fileBrowserOpen, selectedFilename, windowWidth } = this.state
 
     return (
       <div className="demo">
-        {typeof navigator != 'undefined'
-          ? (() => {
-              const opts = {
-                lineNumbers: true,
-                lineWrapping: true,
-                mode: 'javascript',
-                tabSize: 2,
-                theme: 'neo'
+        {typeof navigator != 'undefined' ? (
+          (() => {
+            const opts = {
+              lineNumbers: true,
+              lineWrapping: true,
+              mode: 'javascript',
+              tabSize: 2,
+              theme: 'neo'
+            }
+
+            if (this.state.vimMode) {
+              opts.keyMap = 'vim'
+              opts.extraKeys = { Esc: null }
+            } else {
+              opts.extraKeys = {
+                Esc: this.onEscape
               }
+            }
 
-              if (this.state.vimMode) {
-                opts.keyMap = 'vim'
-                opts.extraKeys = { Esc: null }
-              } else {
-                opts.extraKeys = {
-                  Esc: this.onEscape
-                }
-              }
+            opts.extraKeys.Tab = function indent(cm) {
+              const spaces = Array(cm.getOption('indentUnit') + 1).join(' ')
+              cm.replaceSelection(spaces)
+            }
 
-              opts.extraKeys.Tab = function indent(cm) {
-                const spaces = Array(cm.getOption('indentUnit') + 1).join(' ')
-                cm.replaceSelection(spaces)
-              }
+            require('codemirror/mode/javascript/javascript')
+            require('codemirror/keymap/vim')
 
-              require('codemirror/mode/javascript/javascript')
-              require('codemirror/keymap/vim')
-
-              return (
-                <div className="code" key="0">
-                  <div className="header">
-                    <div className="icons">
-                      <span className="icon close" />
-                      <span className="icon minimize" />
-                      <span className="icon fullScreen" />
-                    </div>
-                    <div className="title">Editor</div>
+            return (
+              <div className="code" key="0">
+                <div className="header">
+                  <div className="icons">
+                    <span className="icon close" />
+                    <span className="icon minimize" />
+                    <span className="icon fullScreen" />
                   </div>
-                  <div className="main">
-                    <ul className="file-tree">
+                  <div className="title">Editor</div>
+                </div>
+                <div className="file-browser" onClick={this.toggleFileBrowser}>
+                  <div className="file-browser-icon">
+                    {!fileBrowserOpen ? <FileBrowser /> : <Cross />}
+                  </div>
+                  <div className="file-browser-title">
+                    {fileBrowserOpen ? 'Close' : ''} File Browser
+                  </div>
+                </div>
+                <div className="mobile-file-tree" />
+                <div className="main">
+                  {!fileBrowserOpen ? (
+                    <>
+                      <ul className="file-tree">
+                        {Object.keys(this.props.files).map(filename => {
+                          return (
+                            <li
+                              key={filename}
+                              className={
+                                'file' +
+                                (filename === selectedFilename
+                                  ? ' selected'
+                                  : '')
+                              }
+                              data-filename={filename}
+                              onClick={this.onFilenameClick}
+                            >
+                              <FileIcon />
+                              <span className="filename">{filename}</span>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                      <div className="file-content">
+                        <CodeMirror
+                          codeMirrorInstance={CodeMirrorInstance}
+                          value={this.props.files[selectedFilename]}
+                          onChange={this.onChange}
+                          options={opts}
+                          ref={ref => (this.codeMirror = ref)}
+                        />
+                      </div>
+                      <div className="deploy">
+                        <Button
+                          onClick={this.props.deployOnClick}
+                          loading={this.props.deployDisabled}
+                          width={windowWidth < 700 ? 'full' : null}
+                        >
+                          {!this.props.deployDisabled && (
+                            <span>
+                              <span className="button-text-bold">DEPLOY</span>{' '}
+                              TO NOW
+                            </span>
+                          )}
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <ul className="mobile-file-tree">
                       {Object.keys(this.props.files).map(filename => {
                         return (
                           <li
                             key={filename}
                             className={
-                              'file' +
+                              'mobile-file' +
                               (filename === selectedFilename ? ' selected' : '')
                             }
                             data-filename={filename}
-                            onClick={this.onFilenameClick}
+                            onClick={this.onFilenameClickMobile}
                           >
                             <FileIcon />
                             <span className="filename">{filename}</span>
@@ -301,20 +372,27 @@ export class Editor extends React.PureComponent {
                         )
                       })}
                     </ul>
-                    <div className="file-content">
-                      <CodeMirror
-                        codeMirrorInstance={CodeMirrorInstance}
-                        value={this.props.files[selectedFilename]}
-                        onChange={this.onChange}
-                        options={opts}
-                        ref={ref => (this.codeMirror = ref)}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
-              )
-            })()
-          : null}
+              </div>
+            )
+          })()
+        ) : (
+          <div className="code" key="1">
+            <div className="header">
+              <div className="icons">
+                <span className="icon close" />
+                <span className="icon minimize" />
+                <span className="icon fullScreen" />
+              </div>
+              <div className="title">Editor</div>
+            </div>
+            <div className="loading">
+              Loading
+              <LoadingDots />
+            </div>
+          </div>
+        )}
 
         <style jsx global>{`
           /* BASICS */
@@ -326,8 +404,8 @@ export class Editor extends React.PureComponent {
               serif;
             font-size: 12px;
             line-height: 16px;
-            height: 260px;
-            padding: 10px 20px 20px 0;
+            height: auto;
+            padding: 10px 10px 10px 0;
             color: black;
           }
 
@@ -626,7 +704,7 @@ export class Editor extends React.PureComponent {
             margin-bottom: -30px;
             margin-right: -30px;
             padding-bottom: 30px;
-            height: 278px;
+            height: 358px;
             outline: none; /* Prevent dragging from highlighting the element */
             position: relative;
           }
@@ -671,7 +749,7 @@ export class Editor extends React.PureComponent {
             position: absolute;
             left: 0;
             top: 0;
-            min-height: 100%;
+            // min-height: 100%;
             z-index: 3;
           }
           .CodeMirror-gutter {
@@ -851,6 +929,33 @@ export class Editor extends React.PureComponent {
           }
         `}</style>
         <style jsx>{`
+          .button-text-bold {
+            font-weight: 700;
+          }
+          .loading {
+            align-items: center;
+            color: #999999;
+            display: flex;
+            font-size: 14px;
+            height: 413px;
+            justify-content: center;
+          }
+
+          .deploy {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -45px;
+            margin-right: 0;
+            height: 80px;
+            padding: 1.5em;
+          }
+
+          .file-browser {
+            display: none;
+          }
+          .deploy :global(.button) {
+            width: 155px;
+          }
           .demo {
             line-height: normal;
           }
@@ -893,6 +998,7 @@ export class Editor extends React.PureComponent {
               'Helvetica Neue', sans-serif;
             text-align: center;
             overflow: auto;
+            margin-top: -20px;
           }
           .code {
             background: #fff;
@@ -929,6 +1035,7 @@ export class Editor extends React.PureComponent {
             fill: #000;
           }
           .code .filename {
+            cursor: pointer;
             margin-left: 8px;
           }
           .code .file-content {
@@ -942,6 +1049,72 @@ export class Editor extends React.PureComponent {
             margin-bottom: 33px;
           }
           @media screen and (max-width: 700px) {
+            .file-browser {
+              align-items: center;
+              border-bottom: 1px #efefef solid;
+              border-top: 1px #efefef solid;
+              cursor: pointer;
+              display: flex;
+              height: 32px;
+              justify-content: center;
+            }
+            .file-browser-icon {
+              display: flex;
+              position: relative;
+              justify-self: flex-start;
+              margin-left: 12px;
+              width: 30px;
+            }
+            .file-browser-title {
+              color: #9b9b9b;
+              font-size: 12px;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+                'Droid Sans', 'Helvetica Neue', sans-serif;
+              text-align: center;
+              margin-left: -42px;
+              width: 100%;
+              overflow: auto;
+            }
+            .deploy {
+              // align-items: flex-end;
+              height: fit-content;
+              padding: 0;
+              margin-top: 20px;
+            }
+            .deploy :global(.button) {
+              border-top-left-radius: 0;
+              border-top-right-radius: 0;
+              width: 100%;
+            }
+            .file-tree {
+              display: none;
+            }
+            .mobile-file-tree {
+              padding: 0;
+              margin: 0;
+            }
+            .mobile-file {
+              align-items: center;
+              border-bottom: 1px #efefef solid;
+              cursor: pointer;
+              display: flex;
+              font-size: 12px;
+              padding: 22px 14px;
+            }
+            .code .mobile-file.selected {
+              font-weight: bold;
+            }
+            .code .mobile-file.selected :global(g) {
+              fill: #000;
+            }
+            .code .mobile-filename {
+              cursor: pointer;
+              margin-left: 8px;
+            }
+            // .code .file-content {
+            //   padding-left: 110px;
+            // }
             .demo {
               margin: 0;
             }

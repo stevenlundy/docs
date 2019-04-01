@@ -5,6 +5,7 @@ import formatDate from 'date-fns/format'
 import Head from '~/components/layout/head'
 import Layout from '~/components/layout/layout'
 import Wrapper from '~/components/layout/wrapper'
+import ContentFooter from '~/components/layout/content-footer'
 import Heading from '~/components/text/linked-heading'
 import components from '~/lib/mdx-components'
 import H1 from '~/components/text/h1'
@@ -18,42 +19,42 @@ import HR from '~/components/text/hr'
 import { GuidesFeedback } from '~/components/feedback-input'
 
 const DocH2 = ({ children }) => (
-  <div>
+  <>
     <Heading lean offsetTop={175}>
       <H2>{children}</H2>
     </Heading>
     <style jsx>{`
-      div {
+      :global(h2) {
         margin: 40px 0 0 0;
       }
     `}</style>
-  </div>
+  </>
 )
 
 const DocH3 = ({ children }) => (
-  <div>
+  <>
     <Heading lean offsetTop={175}>
       <H3>{children}</H3>
     </Heading>
     <style jsx>{`
-      div {
+      :global(h3) {
         margin: 40px 0 0 0;
       }
     `}</style>
-  </div>
+  </>
 )
 
 const DocH4 = ({ children }) => (
-  <div>
+  <>
     <Heading lean offsetTop={175}>
       <H4>{children}</H4>
     </Heading>
     <style jsx>{`
-      div {
+      :global(h4) {
         margin: 40px 0 0 0;
       }
     `}</style>
-  </div>
+  </>
 )
 
 class Guide extends React.PureComponent {
@@ -85,7 +86,7 @@ class Guide extends React.PureComponent {
           />
 
           <article>
-            <header className="guide-heading">
+            <header className="guide-heading content-heading">
               <Wrapper width="900">
                 <H1>{meta.title}</H1>
                 <P>{meta.description}</P>
@@ -93,7 +94,7 @@ class Guide extends React.PureComponent {
             </header>
 
             <Wrapper width="650">
-              <section className="guide">
+              <section className="guide content">
                 {this.props.children}
                 <HR />
                 <div className="rate-guide">
@@ -119,6 +120,10 @@ class Guide extends React.PureComponent {
                     on {formatDate(meta.published, 'MMMM Do YYYY')}
                   </span>
                 </div>
+                <ContentFooter
+                  lastEdited={meta.lastEdited}
+                  editUrl={meta.editUrl}
+                />
               </section>
             </Wrapper>
           </article>

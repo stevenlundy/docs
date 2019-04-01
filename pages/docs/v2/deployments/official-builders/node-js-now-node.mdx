@@ -11,7 +11,9 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'Node.js Builder (@now/node)',
   description:
-    'The official Node.js Builder for ZEIT Now. Deploy serverless Node.js applications with ease.'
+    'The official Node.js Builder for ZEIT Now. Deploy serverless Node.js applications with ease.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/node-js-now-node.mdx',
+  lastEdited: '2019-03-21T18:25:21.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -63,7 +65,9 @@ The only step left is to define a build that will take this directory's entrypoi
   <InlineCode>@now/node</InlineCode> builder.
 </Caption>
 
-Our resulting deployment is here: https://my-node-project-5gkn6kqfy.now.sh/
+Our resulting deployment is here: <https://my-node-project-5gkn6kqfy.now.sh/>
+
+The example deployment above is open-source and you can view the code for it here: <https://my-node-project-5gkn6kqfy.now.sh/_src>
 
 You can pass query parameters to make the name change:
 
@@ -167,7 +171,7 @@ module.exports = (req, res) => {
   ]
 }`}</Code>
 
-The resulting lambda contains both the build and current time: https://build-time-pq6g1255e.now.sh/
+The resulting lambda contains both the build and current time: <https://build-time-pq6g1255e.now.sh/>
 
 </Example>
 
@@ -178,6 +182,30 @@ The Node.js version used is the latest in the **8 branch**.
 ### Request and Response Objects
 
 For each invocation of a Node.js lambda, two objects, request and response, are passed to the function. These objects are the standard HTTP [request](https://nodejs.org/api/http.html#http_event_request) and [response](https://nodejs.org/api/http.html#http_class_http_serverresponse) objects given and used by Node.js.
+
+With many Node.js-based frameworks like [Express](http://expressjs.com/) also frequently dealing with these HTTP request and response objects, you may be able to use them in your Node.js lambda. The following lambda example, using Express, accepts a JSON body in the POST request, and returns a stringified version of it.
+
+<Example>
+  <span>Example Node.js lambda using express and body-parser</span>
+  <Code lang="javascript">{`'use strict'\n
+const express = require('express')
+const bodyParser = require('body-parser')\n
+const app = express()
+module.exports = app\n
+app.use(bodyParser.json())\n
+app.post('*', (req, res) => {
+  if (req.body == null) {
+    return res.send(400, { error: 'no JSON object in the request' })
+  }\n
+  res.set('Content-Type', 'application/json')
+  res.send(200, JSON.stringify(req.body, null, 4))
+})\n
+app.all('*', (req, res) => {
+  res.send(405, { error: 'only POST requests are accepted' })
+})`}</Code>
+</Example>
+
+For more information, see the following examples: [Express](/examples/express/) and [Twitter Dreamify with Express](/examples/express-twitter-dreamify/).
 
 ### Maximum Lambda Bundle Size
 

@@ -4,6 +4,11 @@ import { HelpLink } from '~/components/text/link'
 import Endpoint from '~/components/api/endpoint'
 import Request from '~/components/api/request'
 
+export const meta = {
+  editUrl: 'pages/docs/api/v2/api-docs-mdx/endpoints/certificates.mdx',
+  lastEdited: '2019-03-22T01:46:12.000Z'
+}
+
 ## Certificates
 
 ### List all the certificates
@@ -23,25 +28,18 @@ information about the certificate issued for the common name specified in the UR
 
 This is the format of each item in the `certs` list.
 
-| Key            | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink>       | Description                                                   |
-| -------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
-| **uid**        | <HelpLink href="#api-basics/types">ID</HelpLink>                 | The unique identifier of the certificate.                     |
-| **cns**        | <HelpLink href="#api-basics/types">List&lt;String&gt;</HelpLink> | The common names for which domain the certificate was issued. |
-| **created**    | <HelpLink href="#api-basics/types">Date</HelpLink>               | The date when the certificate was created.                    |
-| **expiration** | <HelpLink href="#api-basics/types">Date</HelpLink>               | The date when the certificate is going to expire.             |
-| **autoRenew**  | <HelpLink href="#api-basics/types">Boolean</HelpLink>            | If the certificate is going to be automatically renewed.      |
+| Key            | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink>    | Description                                                   |
+| -------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| **uid**        | <HelpLink href="#api-basics/types">ID</HelpLink>              | The unique identifier of the certificate.                     |
+| **cns**        | <HelpLink href="#api-basics/types">List&lt;String></HelpLink> | The common names for which domain the certificate was issued. |
+| **created**    | <HelpLink href="#api-basics/types">Date</HelpLink>            | The date when the certificate was created.                    |
+| **expiration** | <HelpLink href="#api-basics/types">Date</HelpLink>            | The date when the certificate is going to expire.             |
+| **autoRenew**  | <HelpLink href="#api-basics/types">Boolean</HelpLink>         | If the certificate is going to be automatically renewed.      |
 
 <Example>
   <span>Example request:</span>
 
-<Request
-  url="https://api.zeit.co/v3/now/certs"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
-/>
+<Request url="https://api.zeit.co/v3/now/certs" auth />
 
 Example successful (**200**) response:
 
@@ -67,25 +65,18 @@ certificate id specified in the URL.
 
 #### Response Parameters
 
-| Key            | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink>       | Description                                                   |
-| -------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
-| **uid**        | <HelpLink href="#api-basics/types">ID</HelpLink>                 | The unique identifier of the certificate.                     |
-| **cns**        | <HelpLink href="#api-basics/types">List&lt;String&gt;</HelpLink> | The common names for which domain the certificate was issued. |
-| **created**    | <HelpLink href="#api-basics/types">Date</HelpLink>               | The date when the certificate was created.                    |
-| **expiration** | <HelpLink href="#api-basics/types">Date</HelpLink>               | The date when the certificate is going to expire.             |
-| **autoRenew**  | <HelpLink href="#api-basics/types">Boolean</HelpLink>            | If the certificate is going to be automatically renewed.      |
+| Key            | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink>    | Description                                                   |
+| -------------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| **uid**        | <HelpLink href="#api-basics/types">ID</HelpLink>              | The unique identifier of the certificate.                     |
+| **cns**        | <HelpLink href="#api-basics/types">List&lt;String></HelpLink> | The common names for which domain the certificate was issued. |
+| **created**    | <HelpLink href="#api-basics/types">Date</HelpLink>            | The date when the certificate was created.                    |
+| **expiration** | <HelpLink href="#api-basics/types">Date</HelpLink>            | The date when the certificate is going to expire.             |
+| **autoRenew**  | <HelpLink href="#api-basics/types">Boolean</HelpLink>         | If the certificate is going to be automatically renewed.      |
 
 <Example>
   <span>Example request:</span>
 
-<Request
-  url="https://api.zeit.co/v3/now/certs/oAjf6y9pxZgCJyQfrclN"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
-/>
+<Request url="https://api.zeit.co/v3/now/certs/oAjf6y9pxZgCJyQfrclN" auth />
 
 Example successful (200) response:
 
@@ -109,9 +100,9 @@ The body should contain \`domains\` array and it may contain \`renew\` field to 
 
 #### Request Parameters
 
-| Key         | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink>       | Required | Description                                                            |
-| ----------- | ---------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| **domains** | <HelpLink href="#api-basics/types">List&lt;String&gt;</HelpLink> | Yes      | A list of Common Names for which the certificate is being provisioned. |
+| Key         | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink>    | Required | Description                                                            |
+| ----------- | ------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| **domains** | <HelpLink href="#api-basics/types">List&lt;String></HelpLink> | Yes      | A list of Common Names for which the certificate is being provisioned. |
 
 #### Response Parameters
 
@@ -127,11 +118,9 @@ The body should contain \`domains\` array and it may contain \`renew\` field to 
   method="POST"
   url="https://api.zeit.co/v3/now/certs"
   headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`,
     'Content-Type': 'application/json'
   }}
+  auth
   body={{
     domains: ['testing.zeit.co'],
     renew: true
@@ -175,11 +164,9 @@ The body should contain `cert`, private `key`, and `ca` chain fields in PEM form
   method="PUT"
   url="https://api.zeit.co/v3/now/certs"
   headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`,
     'Content-Type': 'application/json'
   }}
+  auth
   body={{
     ca: 'PEM formatted CA chain',
     cert: 'PEM formatted certificate',
@@ -205,11 +192,9 @@ an empty body; Otherwise an error object is returned.
 <Example>
   <span>Example request:</span>
 
-  <Request
+<Request
     method="DELETE"
     url="https://api.zeit.co/v3/now/certs/zWsFytQUFlkUWaR7nWdwS7xR"
-    headers={{
-      Authorization: `Bearer ${(props.testingToken ? props.testingToken.token : '$TOKEN')}`
-    }}
+    auth
   />
 </Example>

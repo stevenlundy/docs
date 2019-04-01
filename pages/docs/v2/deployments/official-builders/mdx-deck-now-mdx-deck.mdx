@@ -10,7 +10,10 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'MDX Deck Builder (@now/mdx-deck)',
   description:
-    'The official MDX Deck Builder for ZEIT Now. Deploy MDX Deck applications with minimal setup and a single entrypoint.'
+    'The official MDX Deck Builder for ZEIT Now. Deploy MDX Deck applications with minimal setup and a single entrypoint.',
+  editUrl:
+    'pages/docs/v2/deployments/official-builders/mdx-deck-now-mdx-deck.mdx',
+  lastEdited: '2019-03-12T15:18:33.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -19,11 +22,11 @@ Create [mdx-deck](https://github.com/jxnblk/mdx-deck) decks with ease.
 
 This builder is similar to [`@now/static-build`](/docs/v2/deployments/official-builders/static-build-now-static-build), but instead of having to write a `package.json` file, it receives a `.mdx` file directly as an entrypoint, which it builds into a `index.html`, `main.js` and `main.html` files.
 
-## When to use it
+## When to Use It
 
 When you need to quickly create a deck with no ceremony, configuration or custom npm packages.
 
-## How to use it
+## How to Use It
 
 Define a `index.mdx` file with the following contents:
 
@@ -44,7 +47,9 @@ Then define the build inside `now.json`:
 }
 ```
 
-Your resulting deck is statically built and served from our CDN: https://mdx-deck-deployment-714egk6ff.now.sh
+Your resulting deck is statically built and served from our CDN: <https://mdx-deck-deployment-714egk6ff.now.sh>
+
+The example deployment above is open-source and you can view the code for it here: <https://mdx-deck-deployment-714egk6ff.now.sh/_src>
 
 ## Technical details
 

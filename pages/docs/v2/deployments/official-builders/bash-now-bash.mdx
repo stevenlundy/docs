@@ -8,7 +8,9 @@ import Example from '~/components/example'
 export const meta = {
   title: 'Bash Builder (@now/bash)',
   description:
-    'The official Bash Builder for ZEIT Now. Write Bash functions that serve HTTP requests.'
+    'The official Bash Builder for ZEIT Now. Write Bash functions that serve HTTP requests.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/bash-now-bash.mdx',
+  lastEdited: '2019-03-15T18:14:39.000Z'
 }
 
 The `@now/bash` Builder takes an entrypoint of a bash function, [imports](https://import.pw) its dependencies, and bundles them into a [Lambda](/docs/v2/deployments/concepts/lambdas).
@@ -67,12 +69,14 @@ The final step is to define a build that will take this entrypoint (`index.sh`),
   lambda.
 </Caption>
 
-The resulting deployment can be seen here: https://bash-o54wu79wa.now.sh/
+The resulting deployment can be seen here: <https://bash-o54wu79wa.now.sh/>
+
+Furthermore, the source code of the deployment can be checked by appending `/_src` e.g. <https://bash-o54wu79wa.now.sh/_src>.
 
 Note, however, that it will return an empty response without a querystring.
 
 By passing in a querystring, the lambda will return the uppercased version.
-For example: https://bash-o54wu79wa.now.sh/api/uppercase?hello%20world
+For example: <https://bash-o54wu79wa.now.sh/api/uppercase?hello%20world>
 
 ## Technical Details
 
@@ -100,7 +104,59 @@ handler() {
 }
 ```
 
-**Demo:** https://bash-build-j3adniz41.now.sh/
+**Demo:** <https://bash-build-j3adniz41.now.sh/>
+
+### Response Headers
+
+The default `Content-Type` is `text/plain; charset=utf8` but you can change it by setting a response header.
+
+```bash
+handler() {
+  http_response_header "Content-Type" "text/html; charset=utf8"
+  echo "<h1>Current time</h1><p>$(date)</p>"
+}
+```
+
+**Demo:** <https://bash-html-8vveguuqn.now.sh>
+
+### JSON Response
+
+It is common for serverless functions to communicate via JSON so you can use the `http_response_json` function to set the content type to `application/json; charset=utf8`.
+
+```bash
+handler() {
+  http_response_json
+  echo "{ \"title\": \"Current time\", \"body\": \"$(date)\" }"
+}
+```
+
+**Demo:** <https://bash-json-ffsi051oy.now.sh>
+
+### Status Code
+
+The default status code is `200` but you can change it with the `http_response_code` method.
+
+```bash
+handler() {
+  http_response_code "500"
+  echo "Internal Server Error"
+}
+```
+
+**Demo:** <https://bash-status-wwxmmk9wh.now.sh>
+
+### Redirect
+
+You can use the `http_response_redirect` function to set the location and status code. The default status code is `302` temporary redirect but you could use a permanent redirect by setting the second argument to `301`.
+
+```bash
+handler() {
+  http_response_redirect "https://twitter.com/zeithq" "301"
+  echo "Redirecting..."
+}
+```
+
+**Demo**: <https://bash-redirect-bmxccvg7c.now.sh>
 
 ### Importing Dependencies
 
@@ -124,7 +180,7 @@ handler() {
 }
 ```
 
-**Demo:** https://bash-querystring-fommsvjvs.now.sh/?a=b
+**Demo:** <https://bash-querystring-fommsvjvs.now.sh/?a=b>
 
 ### Bash Version
 
@@ -136,7 +192,7 @@ handler() {
 }
 ```
 
-**Demo:** https://bash-version-rkb5w4ua6.now.sh/
+**Demo:** <https://bash-version-rkb5w4ua6.now.sh/>
 
 ### Maximum Lambda Bundle Size
 

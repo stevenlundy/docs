@@ -5,6 +5,11 @@ import Now from '~/components/text/now'
 import Endpoint from '~/components/api/endpoint'
 import Request from '~/components/api/request'
 
+export const meta = {
+  editUrl: 'pages/docs/api/v2/api-docs-mdx/endpoints/domains.mdx',
+  lastEdited: '2019-03-22T01:46:12.000Z'
+}
+
 ## Domains
 
 ### List all the domains
@@ -35,14 +40,7 @@ Retrieves a list of domains registered for the authenticating user.
 <Example>
   <span>Example request:</span>
 
-<Request
-  url="https://api.zeit.co/v4/domains"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
-/>
+<Request url="https://api.zeit.co/v4/domains" auth />
 
 Example successful (**200**) response:
 
@@ -127,11 +125,9 @@ been created, the user may retry the same POST and the endpoint shall return
   method="POST"
   url="https://api.zeit.co/v4/domains"
   headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`,
     'Content-Type': 'application/json'
   }}
+  auth
   body={{
     name: 'my-zeit-domain.website'
   }}
@@ -214,11 +210,9 @@ Initiate a domain transfer request from an external Registrar to ZEIT.
   method="POST"
   url="https://api.zeit.co/v4/domains"
   headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`,
     'Content-Type': 'application/json'
   }}
+  auth
   body={{
     method: 'transfer-in',
     name: 'my-zeit-domain.website',
@@ -297,11 +291,9 @@ Verify a domain after adding either the intended nameservers or DNS TXT verifica
   method="POST"
   url="https://api.zeit.co/v4/domains/my-zeit-domain.website/verify"
   headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`,
     'Content-Type': 'application/json'
   }}
+  auth
   body={{}}
 />
 
@@ -398,14 +390,7 @@ Get information for a single domain in an account or team.
 <Example>
 <span>Example request:</span>
 
-<Request
-  url="https://api.zeit.co/v4/domains/my-zeit-domain.website"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
-/>
+<Request url="https://api.zeit.co/v4/domains/my-zeit-domain.website" auth />
 
 Example successful (**200**) response:
 
@@ -445,7 +430,7 @@ Example successful (**200**) response:
 
 Example "Not Found" error:
 
-<Code>{`{
+<Code lang="json">{`{
   "error": {
     "code": "not_found",
     "message": "Domain name \`my-zeit-domain.online\` not found",
@@ -474,11 +459,7 @@ Deleting a domain will automatically remove any associated aliases.
 <Request
   method="DELETE"
   url="https://api.zeit.co/v4/domains/my-zeit-domain.website"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
+  auth
 />
 
 Example successful (**200**) response:
@@ -505,11 +486,7 @@ Check if a domain name _may_ be available to buy or not. The response is a JSON 
 
 <Request
   url="https://api.zeit.co/v4/domains/status?name=my-zeit-domain.website"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
+  auth
 />
 
 Example successful (**200**) response:
@@ -535,14 +512,7 @@ Check the price to purchase a domain and how long a single purchase period is. T
 <Example>
   <span>Example request:</span>
 
-<Request
-  url="https://api.zeit.co/v4/domains/price?name=zeit.rocks"
-  headers={{
-    Authorization: `Bearer ${
-      props.testingToken ? props.testingToken.token : '$TOKEN'
-    }`
-  }}
-/>
+<Request url="https://api.zeit.co/v4/domains/price?name=zeit.rocks" auth />
 
 Example successful (**200**) response:
 
@@ -579,6 +549,7 @@ In case of a successful purchase the returns with code 200 and an empty body.
     }`,
     'Content-Type': 'application/json'
   }}
+  auth
   body={{
     name: 'zeit.rocks'
   }}

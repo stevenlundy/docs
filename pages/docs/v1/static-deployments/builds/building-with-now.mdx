@@ -9,8 +9,9 @@ export const meta = {
   description:
     'Using a Dockerfile to build and deploy a static app all from within Now',
   date: '12 July 2018',
-  editUrl: 'pages/docs/static-deployments/builds/building-with-now.mdx',
-  image: process.env.IMAGE_ASSETS_URL + '/docs/static-builds/tw-card.png'
+  editUrl: 'pages/docs/v1/static-deployments/builds/building-with-now.mdx',
+  image: process.env.IMAGE_ASSETS_URL + '/docs/static-builds/tw-card.png',
+  lastEdited: '2019-03-05T01:21:32.000Z'
 }
 
 With <Now color="#000"/>, you can build static apps when deploying using a `Dockerfile`. You can build a static app however you wish and then output the content in a directory called `/public` for Now to upload after the build.
@@ -123,7 +124,7 @@ The above example is deployed to the following URL: [nextjs-static-example.zeit.
 
 _The above deployment is [public](</docs/features/configuration#public(boolean)>) so you can append `/_src` or `/_logs` to the URL to see the source of logs!_
 
-You can see the source code of the deployment here: https://github.com/now-examples/nextjs-static
+You can see the source code of the deployment here: <https://github.com/now-examples/nextjs-static>
 
 > Make sure you have the latest version of the Now CLI to utilize static builds.<br/> You can get it from [zeit.co/download](https://zeit.co/download).
 
@@ -193,9 +194,9 @@ RUN bundle install && \
   app and export it to `/public`
 </Caption>
 
-Take a look at the live example: https://zeit.co/zeit/now-jekyll/slxipttlce
+Take a look at the live example: <https://zeit.co/zeit/now-jekyll/slxipttlce>
 
-View the source code for the complete example: https://github.com/now-examples/jekyll-static
+View the source code for the complete example: <https://github.com/now-examples/jekyll-static>
 
 ### create-react-app
 
@@ -238,7 +239,7 @@ Static builds don't just mean that you have to export your app statically, it al
 
 Even if you're using GitHub and have nothing to deploy in your repository, you can use Now + GitHub and a `Dockerfile` to run your own tests for each pull request.
 
-Let's take a look at an example pull request using this method: https://github.com/importpw/querystring/pull/1.
+Let's take a look at an example pull request using this method: <https://github.com/importpw/querystring/pull/1>.
 
 When someone pushes to that PR, Now will run tests inside that app and hosts the test report as a static app.
 

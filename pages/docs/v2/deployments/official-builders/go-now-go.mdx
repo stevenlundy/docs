@@ -7,18 +7,20 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'Go Builder (@now/go)',
   description:
-    'The official Go Builder for ZEIT Now. Serverless invokable functions from Go source code for ZEIT Now deployments.'
+    'The official Go Builder for ZEIT Now. Serverless invokable functions from Go source code for ZEIT Now deployments.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/go-now-go.mdx',
+  lastEdited: '2019-03-17T20:28:25.000Z'
 }
 
 <Tag>Status: Alpha</Tag>
 
 This builder takes in a Go program that defines a singular HTTP handler and outputs it as a [Lambda](/docs/v2/deployments/concepts/lambdas).
 
-## When to use it
+## When to Use It
 
 Whenever you want to expose an API or a function written in Go.
 
-## How to use it
+## How to Use It
 
 Define a `index.go` file inside a folder as follows:
 
@@ -46,7 +48,9 @@ And define a `now.json` like:
 
 Notice that the API is cohesive with the `net/http` Go API. Your main entrypoint function **must be** called `Handler`.
 
-The example above can be seen live from the following URL: https://go-deployment-l78bij0fj.now.sh/
+The example above can be seen live from the following URL: <https://go-deployment-l78bij0fj.now.sh/>
+
+Also, the source code of the deployment can be checked by appending `/_src` e.g. <https://go-deployment-l78bij0fj.now.sh/_src>.
 
 ## Technical Details
 

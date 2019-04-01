@@ -3,7 +3,7 @@ import { MDXProvider } from '@mdx-js/tag'
 import { withRouter } from 'next/router'
 import Link from 'next/link'
 import debounce from 'lodash.debounce'
-import { HEADER_HEIGHT } from '~/lib/constants'
+import { API_USER_TOKEN_TESTING, HEADER_HEIGHT } from '~/lib/constants'
 
 import * as bodyLocker from '~/lib/utils/body-locker'
 import Layout from '~/components/layout/layout'
@@ -22,6 +22,8 @@ import Select from '~/components/select'
 import Sidebar from '~/components/layout/sidebar'
 import ToggleGroup, { ToggleItem } from '~/components/toggle-group'
 import withPermalink from '~/lib/api/with-permalink'
+import fetchAPI from '~/lib/fetch-api'
+import { getToken } from '~/lib/authenticate'
 
 import ApiDocs from './api-docs-mdx/index.mdx'
 
@@ -35,6 +37,10 @@ class APIPage extends Component {
     navigationActive: false,
     version: this.props.router.asPath.split(/(v[0-9])/)[1] || 'v2'
   }
+
+  // componentDidMount() {
+  //   this.performFetch()
+  // }
 
   componentDidUpdate(prevProps, prevState) {
     if (
@@ -51,6 +57,22 @@ class APIPage extends Component {
       )
     }
   }
+
+  // performFetch = () =>
+  //   new Promise(async resolve => {
+  //     fetchAPI(API_USER_TOKEN_TESTING, getToken(), {
+  //       throwOnHTTPError: true
+  //     })
+  //       .then(({ token }) => {
+  //         this.setState({ testingToken: token.token })
+  //       })
+  //       .catch(err => {
+  //         // eslint-disable-next-line no-console
+  //         console.error(err)
+  //       })
+
+  //     resolve()
+  //   })
 
   updateActive = ({ category = null, section = null, entry = null }) => {
     if (
@@ -192,75 +214,82 @@ class APIPage extends Component {
                   />
                 </Sidebar>
                 <Content>
-                  {structure.map(category => {
-                    const categorySlugs = { category: category.slug }
-                    return (
-                      <div
-                        className="category-wrapper"
-                        key={getFragment(categorySlugs)}
-                      >
-                        <span id={getFragment(categorySlugs)} />
-                        <Context.Provider
-                          value={{
-                            slugs: categorySlugs,
-                            updateActive: this.updateActive
-                          }}
-                        >
-                          {category.content}
-                        </Context.Provider>
-
-                        {category.sections.map(section => {
-                          const sectionSlugs = {
-                            category: category.slug,
-                            section: section.slug
-                          }
-
-                          return (
-                            <div
-                              className="section-wrapper"
-                              key={getFragment(sectionSlugs)}
+                  <div className="content">
+                    <div>
+                      {structure.map(category => {
+                        const categorySlugs = { category: category.slug }
+                        return (
+                          <div
+                            className="category-wrapper"
+                            key={getFragment(categorySlugs)}
+                          >
+                            <span id={getFragment(categorySlugs)} />
+                            <Context.Provider
+                              value={{
+                                slugs: categorySlugs,
+                                // testingToken,
+                                updateActive: this.updateActive
+                              }}
                             >
-                              <span id={getFragment(sectionSlugs)} />
-                              <Context.Provider
-                                value={{
-                                  slugs: sectionSlugs,
-                                  updateActive: this.updateActive
-                                }}
-                              >
-                                {section.content}
-                              </Context.Provider>
-                              <div>
-                                {section.entries.map(entry => {
-                                  const entrySlugs = {
-                                    category: category.slug,
-                                    section: section.slug,
-                                    entry: entry.slug
-                                  }
+                              {category.content}
+                            </Context.Provider>
 
-                                  return (
-                                    <div
-                                      className="entry-wrapper"
-                                      key={getFragment(entrySlugs)}
-                                    >
-                                      <span id={getFragment(entrySlugs)} />
-                                      <Context.Provider
-                                        value={{
-                                          slugs: entrySlugs,
-                                          updateActive: this.updateActive
-                                        }}
-                                      >
-                                        {entry.content}
-                                      </Context.Provider>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )
-                  })}
+                            {category.sections.map(section => {
+                              const sectionSlugs = {
+                                category: category.slug,
+                                section: section.slug
+                              }
+
+                              return (
+                                <div
+                                  className="section-wrapper"
+                                  key={getFragment(sectionSlugs)}
+                                >
+                                  <span id={getFragment(sectionSlugs)} />
+                                  <Context.Provider
+                                    value={{
+                                      slugs: sectionSlugs,
+                                      // testingToken,
+                                      updateActive: this.updateActive
+                                    }}
+                                  >
+                                    {section.content}
+                                  </Context.Provider>
+                                  <div>
+                                    {section.entries.map(entry => {
+                                      const entrySlugs = {
+                                        category: category.slug,
+                                        section: section.slug,
+                                        entry: entry.slug
+                                      }
+
+                                      return (
+                                        <div
+                                          className="entry-wrapper"
+                                          key={getFragment(entrySlugs)}
+                                        >
+                                          <span id={getFragment(entrySlugs)} />
+                                          <Context.Provider
+                                            value={{
+                                              slugs: entrySlugs,
+                                              // testingToken,
+                                              updateActive: this.updateActive
+                                            }}
+                                          >
+                                            {entry.content}
+                                          </Context.Provider>
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </Content>
               </Main>
             )}

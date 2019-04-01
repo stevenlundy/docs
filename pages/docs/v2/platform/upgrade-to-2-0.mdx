@@ -11,7 +11,9 @@ import Note from '~/components/text/note'
 export const meta = {
   title: 'Upgrade to 2.0',
   description:
-    'Upgrade to the latest iteration of the Now Platform and unlock the true meaning of serverless deployments.'
+    'Upgrade to the latest iteration of the Now Platform and unlock the true meaning of serverless deployments.',
+  editUrl: 'pages/docs/v2/platform/upgrade-to-2-0.mdx',
+  lastEdited: '2019-03-25T16:31:42.000Z'
 }
 
 The Now Platform 2.0 simplifies and streamlines the deployment of static and serverless workloads.
@@ -224,8 +226,16 @@ The `files` property in `now.json` is similarly deprecated, as to retain a singu
 - ~~`engines`~~ is no longer applicable (belonged to the `NPM` deployment type).
 - ~~`registryAuthToken`~~ is no longer applicable (belonged to the `NPM` deployment type).
 - ~~`files`~~ is removed in favor of the `.nowignore` file.
+- ~~`dotenv`~~ is removed in favor of [defining them directly inside the deployment configuration](/docs/v2/deployments/environment-variables-and-secrets/#from-now.json). The package [now-env](https://github.com/zeit/now-env) can be used to load environment variables from deployment configurations to be used in development.
 
 Additionally, some environment variables keys are now reserved. You can see a full list of these variables in the [Environment Variables](/docs/v2/deployments/environment-variables-and-secrets/#reserved-variables) document.
+
+### Environment Variables
+
+**Removals**
+
+- ~~`NOW`~~ is no longer assigned. Please use [NOW_REGION](/docs/v2/deployments/environment-variables-and-secrets#built-in-variables) variable as a confirmation method instead.
+- ~~`NOW_URL`~~ is no longer assigned. Please use the `x-now-deployment-url` HTTP Request Header instead.
 
 ### CLI
 

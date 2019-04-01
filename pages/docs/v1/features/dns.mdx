@@ -8,7 +8,8 @@ export const meta = {
   title: 'DNS Management',
   description: 'Managing your DNS records for domains used with Now',
   date: '15 Mar 2017',
-  editUrl: 'pages/docs/features/dns.mdx'
+  editUrl: 'pages/docs/v1/features/dns.mdx',
+  lastEdited: '2019-01-07T00:27:37.000Z'
 }
 
 Thanks to the `now dns` CLI command, managing existing DNS records with <Now color="#000" /> is simple.
@@ -75,7 +76,7 @@ Creates a [CAA record](https://letsencrypt.org/docs/caa/) that allows issuing ce
 > 1. use a custom certificate for your <Now color="#000" /> deployment with <InternalLink href="/docs/features/certs#now-certs-replace">`now certs replace`</InternalLink>
 > 2. run an app outside of <Now color="#000" /> with TLS for a subdomain
 
-### now dns rm &lt;ID&gt;
+### now dns rm &lt;ID>
 
 Removes a record by ID, which is shown in the `now dns ls` listing. Note that it may take a couple of hours before the change is fully propagated across our infrastructure.
 

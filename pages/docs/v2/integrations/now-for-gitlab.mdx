@@ -1,0 +1,151 @@
+import Doc from '~/components/layout/docs'
+import Now from '~/components/text/now'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+import { TerminalInput } from '~/components/text/terminal'
+import { InlineCode } from '~/components/text/code'
+import Note from '~/components/text/note'
+import { GenericLink } from '~/components/text/link'
+import Card from '~/components/card'
+
+export const meta = {
+  title: 'Now for GitLab',
+  description:
+    'Deploy each change in your GitLab projects with Now to share and test with your colleagues. Instant share-able links to your work with each push. Automatically alias your changes to production.',
+  editUrl: 'pages/docs/v2/integrations/now-for-gitlab.mdx',
+  lastEdited: '2019-03-18T15:19:53.000Z'
+}
+
+The Now for GitLab integration automatically deploys and aliases your GitLab projects with [Now](/now).
+
+Now for GitLab provides:
+
+- Automatic deployments for every push to branches and merge requests to preview changes live.
+- Aliases for the most recent changes from the [default branch](https://docs.gitlab.com/ee/user/project/repository/branches/#default-branch).
+- Instant rollbacks when reverting changes that have already been [aliased](/docs/v2/domains-and-aliases/aliasing-a-deployment).
+
+<Image
+src={`${process.env.ASSETS}/docs/now-for-gitlab/ci.png`}
+width={2304/2}
+height={1702/2}
+/>
+<Caption>Now for GitLab deploying a GitLab merge request.</Caption>
+
+## Set up Now for GitLab
+
+### Step 1: Link Now to Your GitLab Account
+
+You can connect your Now account to GitLab by visiting your [account or team](/docs/v2/platform/users-and-teams) [settings page](/account) and clicking the "Connect with GitLab" button.
+
+<Image
+src={`${process.env.ASSETS}/docs/now-for-gitlab/connect-with-gitlab.png`}
+width={1440/2}
+height={384/2}
+/>
+<Caption>The Now for GitLab installation section within the account or team general settings page.</Caption>
+
+Next, you need to authorize the Now application on GitLab with your account.
+
+<Image
+src={`${process.env.ASSETS}/docs/now-for-gitlab/authorize-gitlab.png`}
+width={2192/2}
+height={1584/2}
+/>
+<Caption>The Now for GitLab Authorization section within the account or team onboarding.</Caption>
+
+Once authorized, you will be redirected back to your ZEIT account or team settings page.
+
+### Step 2: Link GitLab Projects
+
+Now only deploys GitLab projects you have explicitly linked to from the GitLab control block in your account or team settings page. Without linking a project, no deployments will be made.
+
+You can link projects across all the GitLab namespaces you have access to and unlink a project at any time.
+
+<Image
+  src={`${process.env.ASSETS}/docs/now-for-gitlab/link-gitlab.png`}
+  width={1456/2}
+  height={582/2}
+/>
+<Caption>Link GitLab Projects.</Caption>
+
+## Sign Up or Login with GitLab
+
+If you have, or will have, [connected](#step-1:-link-now-to-your-gitlab-account) your personal GitLab account to your Now account, you can login with GitLab from our [login page](/login).
+
+Alternatively; if you do not already have a Now account, you can sign up to ZEIT using your GitLab account from [the sign up page](/signup).
+
+<Image
+  src={`${process.env.ASSETS}/docs/now-for-gitlab/login-with-gitlab.png`}
+  width={1994/2}
+  height={1488/2}
+/>
+<Caption>Login to ZEIT with GitLab.</Caption>
+
+## Usage
+
+Once you link a GitLab project, we will deploy every git-push related to that project. If there is no [`now.json` file](/docs/v2/deployments/configuration) within the project, we will deploy the project statically.
+
+Using [a `now.json` file](/docs/v2/deployments/configuration), you can configure your projects to deploy as [dynamic serverless functions](/docs/v2/deployments/concepts/lambdas).
+
+## Default Behaviour
+
+### A Deployment for Each Push
+
+Now for GitLab will **deploy each push by default**. This includes pushes to any branch and any merge requests made from those branches. This allows those working within the project to preview the changes made before they are pushed to production.
+
+With every push, if Now is already building a previous commit, it will cancel that current build to start the most recent commit, ensuring you always have the latest changes deployed as quickly as possible.
+
+### Aliasing the Default Branch
+
+If [an alias is set within the `now.json` file](/docs/v2/domains-and-aliases/aliasing-a-deployment), pushes and merges to the [default branch](https://docs.gitlab.com/ee/user/project/repository/branches/#default-branch) (commonly "master") will be [aliased automatically](/docs/v2/domains-and-aliases/aliasing-a-deployment) and made live to those defined aliases with the latest deployment made with a push.
+
+For example, the following [`now.json` configuration](/docs/v2/deployments/configuration) will make Now for GitLab alias the most recent push to `my-zeit-website.com` by default.
+
+```json
+{
+  "alias": ["my-zeit-website.com"]
+}
+```
+
+## Included Environment Variables
+
+You may want to use different workflows and APIs based on the environment of the deployment based on Git information. To support that, Now will deploy your app with the following built-in [environment variables](/docs/v2/deployments/environment-variables-and-secrets/) when deploying with Now for GitLab:
+
+| Variable Key                 | Description                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------- |
+| `GITLAB_DEPLOYMENT`          | An indicator for whether the app was deployed by Now for GitLab.                        |
+| `GITLAB_PROJECT_NAMESPACE`   | The GitLab user, group, or sub-group that the project belongs to.                       |
+| `GITLAB_PROJECT_NAME`        | The name of the deployed project.                                                       |
+| `GITLAB_PROJECT_ID`          | The ID of the deployed project.                                                         |
+| `GITLAB_PROJECT_PATH`        | The GitLab project path.                                                                |
+| `GITLAB_COMMIT_REF`          | The branch that the app was deployed using.                                             |
+| `GITLAB_COMMIT_SHA`          | The sha of the commit the app was deployed using.                                       |
+| `GITLAB_COMMIT_MESSAGE`      | The message accompanying the commit that the app was deployed using.                    |
+| `GITLAB_COMMIT_AUTHOR_LOGIN` | The username belonging to the author of the commit that the project was deployed using. |
+| `GITLAB_COMMIT_AUTHOR_NAME`  | The name belonging to the author of the commit that the project was deployed using.     |
+
+<Note>
+  You can access these as 
+  <GenericLink href="https://zeit.co/docs/v2/deployments/configuration/#build-env">
+    build environment variables
+  </GenericLink>
+   also.
+</Note>
+
+## Read Next
+
+Learn more about deploying your apps with Now using the following resources:
+
+<Card title="Deployment Basics" href="/docs/v2/deployments/builds">
+  Learn how to deploy any application with Now.
+</Card>
+
+<Card title="Deployments with Builds" href="/docs/v2/deployments/builds">
+  Builds on Now create a production-ready output from your source files.
+</Card>
+
+<Card title="Control Your Paths with Routes" href="/docs/v2/deployments/routes">
+  Control your deployment's paths in detail with routes.
+</Card>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>

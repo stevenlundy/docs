@@ -8,7 +8,9 @@ import { InlineCode } from '~/components/text/code'
 export const meta = {
   title: 'Deployment Immutability',
   description:
-    'A look at the concept of immutable deployments, the reasoning behind the behaviour, and the technical aspects of the implementation.'
+    'A look at the concept of immutable deployments, the reasoning behind the behaviour, and the technical aspects of the implementation.',
+  editUrl: 'pages/docs/v2/deployments/concepts/immutability.mdx',
+  lastEdited: '2019-01-03T18:58:18.000Z'
 }
 
 For a Now deployment to be created, our API requires the client to include a description of the project directory structure and content, expressed as a series of [checksums](https://en.wikipedia.org/wiki/Checksum).
@@ -27,7 +29,7 @@ Immutability enables many important properties for scalable deployments and larg
 
 When you run `now ls`, visit the Deployments List on our web UI, or browse through pull request or pushes made via our [GitHub integration](/docs/v2/integrations/now-for-github), all the deployments will continue to work concurrently.
 
-This allows you to examine the evolution of a project over time. In addition, if a bug is detected, you can instantly roll back by changing the [alias](/docs/v2/domains-and-aliases/aliases) of your production domain.
+This allows you to examine the evolution of a project over time. In addition, if a bug is detected, you can instantly roll back by changing the [alias](/docs/v2/domains-and-aliases/aliasing-a-deployment/) of your production domain.
 
 #### Instant Git Reverts
 

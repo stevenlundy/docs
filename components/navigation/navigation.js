@@ -1,5 +1,5 @@
-const Navigation = ({ children, className }) => (
-  <nav className={className}>
+const Navigation = ({ children, ...props }) => (
+  <nav {...props}>
     {children}
     <style jsx>{`
       nav {

@@ -8,7 +8,10 @@ import Card from '~/components/card'
 
 export const meta = {
   title: 'Deployment Basics',
-  description: 'Learning the basics of deploying any application with ZEIT Now.'
+  description:
+    'Learning the basics of deploying any application with ZEIT Now.',
+  editUrl: 'pages/docs/v2/deployments/basics.mdx',
+  lastEdited: '2019-02-15T15:31:00.000Z'
 }
 
 A deployment represents a copy of your application hosted in our cloud platform, accessible to you and your users via HTTP/2.
@@ -54,7 +57,7 @@ The output looks like the following and includes a deployment URL:
 />
 <Caption>The output of deploying a simple application with <GenericLink href="/docs/v2/getting-started/installation#now-cli">Now CLI</GenericLink></Caption>
 
-Check the deployment for a live example: https://my-app-prtypks27.now.sh/
+Check the deployment for a live example: <https://my-app-prtypks27.now.sh/>
 
 This URL is unique to the source code inside that directory. If you run `now` again, the same deployment is returned. This is why we call our deployments [immutable](/docs/v2/deployments/concepts/immutability).
 
@@ -95,9 +98,9 @@ When we run `now`, the output will look as follows:
 />
 <Caption>The output of deploying a simple application including a build step with <GenericLink href="/docs/v2/getting-started/installation#now-cli">Now CLI</GenericLink></Caption>
 
-If we go to https://my-app-83iw09a84.now.sh/date.js we will get dynamic output.
+If we go to <https://my-app-83iw09a84.now.sh/date.js> we will get dynamic output.
 
-Interestingly, if we go to https://my-app-83iw09a84.now.sh (the root path), you will find that our `index.html` file is not showing, and instead we get a [**directory listing**](/docs/v2/routing/directory-listing):
+Interestingly, if we go to <https://my-app-83iw09a84.now.sh> (the root path), you will find that our `index.html` file is not showing, and instead we get a [**directory listing**](/docs/v2/routing/directory-listing):
 
 <Image
 src={`https://assets.zeit.co/image/upload/v1541629369/front/docs/deployments-basics/basic-deployment-listing.png`}
@@ -131,7 +134,7 @@ When we run `now` again, we will see all our outputs.
 />
 <Caption>The output of deploying a simple application including multiple build steps with <GenericLink href="/docs/v2/getting-started/installation#now-cli">Now CLI</GenericLink></Caption>
 
-The end result is on display at https://my-app-4t1xyg9f7.now.sh, including the `date.js` Lambda: https://my-app-4t1xyg9f7.now.sh/date.js
+The end result is on display at <https://my-app-4t1xyg9f7.now.sh>, including the `date.js` Lambda: <https://my-app-4t1xyg9f7.now.sh/date.js>
 
 ## Read More
 

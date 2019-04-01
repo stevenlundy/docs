@@ -4,7 +4,7 @@ export default function Preview(props) {
   return (
     <div className="preview">
       <Code lang="bash">{`curl -X POST https://api.zeit.co/v6/now/deployments \\
--H "Authorization: Bearer $TOKEN" \\
+-H "Authorization: Bearer ${props.testingToken || '<TOKEN>'}" \\
 -d '${(props.content || '').replace(/'/g, "\\'")}'`}</Code>
 
       <style jsx>{`

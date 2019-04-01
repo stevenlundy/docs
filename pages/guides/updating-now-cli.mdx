@@ -1,0 +1,81 @@
+import Guide from '~/components/layout/guide'
+
+import { Image } from '~/components/media'
+import { TerminalOutput, TerminalInput } from '~/components/text/terminal'
+import Note from '~/components/text/note'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  title: 'How to Update Now CLI',
+  description:
+    'A guide to updating Now CLI using Now Desktop or a package manager.',
+  published: '2019-03-20T03:00:00.860Z',
+  authors: ['msweeneydev', 'timothy'],
+  url: '/guides/updating-now-cli',
+  editUrl: 'pages/guides/updating-now-cli.mdx',
+  lastEdited: '2019-03-21T10:47:12.000Z'
+}
+
+When there is a new release of the [Now CLI](https://zeit.co/download#now-cli) available, you will see a message appear in your terminal output when running Now, letting you know that there is a newer version.
+
+This guide will take you through your options for updating Now CLI and how to stay up-to-date.
+
+## Option 1: Now Desktop
+
+If you have Now Desktop installed, you need not do anything more than to let Now Desktop update Now CLI for you.
+
+Now Desktop comes packaged with Now CLI and updates it automatically.
+
+To have automatic updates to Now CLI using Now Desktop, ensure that automatic updates are enabled from Now Desktop's settings menu:
+
+<Image
+  src={`${
+    process.env.IMAGE_ASSETS_URL
+  }/blog/improved-cli-updates/update-option.png`}
+  width={385}
+  height={228}
+/>
+
+As long as the update option is enabled, you will automatically receive the latest update for the [Now CLI](https://zeit.co/download#now-cli), as they are released.
+
+If you don't have Now Desktop installed yet and would prefer to have automatic updates for Now CLI, you can [install it here](https://zeit.co/download#now-desktop).
+
+## Option 2: Updating Now CLI Manually
+
+To update to the latest version of Now CLI yourself, you can use a package manager, such as [Yarn](#updating-with-yarn) or [npm](#updating-with-npm).
+
+We do, however, recommend that you install [Now Desktop](#option-1:-now-desktop) for automatic updates to Now CLI.
+
+<Note>
+  If you do not have Now CLI installed yet, see our{' '}
+  <GenericLink href="/docs/v2/getting-started/installation">
+    Installation
+  </GenericLink>{' '}
+  guide.
+</Note>
+
+### With Yarn
+
+Use one of the following commands to update Now CLI using the [Yarn package manager](https://yarnpkg.com/lang/en/).
+
+For the latest **stable update**, run the following command from your terminal:
+
+<TerminalInput>yarn global add now</TerminalInput>
+
+To get the latest beta channel **canary update**, run the following command instead:
+
+<TerminalInput>yarn global add now@canary</TerminalInput>
+
+### Updating with npm
+
+Use one of the following commands to update Now CLI using [npm](https://npmjs.com)
+
+For the latest **stable update**, run the following command from your terminal:
+
+<TerminalInput>npm install -g now</TerminalInput>
+
+To get the latest beta channel **canary update**, instead run the following:
+
+<TerminalInput>npm install -g now@canary</TerminalInput>
+
+export default ({ children }) => <Guide meta={meta}>{children}</Guide>

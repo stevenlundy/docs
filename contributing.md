@@ -6,12 +6,18 @@ The following describes how to contribute to the ZEIT documentation, API referen
 
 #### Table of Contents
 
+- [Code of Conduct](#code-of-conduct)
 - [Reporting an issue](#reporting-issues)
 - [Contributing Content](#contributing-content)
   - [Platform and Usage Documentation](#platform-and-usage-documentation)
   - [Guides](#guides)
   - [API Reference](#api-reference)
   - [Examples](#examples)
+
+## Code of Conduct
+
+Our Code of Conduct is adapted from the [Contributor Covenant](http://contributor-covenant.org), version 1.4,
+available at [http://contributor-covenant.org/version/1/4](http://contributor-covenant.org/version/1/4/).
 
 ## Reporting Issues
 

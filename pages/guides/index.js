@@ -11,7 +11,7 @@ import { GenericLink } from '~/components/text/link'
 import Button from '~/components/buttons'
 import guides from '~/lib/data/guides'
 
-export default () => (
+const Guides = () => (
   <Layout>
     <Head
       titlePrefix=""
@@ -233,3 +233,5 @@ export default () => (
     `}</style>
   </Layout>
 )
+
+export default Guides

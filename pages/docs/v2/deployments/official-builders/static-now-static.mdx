@@ -9,14 +9,16 @@ import Tag from '~/components/text/tag'
 export const meta = {
   title: 'Static Builder (@now/static)',
   description:
-    'The official Static Builder for ZEIT Now. Deploy any file statically quickly and with ease.'
+    'The official Static Builder for ZEIT Now. Deploy any file statically quickly and with ease.',
+  editUrl: 'pages/docs/v2/deployments/official-builders/static-now-static.mdx',
+  lastEdited: '2019-03-08T17:46:24.000Z'
 }
 
 <Tag>Status: Stable</Tag>
 
 This module is used to include **source files** as [**Build outputs**](/docs/v2/deployments/builds#sources-and-outputs). You can think of `@now/static` as a module that _copies over_ files.
 
-## When to use it
+## When to Use It
 
 When you deploy a project that has no [Builds](/docs/v2/deployments/builds) we serve the sources directly.
 
@@ -26,7 +28,7 @@ However, if you define a build step, Now will only include its outputs in the re
 
 In those circumstances, if you want to include unmodified source files as outputs, you can use `@now/static`.
 
-## How to use it
+## How to Use It
 
 Suppose you have a directory with three files:
 
@@ -59,7 +61,7 @@ To also serve `index.html`, you'll want to add a `@now/static` build:
 }
 ```
 
-You can see the resulting deployment in action here: [https://builds-deployment-2d7eouze2.now.sh](https://builds-deployment-2d7eouze2.now.sh)
+You can see the resulting deployment in action here: <https://builds-deployment-2d7eouze2.now.sh>
 
 ## Technical Details
 

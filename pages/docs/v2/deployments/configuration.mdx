@@ -11,7 +11,9 @@ import Note from '~/components/text/note'
 export const meta = {
   title: 'Deployment Configuration (now.json)',
   description:
-    'Configuring Now so that your deployments are exactly as you need them.'
+    'Configuring Now so that your deployments are exactly as you need them.',
+  editUrl: 'pages/docs/v2/deployments/configuration.mdx',
+  lastEdited: '2019-03-14T15:57:08.000Z'
 }
 
 When using [Now CLI](/docs/v2/getting-started/installation#now-cli), [Now Desktop](/docs/v2/getting-started/installation#now-desktop) or [Now for GitHub](/docs/v2/getting-started/installation#now-for-github), the configuration for your deployment is read from the `now.json` file.
@@ -38,7 +40,7 @@ Each deployment receives and understands the `now.json` configuration as instruc
 
 The prefix for all new deployment instances. The CLI usually generates this field automatically based on the name of the directory. But if you'd like to define it explicitly, this is the way to go.
 
-The defined name is also used to organise the deployment into [a project](/docs/v2/platform/projects).
+The defined name is also used to organize the deployment into [a project](/docs/v2/platform/projects).
 
 <Example>
   <P.B>Usage Example:</P.B>
@@ -74,6 +76,23 @@ The alias or aliases are applied when merging a PR to the master branch with [No
   <P.B>Usage Example:</P.B>
   <Code lang="json">{`{
   "alias": ["my-domain.com", "www.my-domain.com"]
+}`}</Code>
+</Example>
+
+### scope
+
+**Type**: `String`.
+
+**Valid values**: For teams, either an ID or slug. For users, either a email address, username, or ID.
+
+This property determines the scope ([user or team](/docs/v2/platform/users-and-teams/)) under which the project will be deployed by Now CLI or Now Desktop.
+
+Furthermore, it also affects any other actions that the user takes within the directory that contains this configuration (e.g. listing [secrets](https://zeit.co/docs/v2/deployments/environment-variables-and-secrets/#securing-environment-variables-using-secrets) using `now secrets ls`).
+
+<Example>
+  <P.B>Usage Example:</P.B>
+  <Code lang="json">{`{
+  "scope": "my-team"
 }`}</Code>
 </Example>
 
@@ -195,7 +214,7 @@ For more information on builds and builders, see the documentation:
 
 **Route object definition:**
 
-- `src`: A PCRE-compatible regular expression that matches each incoming pathname (excluding querystring).
+- `src`: A [PCRE-compatible regular expression](https://www.pcre.org/original/doc/html/pcrepattern.html) that matches each incoming pathname (excluding querystring).
 - `methods`: A set of HTTP method types. If no method is provided, requests with any HTTP method will be a candidate for the route.
 - `dest`: A destination pathname or full URL, including querystring, with the ability to embed capture groups as $1, $2…
 - `headers`: A set of headers to apply for responses.

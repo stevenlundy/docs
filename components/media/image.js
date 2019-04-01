@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { useAmp } from 'next/amp'
 import PropTypes from 'prop-types'
 import IObserver from '~/components/intersection-observer'
 
@@ -12,6 +13,16 @@ import VideoComponent from './video'
 
 // Because if you want to do that, you need to set the aspect
 // ratio of the image's container BEFORE the image loads
+
+const AmpImg = ({ children, src, srcSet, height, width, alt }) => {
+  const isAmp = useAmp()
+
+  if (isAmp)
+    return (
+      <amp-img layout="responsive" {...{ src, srcSet, height, width, alt }} />
+    )
+  return children
+}
 
 class Image extends Component {
   constructor(props) {
@@ -60,72 +71,78 @@ class Image extends Component {
     }
 
     return (
-      <IObserver
-        once
-        onIntersect={this.handleIntersect}
-        rootMargin="20%"
-        disabled={!lazy}
-      >
-        <figure className={classes}>
-          <main style={{ width }}>
-            <div className="container" style={{ paddingBottom: aspectRatio }}>
-              {this.state.src ? <img src={this.state.src || null} /> : children}
-            </div>
+      <AmpImg {...this.props}>
+        <IObserver
+          once
+          onIntersect={this.handleIntersect}
+          rootMargin="20%"
+          disabled={!lazy}
+        >
+          <figure className={classes}>
+            <main style={{ width }}>
+              <div className="container" style={{ paddingBottom: aspectRatio }}>
+                {this.state.src ? (
+                  <img src={this.state.src || null} />
+                ) : (
+                  children
+                )}
+              </div>
 
-            {caption && (
-              <p style={captionSpacing ? { marginTop: captionSpacing } : {}}>
-                {caption}
-              </p>
-            )}
-          </main>
+              {caption && (
+                <p style={captionSpacing ? { marginTop: captionSpacing } : {}}>
+                  {caption}
+                </p>
+              )}
+            </main>
 
-          <style jsx>{`
-            figure {
-              display: block;
-              text-align: center;
-              margin: ${margin}px 0;
-            }
-
-            main {
-              margin: 0 auto;
-              max-width: 100%;
-            }
-
-            div {
-              position: relative;
-            }
-
-            img {
-              height: 100%;
-              left: 0;
-              position: absolute;
-              top: 0;
-              width: 100%;
-              ${borderRadius ? `border-radius: 5px;` : ''};
-            }
-
-            .container {
-              display: flex;
-              justify-content: center;
-            }
-
-            p {
-              color: #999;
-              font-size: 12px;
-              margin: 0;
-              text-align: center;
-            }
-
-            @media (min-width: 992px) {
-              figure.oversize {
-                width: ${width}px;
-                margin: ${margin}px 0 ${margin}px
-                  calc(((${width}px - 650px) / 2) * -1);
+            <style jsx>{`
+              figure {
+                display: block;
+                text-align: center;
+                margin: ${margin}px 0;
               }
-            }
-          `}</style>
-        </figure>
-      </IObserver>
+
+              main {
+                margin: 0 auto;
+                max-width: 100%;
+              }
+
+              div {
+                position: relative;
+              }
+
+              img {
+                height: 100%;
+                left: 0;
+                position: absolute;
+                top: 0;
+                width: 100%;
+                ${borderRadius ? `border-radius: 5px;` : ''};
+              }
+
+              .container {
+                display: flex;
+                justify-content: center;
+              }
+
+              p {
+                color: #999;
+                font-size: 12px;
+                margin: 0;
+                text-align: center;
+              }
+
+              @media (min-width: 992px) {
+                figure.oversize {
+                  width: ${width}px;
+                  margin: ${margin}px 0 ${margin}px
+                    calc(((${width}px - 650px) / 2) * -1);
+                }
+              }
+            `}</style>
+          </figure>
+        </IObserver>
+      </AmpImg>
     )
   }
 }

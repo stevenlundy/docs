@@ -8,7 +8,8 @@ export const meta = {
   description:
     'The answers to our most frequently asked questions for Now and other ZEIT products and services',
   date: '30 Jan 2018',
-  editUrl: 'pages/docs/other/faq.mdx'
+  editUrl: 'pages/docs/v1/other/faq.mdx',
+  lastEdited: '2019-03-13T13:19:27.000Z'
 }
 
 ## Where can I see the current status of the platform?
@@ -24,10 +25,10 @@ can be [scaled](/docs/getting-started/scaling) to multiple instances.
 Therefore, each "deployment" can consist of multiple "instances".
 
 Both personal and team accounts may own unlimited deployments. However, the
-number of running instances is limited to your personal or team account's [current plan](/pricing).
+number of running instances is limited to your personal or team account's [current plan](/pricing/v1).
 
 If you exceed your paid plan's limit for running instances, you will
-be charged the **On Demand price** (check the [On Demand plan](/pricing)) for
+be charged the **On Demand price** (check the [On Demand plan](/pricing/v1)) for
 additional instances.
 
 ## How do I deploy and alias in a single command?
@@ -72,11 +73,11 @@ You can change your email address from within your [account settings page](/acco
 
 ## What are the hardware specifications of the deployment instances?
 
-Each instance has up to 1GB of RAM and 1 CPU in [any paid plan](/pricing).
+Each instance has up to 1GB of RAM and 1 CPU in [any paid plan](/pricing/v1).
 
 Deployments belonging to the OSS plan have half the resources of a paid plan.
 
-The storage limit of any plan is shown under the plan on [the pricing page](/pricing).
+The storage limit of any plan is shown under the plan on [the pricing page](/pricing/v1).
 
 ## How do I allocate more resources for my application?
 
@@ -210,13 +211,13 @@ If you are logged in to [zeit.co](/login), you can still access the source when 
 
 Check our WordPress example repository.
 
-> [https://github.com/now-examples/wordpress](https://github.com/now-examples/wordpress)
+> <https://github.com/now-examples/wordpress>
 
 ## Is it possible to host Ghost on the Now Platform?
 
 Check our Ghost example repository.
 
-> [https://github.com/now-examples/ghost](https://github.com/now-examples/ghost)
+> <https://github.com/now-examples/ghost>
 
 ## How do I add my deployments to a list of whitelisted IP Addresses?
 
@@ -226,7 +227,7 @@ Our recommendation when connecting to external services (eg. a database) is to u
 
 ## How do I set up an email for a domain purchased through Now Domains?
 
-&#8203;<Now color="#000" /> doesn't provide you with an email server for your custom domains. You can use [`now dns`](/docs/features/dns) to setup MX records pointing to any external service.
+​<Now color="#000" /> doesn't provide you with an email server for your custom domains. You can use [`now dns`](/docs/features/dns) to setup MX records pointing to any external service.
 
 ## How do I use private npm modules or GitHub repositories?
 
@@ -290,7 +291,7 @@ The amount of HTTP requests you can have per instance is based on the previous i
 
 ## Why would I require autoscale and not just use all my 10 Instances at the same time?
 
-Your instance limit [(based on your plan)](/pricing) is per account not per deployment. For example; if you want to have more than one running deployment you need to share those instances. Using autoscale will let you have N amount of deployments and scale as required.
+Your instance limit [(based on your plan)](/pricing/v1) is per account not per deployment. For example; if you want to have more than one running deployment you need to share those instances. Using autoscale will let you have N amount of deployments and scale as required.
 
 ## Where do I see my current bandwidth and logs consumption?
 

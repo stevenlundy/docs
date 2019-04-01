@@ -3,8 +3,10 @@ import Now from '~/components/text/now'
 import { GenericLink } from '~/components/text/link'
 import { P } from '~/components/text/paragraph'
 import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
 import { InlineCode } from '~/components/text/code'
 import Card from '~/components/card'
+import Note from '~/components/text/note'
 import {
   TerminalInput,
   TerminalOutput,
@@ -14,47 +16,166 @@ import {
 export const meta = {
   title: 'Aliasing a Deployment',
   description:
-    'All you need to know about assigning a name to your ZEIT Now deployments'
+    'All you need to know about assigning a name to your ZEIT Now deployments',
+  editUrl: 'pages/docs/v2/domains-and-aliases/aliasing-a-deployment.mdx',
+  lastEdited: '2019-01-07T16:20:02.000Z'
 }
 
-This guide covers how to assign two types of domains to your <Now color="#000"/> deployments.
+When deploying a [project](/docs/v2/platform/projects/), whether ready for staging or production, you will want a URL to share the project with others or for yourself to check on other devices.
 
-1. Subdomains under `.now.sh` (for example https://hello.now.sh)
-2. Entirely custom domains (for example https://your-company.com)
+Aliases are Now's method for creating a link to the latest, or chosen deployment with a custom URL with zero-downtime for each alias transition.
 
-## Aliasing Basics
+There are two ways to create an alias with Now:
 
-Whenever you deploy to <Now color="#000"/>, the URL you get in return looks something like:
+- [Deployment Environments](#deployment-environments), automatic aliases based on the deployment environment.
+- [Manual Aliasing](#manual-aliasing), alias to a specific URL, manually.
 
-<TerminalOutput>
-  https://<P.B>get-started</P.B>-<P.B>hwbbrak5g</P.B>.now.sh
-</TerminalOutput>
+## Deployment Environments
 
-We can split the above [URL](/docs/v2/deployments/concepts/urls) into few parts:
+When making a deployment, you can choose whether to push that deployment [to production](#production) or to [a staging URL](#staging).
 
-- **https://** -Every single deployment is automatically served under HTTP/2 with SSL. Certificates are automatically provisioned.
-- **get-started** - The application's name. You can customize it upon deployment (for example with the name field in package.json for Node.js deployments or LABEL in Dockerfile for Docker ones.
-- **etjnigdrkz** - A cryptographically-strong random string that makes your URL virtually impossible to guess, while retaining a reasonable length for sharing it with your co-workers or clients.
-- **.now.sh** - All your deployments end in .now.sh by default. Aliases allow you to point them to custom domains.
+### Staging
 
-These URLs are ideal for development and staging, but not ideal for end users.
+Every new deployment, whether it is from Now CLI, Now for GitHub, or Now for GitLab, will receive both a unique deployment URL and a staging alias for the deployment that updates with every deployment you personally make from the project.
 
-&#8203;<Now color="#000"/> aliases have two purposes:
+The staging alias can be formatted in multiple ways, depending on where it came from.
 
-1. Giving your deployment a friendly and memorable name.
-2. Updating deployments with **zero downtime**.
+These staging aliases include:
 
-## Creating Aliases
+- [Personal Project Staging Aliases](#personal-project-staging-aliases)
+- [Default Staging Aliases for a Project within a Team](#default-staging-aliases-for-a-team's-project)
+- [Team Staging Aliases for a Project](#staging-environment-aliases-for-a-team's-project)
+- [Git Branch Staging Aliases](#git-staging-aliases)
 
-Aliases are managed by invoking the command `now alias`, which has the following syntax:
+#### Personal Project Staging Aliases
+
+For **deployments made from a personal account** with Now CLI, you will get a staging alias like the following:
+
+<Image src={`${process.env.ASSETS}/docs/domains-and-aliases/aliasing-a-deployment/personal-staging-alias.png`}
+width={1200/2}
+height={320/2}
+/>
+<Caption>Breakdown of a personal staging alias.</Caption>
+
+In the above example, each deployment from the personal account with the username `timothy` to their `my-app` [project](/docs/v2/platform/projects/) will result in an update with the latest app to the staging alias URL `my-app.timothy.now.sh`.
+
+This alias is helpful when you want to share a non-production URL containing the latest changes of a personal project with automatic updates for each deployment.
+
+#### Default Staging Aliases for a Team's Project
+
+**Deployments made in a team's scope** with Now CLI, by default, will result in a staging alias like the following:
+
+<Image src={`${process.env.ASSETS}/docs/domains-and-aliases/aliasing-a-deployment/personal-staging-alias-team.png`}
+width={1200/2}
+height={320/2}
+/>
+<Caption>Breakdown of a default staging alias for a project in a team.</Caption>
+
+In the above example, each deployment from the team scope `my-team` by a team member with the username `timothy` to the `my-app` [project](/docs/v2/platform/projects/) will result in an update with the latest app to the staging alias URL `my-app-timothy.my-team.now.sh`.
+
+This default alias is helpful when you want to share the URL containing the latest changes of a single team member for a project that automatically updates with each new deployment.
+
+#### Staging Environment Aliases for a Team's Project
+
+**Deployments made in a team's scope** with Now CLI using the `--target staging` option, will result in a staging alias like the following:
+
+<Image src={`${process.env.ASSETS}/docs/domains-and-aliases/aliasing-a-deployment/team-staging-alias.png`}
+width={1200/2}
+height={320/2}
+/>
+<Caption>Breakdown of an alias for the staging deployment environment for a team's project.</Caption>
+
+In the above example, each deployment with the following command, from the [team scope](/docs/v2/platform/users-and-teams) `my-team` by a team member with the username `timothy` to the `my-app` [project](/docs/v2/platform/projects/) will result in an update with the latest app to the staging alias URL `my-app.my-team.now.sh`:
+
+<TerminalInput>now --target staging</TerminalInput>
+
+This environment alias is helpful when you are working on a project as a team and want to share a URL of the combined efforts of multiple team members, updated with each deployment with the staging target argument.
+
+#### Git Staging Aliases
+
+If you are using **[Now for GitHub](/docs/v2/integrations/now-for-github) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab)**, every push to a non-[default branch](https://git-scm.com/book/en/v1/Git-Branching-What-a-Branch-Is) will result in a staging alias with the following format:
+
+<Image src={`${process.env.ASSETS}/docs/domains-and-aliases/aliasing-a-deployment/git-staging-alias.png`}
+width={1200/2}
+height={320/2}
+/>
+<Caption>Breakdown of an alias for the staging deployment environment for a team's project on a non-default Git branch.</Caption>
+
+In the above example, each push to the `staging` branch with the [team scope](/docs/v2/platform/users-and-teams) `my-team` to the `my-app` [project](/docs/v2/platform/projects/) will result in an update with the latest app to the staging alias URL `my-app-git-staging.my-team.now.sh`.
+
+If the non-default branch belongs to a repository connected to a [personal Now user](/docs/v2/platform/users-and-teams/), the `my-team` portion of the alias will be replaced with the username of that account. For example; when the repository's owner is connected with the account `timothy`, the URL would be `my-app-git-staging.timothy.now.sh`.
+
+### Production
+
+The production alias is a custom defined production environment, configured using [the `alias` property of a `now.json` file](/docs/v2/deployments/configuration#alias).
+
+```json
+{
+  "version": 2,
+  "alias": "my-zeit-domain.live"
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file configuring the{' '}
+  <GenericLink href="/docs/v2/platform/overview/#versioning">
+    Now platform version
+  </GenericLink>{' '}
+  and a production alias.
+</Caption>
+
+Triggering a deployment to a production alias can be done with either [Now CLI](#with-now-cli) or automatically with [a Now for Git integration](#with-now-for-git).
+
+<Note>
+  This production alias can be your added domain or a custom alias using the{' '}
+  <InlineCode>.now.sh</InlineCode> suffix or{' '}
+  <GenericLink href="/docs/v2/platform/add-ons#custom-deployment-suffix">
+    a Custom Deployment Suffix
+  </GenericLink>
+  .
+</Note>
+
+#### With Now CLI
+
+Deploying with the following command will trigger a deployment to the production alias defined in the `now.json` file:
+
+<TerminalInput>now --target production</TerminalInput>
+
+#### With Now for Git
+
+Each push to the default branch with either [Now for GitHub](/docs/v2/integrations/now-for-github) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab), will result in aliasing a fresh deployment to the production alias, set in your `now.json` file.
+
+## Manual Aliasing
+
+Aside from [automatic aliases through deployment environments](#deployment-environments), you can also manually alias your deployments using Now CLI.
+
+Invoking the command `now alias` will create an alias between a provided deployment URL and a defined alias, using the following syntax:
 
 <TerminalInput>
   now alias &lt;SOURCE URL | ID&gt; &lt;TARGET SUBDOMAIN | DOMAIN&gt;
 </TerminalInput>
 
-For example, let's say you want `https://get-started-hwbbrak5g.now.sh` to be accessible by the alias `get-started.now.sh`.
+You can manually alias to either your [added domain](#aliasing-to-a-domain) or [a subdomain](#aliasing-to-a-url-with-a-deployment-suffix) of the `.now.sh` default suffix or Custom Deployment Suffix.
 
-All you have to do is run:
+### Aliasing to A Domain
+
+The same mechanism used above can be used to configure [a **custom domain**](/docs/v2/domains-and-aliases/introduction).
+
+The command to alias a deployment to a domain is similar:
+
+<TerminalInput>
+  now alias https://get-started-hwbbrak5g.now.sh my-zeit-domain.com
+</TerminalInput>
+
+If `my-zeit-domain.com` is not yet yours and is available to [purchase](/docs/v2/domains-and-aliases/buying-a-domain), <Now color="#000"/> will allow you to buy it directly from the command-line, which is the only step you need to take. <Now color="#000"/> will take care of all the domain configuration.
+
+Otherwise, you need to [add the domain](/docs/v2/domains-and-aliases/introduction) to your <Now color="#000"/> account or team.
+
+Refer to [the domains documentation](/docs/v2/domains-and-aliases/introduction) for more information on domain configuration.
+
+### Aliasing to a URL with a Deployment Suffix
+
+For example, say you want the deployment `https://get-started-hwbbrak5g.now.sh` to be accessible by the alias `get-started.now.sh`; running the following command will create this alias:
 
 <TerminalInput>
   now alias https://get-started-hwbbrak5g.now.sh <P.B>get-started</P.B>
@@ -67,13 +188,13 @@ All you have to do is run:
   </TerminalLink>
   {` now points to `}
   <TerminalLink href="https://get-started-hwbbrak5g.now.sh">
-    <P.B>https://get-started-hwbbrak5g.now.sh</P.B>
+    <P.B>get-started-hwbbrak5g.now.sh</P.B>
   </TerminalLink>
   {` `}
   <span style={{ color: 'gray' }}>[1s]</span>
 </TerminalOutput>
 
-After this successful message, your deployment is instantly available via its original URL and the new alias you gave it:
+After this success message, your deployment is instantly available through the original input URL and the new alias you chose for it:
 
 <Image
   src={`https://assets.zeit.co/image/upload/v1546875074/front/docs/domains/simple-deployment.png`}
@@ -86,7 +207,15 @@ After this successful message, your deployment is instantly available via its or
   }
 />
 
-Notice that we omitted `.now.sh` at the end of the target subdomain. When one is not given, we default to `now.sh`.
+Notice that the example command omitted `.now.sh` at the end of the target subdomain. When one is not given, Now defaults the alias value to use `.now.sh` as a suffix.
+
+<Note>
+  You can use{' '}
+  <GenericLink href="/docs/v2/platform/c/#custom-deployment-suffix">
+    a Custom Deployment Suffix
+  </GenericLink>{' '}
+  in place of <InlineCode>.now.sh</InlineCode>.
+</Note>
 
 For convenience, we parse the URLs you supply as parameters to `now alias` to extract the hostname, which means the following are all valid **source URLs**:
 
@@ -94,57 +223,19 @@ For convenience, we parse the URLs you supply as parameters to `now alias` to ex
 - Including http(s): `https://get-started-hwbbrak5g.now.sh`
 - Including /: `https://get-started-hwbbrak5g.now.sh/`
 
-## Custom Domains
+## Read More
 
-The same mechanism we explained above can be used to configure [a **custom domain**](/docs/v2/domains-and-aliases/adding-a-domain).
+The following resources are related to this topic and helpful with any path you would like to take next:
 
-The command is almost exactly the same:
+<Card
+  title="Introduction to Domains"
+  href="/docs/v2/domains-and-aliases/introduction"
+>
+  Learn how to add, buy, and utilise domains as aliases for your deployments.
+</Card>
 
-<TerminalInput>
-  now alias https://get-started-hwbbrak5g.now.sh your-company.com
-</TerminalInput>
-
-If `your-company.com` is available to buy, <Now color="#000"/> will allow you to buy it directly from the command line, which is the only step you need to do. <Now color="#000"/> will take care of all the domain configuration.
-
-Otherwise, you need to [configure](/docs/getting-started/assign-a-domain-name) the domain name for <Now color="#000"/>. You can either use our [global DNS service](/world) or add an `ALIAS/CNAME` record on your existing DNS solution.
-
-Refer to this [guide](/docs/getting-started/assign-a-domain-name) for more information on domain configuration.
-
-## Security Considerations
-
-We ensure that **your domains are fully protected and only you can alias to them**.
-
-When you add an alias to a certain domain name, we first verify its ownership. If it's not been claimed by anyone, we associate it with your account.
-
-After executing the `alias` above, just run `now domains ls` to see all the domains in your account:
-
-<TerminalInput>now domains ls</TerminalInput>
-
-<TerminalOutput>
-  <span style={{color: "gray"}}>> </span> 2 domains found under <P.B>myaccount</P.B> [214ms]<br /><br />
-  &nbsp;&nbsp;<span style={{color: "gray"}}>domain &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; serviceType &nbsp;&nbsp;   verified &nbsp;&nbsp; cdn  &nbsp;&nbsp;&nbsp; age</span><br />
-
-  <span>&nbsp;&nbsp;</span>
-  <TerminalLink href="https://your-company.com">
-    <P.B>my-zeit-domain.website</P.B>
-  </TerminalLink> &nbsp; zeit.world &nbsp;&nbsp;&nbsp; true &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; true &nbsp;&nbsp;&nbsp;<span style={{color: "gray"}}>3d</span><br />
-
-  <span>&nbsp;&nbsp;</span>
-  <TerminalLink href="https://your-company.com">
-    <P.B>my-zeit-website.com</P.B>
-  </TerminalLink> &nbsp;&nbsp;&nbsp;&nbsp; external &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; true &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; false &nbsp;&nbsp;<span style={{color: "gray"}}>8d</span><br />
-
-</TerminalOutput>
-
-As you can see, there are two types of domains:
-
-- **external**: the domain is associated with a third-party nameserver provider like DNSimple.
-- **zeit.world**: the domain is hosted with <GenericLink href="/world">zeit.world</GenericLink> and `now alias` automatically sets up records.
-
-Once a domain appears under `now domains ls`, **only you can point aliases to it** until you remove it from your account.
-
-<Card title="Read Next: The Now CDN" href="/docs/v2/domains-and-aliases/cdn">
-  Learn how to enable and control cached assets with Now CDN.
+<Card title="Deployment Basics" href="/docs/v2/deployments/basics">
+  Learn how to deploy your applications that you will alias to your domains.
 </Card>
 
 export default ({ children }) => <Doc meta={meta}>{children}</Doc>

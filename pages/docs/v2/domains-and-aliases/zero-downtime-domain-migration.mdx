@@ -4,11 +4,15 @@ import { Image, Video } from '~/components/media'
 import Caption from '~/components/text/caption'
 import Card from '~/components/card'
 import { GenericLink } from '~/components/text/link'
+import Note from '~/components/text/note'
 
 export const meta = {
   title: 'Zero-Downtime Domain Migration',
   description:
-    'Migrating your domain from an external service to ZEIT with no downtime, in only a few steps.'
+    'Migrating your domain from an external service to ZEIT with no downtime, in only a few steps.',
+  editUrl:
+    'pages/docs/v2/domains-and-aliases/zero-downtime-domain-migration.mdx',
+  lastEdited: '2019-02-16T22:48:11.000Z'
 }
 
 When migrating to another set of nameservers, there can often be downtime incurred. In this guide we will walk you through adding your domain to ZEIT and setting it up before migrating the nameservers, ensuring no downtime at any point.
@@ -66,7 +70,7 @@ With [Now CLI](/docs/v2/getting-started/installation), you can generate an SSL c
 
 You will then be asked to solve a DNS challenge, required for the Certificate Authority (CA) to prove that Now has sufficient permissions, consisting of two TXT records.
 
-Once these TXT records are added to your domain via your domain provider, run the `now certs issue` command again as above to attempt the certificate issuance again.
+Once these TXT records are added to your domain via your domain provider, run the `now certs issue \*.<domain> <domain>` command again as above to attempt the certificate issuance again.
 
 #### From the Web UI
 
@@ -103,6 +107,15 @@ In short, to deploy your app with Now, you can use the following command, [after
 After Now finishes deploying your app, you can then alias it by using `now alias`:
 
 <TerminalInput>{`now alias <deployment URL> <domain>`}</TerminalInput>
+
+<Note>
+  You can automatically alias your domain to staging and production aliases in
+  just a few steps:{' '}
+  <GenericLink href="/docs/v2/domains-and-aliases/aliasing-a-deployment">
+    Aliasing a Deployment
+  </GenericLink>
+  .
+</Note>
 
 Now your domain will be pointing to the deployment you passed it, and ready to move your nameservers across to show that deployment.
 

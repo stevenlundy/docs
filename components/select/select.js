@@ -9,6 +9,7 @@ const Select = ({
   disabled,
   className,
   onChange,
+  on,
   hasArrow = true,
   defaultValue,
   ...props
@@ -16,6 +17,7 @@ const Select = ({
   return (
     <div className={cn('select', { disabled }, className)} {...props}>
       <select
+        on={on}
         onChange={onChange}
         disabled={disabled}
         defaultValue={defaultValue}
@@ -132,14 +134,6 @@ const Select = ({
 
         .select.disabled:hover .arrow :global(svg) {
           stroke: #999;
-        }
-
-        @-moz-document url-prefix() {
-          select {
-            margin-right: 0;
-            width: 100%;
-            padding: ${hasArrow ? '0 56px 0 16px' : '0 16px'};
-          }
         }
       `}</style>
     </div>
