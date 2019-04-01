@@ -14,14 +14,14 @@ export const meta = {
   url: '/guides/dialogflow-fulfillment-with-now'
 }
 
-Dialogflow is a framework for human–computer interaction technologies based on natural language conversations.
+[Dialogflow](https://dialogflow.com/) is a framework for human–computer interaction technologies based on natural language conversations.
 
 ## Step 1: Set Up Your Dialogflow Project
 
-The first step to [setting up a Dialogflow project](https://nextjs.org/learn) is to create a project directory and then install the required dependencies from your terminal:
+The first step to [setting up a Dialogflow project](https://dialogflow.com/docs/tutorial-build-an-agent) is to create a project directory and then install the required dependencies from your terminal:
 
 <TerminalInput>npm --install dialogflow dialogflow-fulfillment express body-parser</TerminalInput>
-<Caption>Installing dialogflow, express, and body-parser with npm</Caption>
+<Caption>Installing dialogflow, express, and body-parser with npm.</Caption>
 
 ## Step 2: Deploy Your Dialogflow Project with Now
 
@@ -57,12 +57,12 @@ module.exports = app;
 ```
 
 <Caption>
-  Basic Dialogflow Fullfillment script.
+  A basic Dialogflow Fullfillment script.
 </Caption>
 
-Next, you will need to tell Now what the entrypoint is for the application and what Builder it should use to build and deploy the application so it will act as you would expect.
+Next, you will need to tell Now what the entrypoint is for the application and what [Builder](/docs/v2/deployments/builders/overview/) it should use to build and deploy the application.
 
-You will need to create a [`now.json` configuration file](https://zeit.co/docs/v2/deployments/configuration) to instruct Now on how to handle your application in the build phase and when being served to visitors.
+You will need to create a [`now.json` configuration file](/docs/v2/deployments/configuration) to instruct Now on building your application and serving it to visitors, this is where you specify the [Builder](/docs/v2/deployments/builders/overview/) and entrypoint mentioned above.
 
 ```json
 {
@@ -75,14 +75,15 @@ You will need to create a [`now.json` configuration file](https://zeit.co/docs/v
 
 <Caption>
   A <InlineCode>now.json</InlineCode> configuration file that specifies the
-  node Builder.
+  [Node Builder](/docs/v2/deployments/official-builders/node-js-now-node/).
 </Caption>
 
 The above `now.json` file achieves a few things:
 
 - Defines a `version` property to ensure you are using the latest [Now 2.0 platform](/docs/v2/platform/overview) version.
 - Defines a project `name` that your deployments will be sorted under and known by under Now.
-- Defines a `builds` property as an array with one build step using `@now/node` to instruct Now to statically build the project and deploy the `build` directory. Using the `package.json` file as an entrypoint, [more on that below](#build-instruction).
+- Defines a [`builds` property](/docs/v2/deployments/builds/) as an array with one build step using `@now/node` to instruct Now to statically build the project and deploy the `build` directory.
+- Defines a [`routes` property](/docs/v2/deployments/routes/) as an array with one route directing all requests to use the `index.js` file that we defined above.
 
 <Note>
   Don't forget to exclude the <InlineCode>node_modules</InlineCode> folder from
@@ -99,9 +100,9 @@ The above `now.json` file achieves a few things:
 You are now ready to deploy the app with Now:
 
 <TerminalInput>now</TerminalInput>
-<Caption>Deploying your Dialogflow Fulfillment app with Now CLI from a terminal.</Caption>
+<Caption>Deploying your Dialogflow Fulfillment app with the Now CLI from a terminal.</Caption>
 
-Once the app is deployed, you will receive a deployment URL similar to the following (styled for effect, with an additional page): https://dialogflow-fulfillment-8fnzfb1ci.now.sh
+Once the app is deployed, you will receive a deployment URL similar to the following (styled for effect, with an additional page): https://dialogflowfulfillment-ep0m16tus.now.sh
 
 ### Connecting your Dialogflow Fulfillment webhook to an agent
 
@@ -110,7 +111,7 @@ Now that you have your Dialogflow Fullfillment server running, you can connect i
  1. [Create and customize and agent](https://dialogflow.com/docs/tutorial-build-an-agent/create-customize-agent).
  2. [Provide your deployment URL for the webhook](https://dialogflow.com/docs/fulfillment/configure)
 
-Your agent will now respond to the Default Welcome Intent using your deployed webhook.
+Your agent will now respond to the [Default Welcome Intent](https://dialogflow.com/docs/intents/default-intents) using your deployed webhook.
 
 ## Resources
 
