@@ -1,5 +1,7 @@
 import { Component } from 'react'
 import Link from 'next/link'
+import cn from 'classnames'
+import { withRouter } from 'next/router'
 import PropTypes from 'prop-types'
 import AutoSuggest from 'react-autosuggest'
 import {
@@ -19,7 +21,16 @@ class AutoComplete extends Component {
   }
 
   state = {
-    value: this.props.currentRefinement
+    value: '',
+    inputFocused: false
+  }
+
+  componentDidMount() {
+    if (this.props.router.query.query) {
+      this.setState({
+        value: decodeURIComponent(this.props.router.query.query) || ''
+      })
+    }
   }
 
   onChange = (_, { newValue }) => {
@@ -30,6 +41,10 @@ class AutoComplete extends Component {
     this.setState({ value: newValue })
   }
 
+  onToggleFocus = () => {
+    this.setState({ inputFocused: !this.state.inputFocused })
+  }
+
   onSuggestionsFetchRequested = ({ value }) => {
     this.props.refine(value)
   }
@@ -38,16 +53,39 @@ class AutoComplete extends Component {
     this.props.refine()
   }
 
-  getSuggestionValue(hit) {
-    return hit.title
+  onSuggestionSelected = (_, { suggestion, method }) => {
+    this.props.onSuggestionSelected(_, { suggestion })
+
+    if (method === 'enter') {
+      this.props.router.push({
+        pathname: suggestion.url,
+        query: { query: encodeURIComponent(this.state.value) },
+        hash: suggestion.anchor
+      })
+    }
   }
 
-  renderSuggestion(hit) {
+  getSuggestionValue = () => this.state.value
+
+  renderSuggestion = hit => {
+    console.log(hit.anchor)
     return (
-      <Link href={hit.url}>
+      <Link
+        href={`${hit.url}?query=${encodeURIComponent(this.state.value)}${
+          hit.anchor ? `${hit.anchor}` : ''
+        }`}
+        prefetch
+      >
         <a>
           <span className="suggestion__title">
             <Highlight attribute="title" tagName="mark" hit={hit} />
+            <div className="tags">
+              {hit._tags.map(tag => (
+                <span key={tag} className="tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </span>
           {hit.section && (
             <span className="suggestion__section">
@@ -57,39 +95,36 @@ class AutoComplete extends Component {
           <span className="suggestion__content">
             <Snippet hit={hit} attribute="content" tagName="mark" />
           </span>
-          <div className="tags">
-            {hit._tags.map(tag => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
-            ))}
-          </div>
         </a>
       </Link>
     )
   }
 
   render() {
-    const { hits, onSuggestionSelected } = this.props
-    const { value } = this.state
+    const { hits } = this.props
+    const { value, inputFocused } = this.state
 
     const inputProps = {
       placeholder: 'Search...',
       onChange: this.onChange,
+      onFocus: this.onToggleFocus,
+      onBlur: this.onToggleFocus,
       value
     }
 
     return (
-      <span className="search__container">
+      <span className={cn('search__container', { focused: inputFocused })}>
         <span className="search__search-icon">
           <SearchIcon />
         </span>
+
         <AutoSuggest
           suggestions={hits}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          onSuggestionSelected={onSuggestionSelected}
+          onSuggestionSelected={this.onSuggestionSelected}
           getSuggestionValue={this.getSuggestionValue}
+          highlightFirstSuggestion={true}
           renderSuggestion={this.renderSuggestion}
           inputProps={inputProps}
         />
@@ -110,13 +145,15 @@ class AutoComplete extends Component {
             left: 20px;
             z-index: 3;
             top: 11px;
+            transition: fill 0.15s ease;
           }
 
           .suggestion__title {
             font-size: 16px;
             font-weight: 500;
             margin-bottom: 12px;
-            display: block;
+            display: flex;
+            align-items: center;
           }
 
           .suggestion__section {
@@ -128,18 +165,20 @@ class AutoComplete extends Component {
 
           .suggestion__content {
             font-size: 14px;
-            color: #666;
+            color: #333;
             display: block;
-            line-height: 1.4;
+            line-height: 1.6;
           }
 
           .tags {
-            padding: 12px 0 4px;
+            margin-left: 12px;
+            height: 22px;
           }
 
           .tags .tag {
             border-radius: 4px;
             border: 1px solid #eaeaea;
+            background: white;
             font-size: 10px;
             text-transform: uppercase;
             padding: 4px 8px;
@@ -154,9 +193,9 @@ class AutoComplete extends Component {
           }
 
           .react-autosuggest__suggestion mark {
-            color: #0076ff;
+            color: #000;
             font-weight: 500;
-            background: transparent;
+            background: yellow;
           }
 
           .react-autosuggest__container {
@@ -171,11 +210,22 @@ class AutoComplete extends Component {
             font-size: 14px;
             border: 1px solid transparent;
             border-radius: 4px;
+            transition: border 0.15s ease;
+            -webkit-appearance: none;
           }
 
-          .react-autosuggest__input:focus {
-            outline: none;
+          .react-autosuggest__input:hover {
             border: 1px solid #eaeaea;
+          }
+
+          .search__container.focused .react-autosuggest__input,
+          .react-autosuggest__input:focus {
+            border: 1px solid #ddd;
+            outline: 0;
+          }
+
+          .search__container.focused .search__search-icon :global(svg) {
+            fill: #333;
           }
 
           .react-autosuggest__suggestions-container {
@@ -205,8 +255,11 @@ class AutoComplete extends Component {
           .react-autosuggest__suggestion {
             cursor: pointer;
             padding: 10px 20px;
-            border-bottom: 1px solid #eaeaea;
             padding: 12px 16px;
+          }
+
+          .react-autosuggest__suggestion:not(:last-child) {
+            border-bottom: 1px solid #eaeaea;
           }
 
           .react-autosuggest__suggestion a {
@@ -215,7 +268,7 @@ class AutoComplete extends Component {
           }
 
           .react-autosuggest__suggestion--highlighted {
-            background: #fafbfc;
+            background: #f1f1f1;
           }
 
           .react-autosuggest__section-container {
@@ -233,6 +286,10 @@ class AutoComplete extends Component {
           }
 
           @media screen and (max-width: 950px) {
+            .react-autosuggest__input {
+              font-size: 16px;
+            }
+
             .react-autosuggest__suggestions-container--open {
               right: 0;
               left: -30px;
@@ -245,4 +302,4 @@ class AutoComplete extends Component {
   }
 }
 
-export default connectAutoComplete(AutoComplete)
+export default withRouter(connectAutoComplete(AutoComplete))

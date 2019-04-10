@@ -8,14 +8,13 @@ const NavigationItem = ({ active, children, className, href, onClick }) => (
     </GenericLink>
     <style jsx>{`
       .navigation-item :global(a) {
-        color: #999;
+        color: #666;
         display: inline-block;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: normal;
-        line-height: 30px;
         padding: 10px;
         text-decoration: none;
-        text-transform: uppercase;
+        text-transform: capitalize;
         transition: color 0.2s ease;
         vertical-align: middle;
       }

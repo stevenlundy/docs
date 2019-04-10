@@ -71,6 +71,11 @@ class Header extends Component {
     }
   }
 
+  onLogoRightClick = event => {
+    event.preventDefault()
+    Router.push('/design')
+  }
+
   getSearchQ() {
     const { router } = this.props
     let query = router.query.q
@@ -79,14 +84,10 @@ class Header extends Component {
     return query
   }
 
-  onSuggestionSelected = (_, { suggestion, method }) => {
+  onSuggestionSelected = (_, { suggestion }) => {
     this.setState({
       query: suggestion.title
     })
-
-    if (method === 'enter') {
-      Router.push(suggestion.url)
-    }
   }
 
   onSuggestionCleared = () => {
@@ -215,7 +216,6 @@ class Header extends Component {
           .user {
             display: inline-flex;
             height: 20px;
-            line-height: 30px;
             vertical-align: middle;
             align-items: center;
           }
@@ -280,7 +280,7 @@ class Header extends Component {
             })
           }}
         >
-          <Configure hitsPerPage={3} />
+          <Configure hitsPerPage={8} />
           <AutoComplete
             onSuggestionSelected={this.onSuggestionSelected}
             onSuggestionCleared={this.onSuggestionCleared}
@@ -323,7 +323,12 @@ class Header extends Component {
           </amp-state>
         )}
 
-        <a className="logo" href={dashboard} aria-label="ZEIT Home">
+        <a
+          className="logo"
+          href={dashboard}
+          aria-label="ZEIT Home"
+          onContextMenu={this.onLogoRightClick}
+        >
           <Logo height="25px" width="28px" />
         </a>
 
@@ -541,6 +546,10 @@ class Header extends Component {
             transform: translateY(0px) rotate(-45deg);
           }
 
+          .logo {
+            display: flex;
+          }
+
           .avatar-link {
             flex: 0;
             margin: -8px -15px;
@@ -642,7 +651,7 @@ class Header extends Component {
               position: fixed;
               left: 0;
               right: 0;
-              top: 89px;
+              top: 85px;
               padding: 0;
               background: white;
               box-shadow: #fff 0 -15px, rgba(0, 0, 0, 0.1) 0 0 15px;
@@ -659,6 +668,12 @@ class Header extends Component {
             }
             .desktop_search {
               display: none;
+            }
+          }
+          @media screen and (max-width: 360px) {
+            .mobile_search {
+              max-width: 242px;
+              width: 70%;
             }
           }
         `}</style>

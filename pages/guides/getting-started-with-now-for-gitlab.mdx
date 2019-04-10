@@ -1,0 +1,242 @@
+import Guide from '~/components/layout/guide'
+import { TerminalInput } from '~/components/text/terminal'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+import Card from '~/components/card'
+import Note from '~/components/text/note'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  title: 'Automatic Deployments with Now for GitLab',
+  description:
+    'Learn how to setup ZEIT Now for GitLab and get automatic deployments and aliasing for each push.',
+  published: '2019-04-01T09:03:14.819Z',
+  authors: ['arunoda', 'timothy'],
+  url: '/guides/getting-started-with-now-for-gitlab',
+  editUrl: 'pages/guides/getting-started-with-now-for-gitlab.mdx',
+  lastEdited: '2019-04-02T18:47:14.000Z'
+}
+
+The [Now for GitLab integration](/docs/v2/integrations/now-for-gitlab) provides you with automatic deployments for each push to a project, automatic aliases for pushes to the default branch, and instant rollbacks for reverts.
+
+This guide will walk you through how to set up the Now for GitLab integration for your projects.
+
+## Step 1: Set Up a Now for GitLab Project
+
+To deploy a project with Now for GitLab, you must first have a project on GitLab.
+
+[Create a new GitLab project](https://docs.gitlab.com/ee/gitlab-basics/create-project.html) with a file called `index.html` with the following contents:
+
+```html
+<body>
+  <h1>Hello World</h1>
+</body>
+```
+
+Push this file to your GitLab project so you have one file inside of it.
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/gitlab-project.png`}
+  width={2152/2.5}
+  height={1450/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-64px'}}>A simple GitLab project setup.</Caption>
+
+## Step 2: Connect Now to Your GitLab User and Project
+
+For Now to make automatic deployments and aliases, it needs access to your GitLab account and its associated projects.
+
+Connect your GitLab account through your [account settings](/account).
+
+If you don't have a ZEIT account, visit <https://zeit.co/signup> and click "Sign Up with GitLab".
+
+### Link Your GitLab Projects
+
+From the [account settings](/account) section where you connected your GitLab account, or from the GitLab tab on <https://zeit.co/new>, select your GitLab project from the dropdown and click "link" to link it.
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/new-project-link.png`}
+  width={2152/2.5}
+  height={1450/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-64px'}}>Linking a GitLab project.</Caption>
+
+With a project linked, no further setup is required on ZEIT.
+
+## Step 3: Create a `now.json` File
+
+Every Now project has a file called `now.json` which holds the instructions Now follows to deploy your app as you intend.
+
+In the root of the project directory, create a file called `now.json` with just the following content to start:
+
+```json
+{
+  "version": 2,
+  "name": "Hello World"
+}
+```
+
+The above `now.json` file sets two properties:
+
+The [`version` property](/docs/v2/deployments/configuration#version) instructs Now to deploy on the latest [Now Platform Version 2.0](/docs/v2/platform/overview#versioning).
+
+The [`name` property](/docs/v2/deployments/configuration#name) instructs Now to assign your deployment under a project called "Hello World". If you leave this field blank, the name assigned will be that of your GitLab project.
+
+## Step 4: Using Now for GitLab
+
+With configuration done, all future commits from your linked projects will have [automatic deployments for each push](#deployments-for-each-push), [merge requests](#deployments-and-staging-aliases-for-merge-requests), and [automatic aliasing to production](deploying-to-production).
+
+### Deployments For Each Push
+
+Now, visiting your [commits](https://gitlab.com/now-examples/hello-world/commits/master) page in GitLab, you will see something like this:
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/commits-page.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-40px'}}>A deployed commit using Now for GitLab.</Caption>
+
+This green status symbol indicates that Now successfully deployed your commit.
+
+Clicking the [commit](https://gitlab.com/now-examples/hello-world/commit/1b7b4f04139024653c9e7566fe99a06fbe259746) itself, you will see a comment that holds a unique deployment URL to test and share the specific commit build:
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/deploy-comment.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-40px'}}>A unique URL for an individual commit.</Caption>
+
+Each commit will result in a unique URL just like the above.
+
+### Deployments and Staging Aliases for Merge Requests
+
+[Merge requests](https://docs.gitlab.com/ee/user/project/merge_requests/) are a way to submit changes to a project without pushing directly to the default branch. This comes in handy when you're working on a feature that is either in progress or needs a review before being launched into production.
+
+There are multiple ways to [create a merge request](https://docs.gitlab.com/ee/gitlab-basics/add-merge-request.html), however, to test, create a merge request by editing the `index.html` file, edit the target branch, and then click "Start a new merge request".
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/create-merge-request.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-40px'}}>Creating a merge request from GitLab's UI.</Caption>
+
+After you commit and create the merge request, you will get a [new view](https://gitlab.com/now-examples/hello-world/merge_requests/1) that will start a deployment pipeline for your changes:
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/merge-request-pipeline.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-40px'}}>A merge request deployment pipeline success message.</Caption>
+
+The pipeline information shows the status as Now builds your app. In this case, it has successfully built. It will show a different icon when Now is building the app.
+
+Below the pipeline message, a comment will present a [staging alias](https://zeit.co/docs/v2/domains-and-aliases/aliasing-a-deployment/#git-staging-aliases) that updates each time the merge request is pushed to, so you can share this link with others without having to worry about sharing the latest update.
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/merge-request-alias.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-40px'}}>A staging alias created from a merge request.</Caption>
+
+You can test this by creating another commit for the merge request and accessing the staging alias. You will notice that, once the commit is deployed, the staging alias will have been updated with the changes.
+
+## Deploying to Production
+
+Pushing or merging to the [default branch](https://docs.gitlab.com/ee/user/project/repository/branches/#default-branch) will result in a deployment, like any other branch or push. However, if you have an [`alias` property](/docs/v2/deployments/configuration#alias) set within your `now.json` file, these deployments will automatically be aliased to your configured destination.
+
+Append the [`alias` property](/docs/v2/deployments/configuration#alias) to your [`now.json` file](/docs/v2/deployments/configuration), like the following:
+
+```json
+{
+  "version": 2,
+  "name": "Hello World",
+  "alias": "my-hello-world-project.now.sh"
+}
+```
+
+<Note>
+  Make sure to choose a unique alias for your project. If you are not using a{' '}
+  <GenericLink href="/docs/v2/domains-and-aliases/introduction">
+    domain
+  </GenericLink>{' '}
+  or a{' '}
+  <GenericLink href="/docs/v2/platform/add-ons/#custom-deployment-suffix">
+    Custom Deployment Suffix
+  </GenericLink>
+  , others on the Now platform may have already taken the alias.
+</Note>
+
+When you push this change to the default branch, this and all subsequent commits to the branch will have the following comment, letting you know that your deployment is live in production.
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/production-deployment.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+  oversize
+/>
+<Caption style={{marginTop: '-40px'}}>A staging alias created from a merge request.</Caption>
+
+It is also possible to use your own domains or an alias using a Custom Deployment Suffix. For that, see the following documentation:
+
+<Card
+  title="Introduction to Domains and Aliases"
+  href="/docs/v2/domains-and-aliases/introduction"
+>
+  Learn more about aliasing your automatic deployments and how to use your own
+  domains.
+</Card>
+
+<Card
+  title="Custom Deployment Suffix"
+  href="/docs/v2/platform/add-ons/#custom-deployment-suffix"
+>
+  Use our add-on to put your brand on every deployment and any alias.
+</Card>
+
+## In Conclusion
+
+Through this guide, you should now have a bulletproof deployment pipeline for all of your GitLab projects, using [Now for GitLab](/docs/v2/integrations/now-for-gitlab).
+
+With every push, an automatic deployment. With every merge request, a unique staging alias. And with every update to the default branch, your changes are aliased to production.
+
+## More Resources
+
+For more information on working with [Now for GitLab](/gitlab), please refer to [the Now for GitLab documentation](/docs/v2/integrations/now-for-gitlab).
+
+To configure Now further, please see these additional topics and guides:
+
+<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
+  Deploy any of your applications with ZEIT Now.
+</Card>
+
+<Card
+  title="Aliasing"
+  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
+>
+  Learn more about aliasing to your deployments.
+</Card>
+
+<Card title="Routes" href="/docs/v2/deployments/routes">
+  Learn more about how Now uses routes to define the behavior of how a request
+  is handled on the routing side.
+</Card>
+
+<Card title="More Guides" href="/guides">
+  See more guides that help you move forward with your projects and automatic
+  deployments from Now for GitLab.
+</Card>
+
+export default ({ children }) => <Guide meta={meta}>{children}</Guide>

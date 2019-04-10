@@ -10,7 +10,7 @@ export const meta = {
   description:
     'Create rewrites, redirects, cache-control headers, and more with Now routes, easily.',
   editUrl: 'pages/docs/v2/deployments/routes.mdx',
-  lastEdited: '2019-03-12T18:11:23.000Z'
+  lastEdited: '2019-04-07T00:32:00.000Z'
 }
 
 Now uses routes to define the behavior of how a request is handled on the routing side. For example, you might use a route to rewrite a URL to another, redirect a user, or apply a header with the response to a request.
@@ -102,6 +102,11 @@ An example of using the `headers` property to add [shared caching](https://devel
   Setting <InlineCode>cache-control</InlineCode> headers for all paths under an{' '}
   <InlineCode>images</InlineCode> directory with routes.
 </Caption>
+
+<Note>
+  You can also add custom headers to your <InlineCode>routes</InlineCode>, these
+  are defined in the same way.
+</Note>
 
 ### `status`
 
@@ -285,6 +290,10 @@ The correct configuration for all routes to take affect would be:
 </Caption>
 
 This type of configuration can be seen in [single-page applications](https://en.wikipedia.org/wiki/Single-page_application) where custom paths need to route to the `index.html` file.
+
+## Limits
+
+There is a limit of 256 route objects within a `routes` array. If there are more than this limit, the deployment will fail.
 
 ## Read More
 

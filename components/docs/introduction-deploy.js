@@ -260,35 +260,132 @@ export class Editor extends React.PureComponent {
 
     return (
       <div className="demo">
-        {typeof navigator != 'undefined' ? (
-          (() => {
-            const opts = {
-              lineNumbers: true,
-              lineWrapping: true,
-              mode: 'javascript',
-              tabSize: 2,
-              theme: 'neo'
-            }
-
-            if (this.state.vimMode) {
-              opts.keyMap = 'vim'
-              opts.extraKeys = { Esc: null }
-            } else {
-              opts.extraKeys = {
-                Esc: this.onEscape
+        {typeof navigator != 'undefined'
+          ? (() => {
+              const opts = {
+                lineNumbers: true,
+                lineWrapping: true,
+                mode: 'javascript',
+                tabSize: 2,
+                theme: 'neo'
               }
-            }
 
-            opts.extraKeys.Tab = function indent(cm) {
-              const spaces = Array(cm.getOption('indentUnit') + 1).join(' ')
-              cm.replaceSelection(spaces)
-            }
+              if (this.state.vimMode) {
+                opts.keyMap = 'vim'
+                opts.extraKeys = { Esc: null }
+              } else {
+                opts.extraKeys = {
+                  Esc: this.onEscape
+                }
+              }
 
-            require('codemirror/mode/javascript/javascript')
-            require('codemirror/keymap/vim')
+              opts.extraKeys.Tab = function indent(cm) {
+                const spaces = Array(cm.getOption('indentUnit') + 1).join(' ')
+                cm.replaceSelection(spaces)
+              }
 
-            return (
-              <div className="code" key="0">
+              require('codemirror/mode/javascript/javascript')
+              require('codemirror/keymap/vim')
+
+              return (
+                <div className="code" key="0">
+                  <div className="header">
+                    <div className="icons">
+                      <span className="icon close" />
+                      <span className="icon minimize" />
+                      <span className="icon fullScreen" />
+                    </div>
+                    <div className="title">Editor</div>
+                  </div>
+                  {windowWidth < 700 && (
+                    <div
+                      className="file-browser"
+                      onClick={this.toggleFileBrowser}
+                    >
+                      <div className="file-browser-icon">
+                        {!fileBrowserOpen ? <FileBrowser /> : <Cross />}
+                      </div>
+                      <div className="file-browser-title">
+                        {fileBrowserOpen ? 'Close' : ''} File Browser
+                      </div>
+                    </div>
+                  )}
+                  <div className="mobile-file-tree" />
+                  <div className="main">
+                    {!fileBrowserOpen ? (
+                      <>
+                        <ul className="file-tree">
+                          {Object.keys(this.props.files).map(filename => {
+                            return (
+                              <li
+                                key={filename}
+                                className={
+                                  'file' +
+                                  (filename === selectedFilename
+                                    ? ' selected'
+                                    : '')
+                                }
+                                data-filename={filename}
+                                onClick={this.onFilenameClick}
+                              >
+                                <FileIcon />
+                                <span className="filename">{filename}</span>
+                              </li>
+                            )
+                          })}
+                        </ul>
+                        <div className="file-content">
+                          <CodeMirror
+                            codeMirrorInstance={CodeMirrorInstance}
+                            value={this.props.files[selectedFilename]}
+                            onChange={this.onChange}
+                            options={opts}
+                            ref={ref => (this.codeMirror = ref)}
+                          />
+                        </div>
+                        <div className="deploy">
+                          <Button
+                            onClick={this.props.deployOnClick}
+                            loading={this.props.deployDisabled}
+                            width={windowWidth < 700 ? 'full' : null}
+                          >
+                            {!this.props.deployDisabled && (
+                              <span>
+                                <span className="button-text-bold">DEPLOY</span>{' '}
+                                TO NOW
+                              </span>
+                            )}
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <ul className="mobile-file-tree">
+                        {Object.keys(this.props.files).map(filename => {
+                          return (
+                            <li
+                              key={filename}
+                              className={
+                                'mobile-file' +
+                                (filename === selectedFilename
+                                  ? ' selected'
+                                  : '')
+                              }
+                              data-filename={filename}
+                              onClick={this.onFilenameClickMobile}
+                            >
+                              <FileIcon />
+                              <span className="filename">{filename}</span>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              )
+            })()
+          : typeof navigator === 'undefined' && (
+              <div className="code" key="1">
                 <div className="header">
                   <div className="icons">
                     <span className="icon close" />
@@ -297,102 +394,12 @@ export class Editor extends React.PureComponent {
                   </div>
                   <div className="title">Editor</div>
                 </div>
-                <div className="file-browser" onClick={this.toggleFileBrowser}>
-                  <div className="file-browser-icon">
-                    {!fileBrowserOpen ? <FileBrowser /> : <Cross />}
-                  </div>
-                  <div className="file-browser-title">
-                    {fileBrowserOpen ? 'Close' : ''} File Browser
-                  </div>
-                </div>
-                <div className="mobile-file-tree" />
-                <div className="main">
-                  {!fileBrowserOpen ? (
-                    <>
-                      <ul className="file-tree">
-                        {Object.keys(this.props.files).map(filename => {
-                          return (
-                            <li
-                              key={filename}
-                              className={
-                                'file' +
-                                (filename === selectedFilename
-                                  ? ' selected'
-                                  : '')
-                              }
-                              data-filename={filename}
-                              onClick={this.onFilenameClick}
-                            >
-                              <FileIcon />
-                              <span className="filename">{filename}</span>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                      <div className="file-content">
-                        <CodeMirror
-                          codeMirrorInstance={CodeMirrorInstance}
-                          value={this.props.files[selectedFilename]}
-                          onChange={this.onChange}
-                          options={opts}
-                          ref={ref => (this.codeMirror = ref)}
-                        />
-                      </div>
-                      <div className="deploy">
-                        <Button
-                          onClick={this.props.deployOnClick}
-                          loading={this.props.deployDisabled}
-                          width={windowWidth < 700 ? 'full' : null}
-                        >
-                          {!this.props.deployDisabled && (
-                            <span>
-                              <span className="button-text-bold">DEPLOY</span>{' '}
-                              TO NOW
-                            </span>
-                          )}
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <ul className="mobile-file-tree">
-                      {Object.keys(this.props.files).map(filename => {
-                        return (
-                          <li
-                            key={filename}
-                            className={
-                              'mobile-file' +
-                              (filename === selectedFilename ? ' selected' : '')
-                            }
-                            data-filename={filename}
-                            onClick={this.onFilenameClickMobile}
-                          >
-                            <FileIcon />
-                            <span className="filename">{filename}</span>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  )}
+                <div className="loading">
+                  Loading
+                  <LoadingDots />
                 </div>
               </div>
-            )
-          })()
-        ) : (
-          <div className="code" key="1">
-            <div className="header">
-              <div className="icons">
-                <span className="icon close" />
-                <span className="icon minimize" />
-                <span className="icon fullScreen" />
-              </div>
-              <div className="title">Editor</div>
-            </div>
-            <div className="loading">
-              Loading
-              <LoadingDots />
-            </div>
-          </div>
-        )}
+            )}
 
         <style jsx global>{`
           /* BASICS */

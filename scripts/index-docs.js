@@ -19,7 +19,7 @@ async function main() {
   let index = []
 
   // Build project
-  await exec(`next build && next export -o dist`)
+  // await exec(`next build && next export -o dist`)
 
   // Scan pages and add titles and content as objects in an `index` array
   let files
@@ -83,9 +83,7 @@ async function main() {
         // If the element is a paragraph, create the record using available information, including the current heading, and push it to the index array.
 
         // Infer URL from filepath
-        const url = `/${file.replace('dist/', '').replace('/index.html', '')}${
-          currentHeading && currentHeading.anchor ? currentHeading.anchor : ''
-        }`
+        const url = `/${file.replace('dist/', '').replace('/index.html', '')}`
 
         // Create record with title, (if it exists) section heading, url (inferred), paragraph content, and order
         const record = {
@@ -94,6 +92,8 @@ async function main() {
             ? currentSubSection && { section: currentSubSection }
             : currentHeading && { section: currentHeading.text }),
           url,
+          ...(currentHeading &&
+            currentHeading.anchor && { anchor: currentHeading.anchor }),
           content: currentEl.text(),
           order: currentRecordNumber,
           objectID: `v2-${url}-${md5(currentEl.text())}`,
@@ -115,15 +115,21 @@ async function main() {
 
   // Test file
   // fs.writeFileSync(`test.json`, JSON.stringify(index))
-  client.copyIndex('prod_docs', tmpIndex.indexName, [
+  const { taskID } = await client.copyIndex('prod_docs', tmpIndex.indexName, [
     'settings',
     'synonyms',
     'rules'
   ])
 
+  await tmpIndex.waitTask(taskID)
+
   const indexTmp = [...index]
 
-  while (indexTmp.length) await tmpIndex.addObjects(indexTmp.splice(0, 1000))
+  while (indexTmp.length) {
+    const { taskID } = await tmpIndex.addObjects(indexTmp.splice(0, 1000))
+
+    await tmpIndex.waitTask(taskID)
+  }
 
   client.moveIndex(tmpIndex.indexName, 'prod_docs')
 }

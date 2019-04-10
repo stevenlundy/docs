@@ -13,7 +13,7 @@ export const meta = {
   description:
     'The official Node.js Builder for ZEIT Now. Deploy serverless Node.js applications with ease.',
   editUrl: 'pages/docs/v2/deployments/official-builders/node-js-now-node.mdx',
-  lastEdited: '2019-03-21T18:25:21.000Z'
+  lastEdited: '2019-04-09T16:21:26.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -141,9 +141,10 @@ You can run build tasks by creating a `now-build` script within a `package.json`
 }`}</Code>
 
 <span>An example build script, named <InlineCode>build.js</InlineCode>:</span>
-<Code lang="javascript">{`fs.writeFile(
+<Code lang="javascript">{`const fs = require('fs');
+  fs.writeFile(
   'built-time.js',
-  \`module.exports = "$$new Date()}"\`,
+  \`module.exports = "\${new Date()}"\`,
   (err) => {
     if (err) throw err
     console.log('Build time file created successfully!')

@@ -85,7 +85,7 @@ const Guides = () => (
 
     <style jsx>{`
       .guides {
-        padding-top: 90px;
+        padding-top: 84px;
         min-height: 100vh;
       }
 

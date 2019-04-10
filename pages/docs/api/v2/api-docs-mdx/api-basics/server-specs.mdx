@@ -1,17 +1,17 @@
 export const meta = {
   editUrl: 'pages/docs/api/v2/api-docs-mdx/api-basics/server-specs.mdx',
-  lastEdited: '2019-03-19T12:50:31.000Z'
+  lastEdited: '2019-04-02T23:17:27.000Z'
 }
 
 ## Server Specs
 
 ### Origins
 
-The Now API serves endpoints from Origin nodes located both in SFO1 (US West) and BRU1 (Brussels, Europe).
+The Now API serves endpoints from Origin nodes located in [bru1, hnd1, iad1, sfo1](/docs/v2/platform/regions-and-providers).
 
 Each request to any `api.zeit.co` endpoint, will be automatically resolved to the closest Origin location using [Anycast](https://zeit.co/network). Allowing requests to be routed this way is the recommended way to use our API.
 
-If requests are desired to hit a certain location, however, the API can be accessed through individual URLs for each Origin. SFO1 can be resolved through `api-sfo1.zeit.co`, and BRU1 can be resolved through `api-bru1.zeit.co`.
+If requests are desired to hit a certain location, however, the API can be accessed through individual URLs for each Origin. For example, sfo1 can be resolved through `api-sfo1.zeit.co`, and bru1 can be resolved through `api-bru1.zeit.co`.
 
 ### HTTP and TLS
 

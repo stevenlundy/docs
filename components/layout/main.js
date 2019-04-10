@@ -6,12 +6,12 @@ const Main = ({ children }) => (
     <style jsx>{`
       .main {
         min-height: 100vh;
-        padding-top: 90px;
+        padding-top: 84px;
       }
 
       .main :global(> div) {
         display: flex;
-        min-height: calc(100vh - 90px);
+        min-height: calc(100vh - 84px);
       }
     `}</style>
   </main>

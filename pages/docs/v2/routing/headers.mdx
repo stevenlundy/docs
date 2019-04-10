@@ -1,11 +1,13 @@
 import Doc from '~/components/layout/docs'
+import Note from '~/components/text/note'
+import { InlineCode } from '~/components/text/code'
 import { RequestHeader } from '~/components/text/code'
 
 export const meta = {
   title: 'Headers',
   description: 'The list of headers included with deployments with ZEIT Now.',
   editUrl: 'pages/docs/v2/routing/headers.mdx',
-  lastEdited: '2019-02-04T23:22:27.000Z'
+  lastEdited: '2019-04-07T00:32:00.000Z'
 }
 
 The following headers are included in Now deployments and indicate certain factors of the environment:
@@ -40,6 +42,19 @@ The unique identifier for each request.
 
 ## `x-now-trace`
 
-Contains list of [our data centers](/docs/v2/platform/regions-and-providers/) through which the request has traversed.
+Contains a list of [our data centers](/docs/v2/platform/regions-and-providers/) through which the request has traversed, usually the data center closest to you.
+
+<Note>
+  The trace is where a request was processed, it is not necessarily where a
+  lambda was executed, this could be different if you defined{' '}
+  <InlineCode>regions</InlineCode> in your
+  <InlineCode>now.json</InlineCode> file.
+</Note>
+
+# Custom Headers
+
+In addition to regular [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) and Now headers, it is also possible to supply your own custom headers.
+
+Custom headers are added in the same way regular headers are, by making an addition to the `routes` property in your `now.json` file.
 
 export default ({ children }) => <Doc meta={meta}>{children}</Doc>

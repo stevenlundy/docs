@@ -7,6 +7,7 @@ const MenuDivider = (props, { darkBg = false }) => (
       .line {
         border-top: 1px solid #eaeaea;
         margin: 8px 0;
+        width: 100%;
       }
 
       .dark.line {
