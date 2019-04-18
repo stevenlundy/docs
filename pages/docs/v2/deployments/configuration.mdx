@@ -68,14 +68,16 @@ Specifies the [Now Platform version](/docs/v2/platform/overview#versioning) the 
 
 **Type**: `Array` or `String`.
 
-**Valid values**: [domain names](/docs/v2/domains-and-aliases/adding-a-domain) (optionally including subdomains) added to the account.
+**Valid values**: [domain names](/docs/v2/domains-and-aliases/adding-a-domain) (optionally including subdomains) added to the account, or a string for a suffxed URL using `.now.sh` or a [Custom Deployment Suffix](/docs/v2/platform/add-ons/#custom-deployment-suffix).
 
-The alias or aliases are applied when merging a PR to the master branch with [Now for GitHub](/docs/v2/integrations/now-for-github), or when deploying to master.
+The alias or aliases are applied automatically using [Now for GitHub](/docs/v2/integrations/now-for-github) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab) when merging or pushing to the default branch.
+
+You can deploy to the defined aliases using Now CLI by setting the [production deployment environment target](/docs/v2/domains-and-aliases/aliasing-a-deployment/#production).
 
 <Example>
   <P.B>Usage Example:</P.B>
   <Code lang="json">{`{
-  "alias": ["my-domain.com", "www.my-domain.com"]
+  "alias": ["my-domain.com", "my-alias"]
 }`}</Code>
 </Example>
 

@@ -25,11 +25,11 @@ Now for GitLab provides:
 - Instant rollbacks when reverting changes that have already been [aliased](/docs/v2/domains-and-aliases/aliasing-a-deployment).
 
 <Image
-src={`${process.env.ASSETS}/docs/now-for-gitlab/ci.png`}
-width={2304/2}
-height={1702/2}
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/deploy-comment.png`}
+  width={2080/2.5}
+  height={1392/2.5}
 />
-<Caption>Now for GitLab deploying a GitLab merge request.</Caption>
+<Caption style={{marginTop: '-40px'}}>A deployment from a Now for GitLab push.</Caption>
 
 ## Set up Now for GitLab
 
@@ -44,29 +44,24 @@ height={384/2}
 />
 <Caption>The Now for GitLab installation section within the account or team general settings page.</Caption>
 
-Next, you need to authorize the Now application on GitLab with your account.
-
-<Image
-src={`${process.env.ASSETS}/docs/now-for-gitlab/authorize-gitlab.png`}
-width={2192/2}
-height={1584/2}
-/>
-<Caption>The Now for GitLab Authorization section within the account or team onboarding.</Caption>
+Next, you will need to authorize the Now application on GitLab with your account.
 
 Once authorized, you will be redirected back to your ZEIT account or team settings page.
 
 ### Step 2: Link GitLab Projects
 
-Now only deploys GitLab projects you have explicitly linked to from the GitLab control block in your account or team settings page. Without linking a project, no deployments will be made.
+Now only deploys GitLab projects you have explicitly linked to from the GitLab control block in your [account](/account) or team settings page, depending on where you linked your GitLab account. Without linking a project, no deployments will be made.
 
 You can link projects across all the GitLab namespaces you have access to and unlink a project at any time.
 
+You can also link a GitLab project from the [New Project page](/new):
+
 <Image
-  src={`${process.env.ASSETS}/docs/now-for-gitlab/link-gitlab.png`}
-  width={1456/2}
-  height={582/2}
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/new-project-link.png`}
+  width={2152/2.5}
+  height={1450/2.5}
 />
-<Caption>Link GitLab Projects.</Caption>
+<Caption style={{marginTop: '-64px'}}>Linking a GitLab project.</Caption>
 
 ## Sign Up or Login with GitLab
 
@@ -75,9 +70,9 @@ If you have, or will have, [connected](#step-1:-link-now-to-your-gitlab-account)
 Alternatively; if you do not already have a Now account, you can sign up to ZEIT using your GitLab account from [the sign up page](/signup).
 
 <Image
-  src={`${process.env.ASSETS}/docs/now-for-gitlab/login-with-gitlab.png`}
-  width={1994/2}
-  height={1488/2}
+  src={`${process.env.ASSETS}/general/login-page.png`}
+  width={2152/2}
+  height={1500/2}
 />
 <Caption>Login to ZEIT with GitLab.</Caption>
 
@@ -87,7 +82,7 @@ Once you link a GitLab project, we will deploy every git-push related to that pr
 
 Using [a `now.json` file](/docs/v2/deployments/configuration), you can configure your projects to deploy as [dynamic serverless functions](/docs/v2/deployments/concepts/lambdas).
 
-## Default Behaviour
+## Default Behavior
 
 ### A Deployment for Each Push
 
@@ -106,6 +101,19 @@ For example, the following [`now.json` configuration](/docs/v2/deployments/con
   "alias": ["my-zeit-website.com"]
 }
 ```
+
+If you decide to revert a commit that has already been aliased, the previous commit's deployment will automatically be aliased instantly; providing you with instant rollbacks.
+
+### Staging Aliases for Each Merge Request
+
+The latest push to any merge request will automatically be aliased to a unique URL based on the project name, branch, and team or username. These URLs will be given through a comment on each merge request. For more on automatic aliases for git pushes and beyond in the [Aliasing Documentation](/docs/v2/domains-and-aliases/aliasing-a-deployment/#git-staging-aliases).
+
+<Image
+  src={`${process.env.ASSETS}/guides/getting-started-with-now-for-gitlab/merge-request-alias.png`}
+  width={2080/2.5}
+  height={1392/2.5}
+/>
+<Caption style={{marginTop: '-40px'}}>A staging alias created from a merge request.</Caption>
 
 ## Included Environment Variables
 

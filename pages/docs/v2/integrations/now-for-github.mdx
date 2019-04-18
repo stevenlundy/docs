@@ -85,7 +85,7 @@ A `now.json` file is a way to configure the deployments Now will make using your
 
 With the repository correctly configured, Now for GitHub will start deploying the app.
 
-## Standard Behaviour
+## Default Behavior
 
 ### A Deployment for Each Push
 
@@ -104,6 +104,33 @@ For example, the following `now.json` configuration will make Now for GitHub ali
   "alias": ["my-zeit-website.com"]
 }
 ```
+
+If you decide to revert a commit that has already been aliased, the previous commit's deployment will automatically be aliased instantly; providing you with instant rollbacks.
+
+### Staging Aliases for the Latest Changes for Each Pull Request
+
+The latest push to any pull request will automatically be aliased to a unique URL based on the project name, branch, and team or username. These URLs will be given through a comment on each pull request. For more on automatic aliases for git pushes and beyond in the [Aliasing Documentation](/docs/v2/domains-and-aliases/aliasing-a-deployment/#git-staging-aliases).
+
+### Deployment Authorizations for Forks
+
+If you recieve a pull request from a fork of your repository and there is either a change to the [`now.json`](/docs/v2/deployments/configuration) file or there are [secrets](/docs/v2/deployments/environment-variables-and-secrets/#securing-environment-variables-using-secrets) used in your project; Now will require an authorization from you or a member of your team to deploy the pull request.
+
+This behavior protects you and your project from a leak of sensitive information.
+
+## Extending Your GitHub Workflow
+
+Now for GitHub uses the deployment API to bring you an extended user interface both in GitHub, when showing deployments, and Slack, if you have notifications setup using the [Slack GitHub app](https://slack.github.com).
+
+You will see all of your deployments, production or staging, from within GitHub in its own page. See the page for this very documentation: https://github.com/zeit/docs/deployments
+
+Due to using GitHub's Deployments API, you will also be able to integrate with other services through [GitHub's checks](https://help.github.com/en/articles/about-status-checks). Now for GitHub will provide the deployment URL to the checks that require it, for example; to a testing suite such as [Ghost Inspector](https://ghostinspector.com/docs/integration/github/).
+
+<Image
+  src={`${process.env.ASSETS}/docs/now-for-github/github-checks.png`}
+  width={1738/2}
+  height={1046/2}
+/>
+<Caption style={{marginTop: '-40px'}}>The checks UI from GitHub containing Now and Ghost Inspector.</Caption>
 
 ## Configuration
 
@@ -147,7 +174,7 @@ To stop Now from [automatically aliasing the default branch](#aliasing-the-defau
 
 ### Disable Commenting with Silent Mode
 
-To stop Now from commenting on pull requests and commits, use the following configuration option in [a `now.json` file](/docs/v2/deployments/configuration) for the repository you want to stop this behaviour in.
+To stop Now from commenting on pull requests and commits, use the following configuration option in [a `now.json` file](/docs/v2/deployments/configuration) for the repository you want to stop this behavior in.
 
 <Note>
   Although Now will stop commenting, it will not stop deploying the latest
@@ -167,7 +194,7 @@ To stop Now from commenting on pull requests and commits, use the following conf
 
 ### Disable Auto Job Cancellation
 
-To stop Now from canceling in-progress builds to prioritise building newer commits, use the following configuration option in [a `now.json` file](/docs/v2/deployments/configuration) for the repository that this behaviour should exist in.
+To stop Now from canceling in-progress builds to prioritise building newer commits, use the following configuration option in [a `now.json` file](/docs/v2/deployments/configuration) for the repository that this behavior should exist in.
 
 ```json
 {

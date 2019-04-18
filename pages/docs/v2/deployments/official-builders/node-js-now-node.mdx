@@ -178,7 +178,7 @@ The resulting lambda contains both the build and current time: <https://build-ti
 
 ### Node.js Version
 
-The Node.js version used is the latest in the **8 branch**.
+The Node.js version used is the **v8.10**.
 
 ### Request and Response Objects
 
@@ -196,13 +196,13 @@ module.exports = app\n
 app.use(bodyParser.json())\n
 app.post('*', (req, res) => {
   if (req.body == null) {
-    return res.send(400, { error: 'no JSON object in the request' })
+    return res.status(400).send({ error: 'no JSON object in the request' })
   }\n
   res.set('Content-Type', 'application/json')
-  res.send(200, JSON.stringify(req.body, null, 4))
+  res.status(200).send(JSON.stringify(req.body, null, 4))
 })\n
 app.all('*', (req, res) => {
-  res.send(405, { error: 'only POST requests are accepted' })
+  res.status(405).send({ error: 'only POST requests are accepted' })
 })`}</Code>
 </Example>
 

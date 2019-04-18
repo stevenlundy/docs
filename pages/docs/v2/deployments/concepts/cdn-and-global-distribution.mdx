@@ -10,7 +10,7 @@ export const meta = {
   description:
     'Documentation for the concept of how ZEIT Now deployments can utilise the ZEIT CDN to host and serve content at the edge.',
   editUrl: 'pages/docs/v2/deployments/concepts/cdn-and-global-distribution.mdx',
-  lastEdited: '2019-03-29T18:47:43.000Z'
+  lastEdited: '2019-04-12T16:49:49.000Z'
 }
 
 We offer two kinds of Content Management Networks (depending on your [pricing plan](/pricing)) for allowing your content to be served as fast as possible.
@@ -19,12 +19,29 @@ We offer two kinds of Content Management Networks (depending on your [pricing pl
 
 On both [pricing plans](/pricing), you can create deployments in any [region](/docs/v2/platform/regions-and-providers) within our **Basic CDN**:
 
-- [BRU](https://bru.zeit.co/) (Brussels, Belgium, West Europe)
+- [ARN](https://arn.zeit.co) (Stockholm, Sweden)
+- [BOM](https://bom.zeit.co) (Mumbai, India)
+- [BRU](https://bru.zeit.co) (Brussels, Belgium, West Europe)
+- [CDG](https://cdg.zeit.co) (Paris, France)
+- [CHS](https://chs.zeit.co) (Charleston, East US)
+- [CLE](https://cle.zeit.co) (Cleveland, East US)
+- [DUB](https://dub.zeit.co) (Dublin, Ireland)
 - [GRU](https://gru.zeit.co) (São Paulo, Brazil)
-- [HND](https://hnd.zeit.co/) (Tokyo, Japan)
-- [IAD](https://iad.zeit.co/) (Washington DC, East US)
-- [LHR](https://lhr.zeit.co/) (London, UK)
-- [SFO](https://sfo.zeit.co/) (San Francisco, West US)
+- [HEL](https://hel.zeit.co) (Helsinki, Finland)
+- [HKG](https://hkg.zeit.co) (Hong Kong)
+- [HND](https://hnd.zeit.co) (Tokyo, Japan)
+- [IAD](https://iad.zeit.co) (Washington DC, East US)
+- [ICN](https://icn.zeit.co) (Seoul, South Korea)
+- [LAX](https://lax.zeit.co) (Los Angeles, West US)
+- [LHR](https://lhr.zeit.co) (London, UK)
+- [OMA](https://oma.zeit.co) (Omaha, Central US)
+- [PDX](https://pdx.zeit.co) (Portland, West US)
+- [SIN](https://sin.zeit.co) (Singapore)
+- [SFO](https://sfo.zeit.co) (San Francisco, West US)
+- [SYD](https://syd.zeit.co) (Sydney, Australia)
+- [TPE](https://tpe.zeit.co) (Taipei, Taiwan)
+- [YUL](https://yul.zeit.co) (Montreal, Canada)
+- [ZRH](https://zrh.zeit.co) (Zurich, Switzerland)
 
 If you do not specify a region (which can be done using the `--region` flag in Now CLI), your [Lambdas](/docs/v2/deployments/concepts/lambdas) will only be created in one of these regions: The one that is closest to you.
 
@@ -44,10 +61,10 @@ Cache-Control: s-maxage=31536000
 
 This is just an example, however.
 
-Although this would be enough for ensuring your responses are cached in all regions available within the Full CDN, you should generally also include `maxage` (used for client caches), so that all clients (e.g., browsers) also know for how long to cache your responses:
+Although this would be enough for ensuring your responses are cached in all regions available within the Full CDN, you should generally also include `max-age` (used for client caches), so that all clients (e.g., browsers) also know for how long to cache your responses:
 
 ```
-Cache-Control: s-maxage=31536000, maxage=0
+Cache-Control: s-maxage=31536000, max-age=0
 ```
 
 As you can see above, the header is now instructing the client to expire any caches for the resource immediately. In general, we recommend this because it leverages Now's caches across the Full CDN instead of depending on the client's as well.
