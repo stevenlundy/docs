@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Code, InlineCode } from '~/components/text/code'
@@ -13,10 +14,10 @@ export const meta = {
   description:
     'The official Python Builder for ZEIT Now. Serverless invokable functions from Python source code for ZEIT Now deployments.',
   editUrl: 'pages/docs/v2/deployments/official-builders/python-now-python.mdx',
-  lastEdited: '2019-03-12T15:18:33.000Z'
+  lastEdited: '2019-05-03T01:09:00.000Z'
 }
 
-<Tag>Status: Alpha</Tag>
+<Tag>Status: Beta</Tag>
 
 This builder takes in a Python program that defines a singular HTTP handler and outputs it as a [Lambda](/docs/v2/deployments/concepts/lambdas).
 
@@ -62,15 +63,60 @@ The example above can be seen live as <https://python-deployment-mhssg6mqx.now.s
 
 Also, the source code of the deployment can be checked by appending `/_src` e.g. <https://python-deployment-mhssg6mqx.now.sh/_src>.
 
+## Web Server Gateway Interface
+
+The Web Server Gateway Interface (WSGI) is a calling convention for web servers to forward requests to web applications written in Python. You can use WSGI with frameworks such as [Flask](/examples/python-flask) or Django.
+
+Instead of defining a `handler`, define an `app` variable in your Python file.
+
+For example, define a `index.py` file inside a folder as follows:
+
+```python
+from flask import Flask, Response
+app = Flask(__name__)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return Response("<h1>Flask on Now</h1><p>You visited: /%s</p>" % (path), mimetype="text/html")
+```
+
+Inside `requirements.txt` define:
+
+```
+flask==1.0.2
+```
+
+And define a `now.json` like:
+
+```json
+{
+  "version": 2,
+  "builds": [{ "src": "index.py", "use": "@now/python" }],
+  "routes": [{ "src": "(.*)", "dest": "index.py" }]
+}
+```
+
+Most frameworks use their own implementation of routing. However, you can use a catch-all route to circumvent the framework and instead use [Now Routing Layer](/docs/v2/deployments/routes) to match a route to a Lambda.
+
+The example above can be seen live as <https://simple-python-flask.now-examples.now.sh/Hello>
+
 ## Technical Details
 
 ### Entrypoint
 
-The entrypoint file must be a `.py` source file with a `handler` that inherits from the `BaseHTTPRequestHandler` class.
+The entrypoint file must be a `.py` source file with one of the following variables defined:
+
+- `handler` that inherits from the `BaseHTTPRequestHandler` class
+- `app` that exposes a WSGI Application
+
+### Version
+
+Python 3.6 is used.
 
 ### Dependencies
 
-This builder supports installing dependencies defined in the `requirements.txt` file.
+This builder supports installing dependencies defined in the `requirements.txt` file or a `Pipfile.lock` file.
 
 ### Maximum Lambda Bundle Size
 
@@ -88,4 +134,6 @@ This [limit is extendable](/docs/v2/deployments/builders/overview#configuring-ou
 }`}</Code>
 </Example>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

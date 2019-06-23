@@ -1,0 +1,19 @@
+import Terminology from './terminology.mdx'
+import UIHooksHttpBased from './uihooks-http-based.mdx'
+import HttpPayload from './http-payload.mdx'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/understanding-uihooks/understanding-uihooks.mdx',
+  lastEdited: '2019-06-12T15:12:45.000Z'
+}
+
+# Understanding UIHooks
+
+A UIHook is the main component of a ZEIT Integration. In [the Creating an Integration section](#creating-an-integration), we used a utility from the `@zeit/integration-utils` module to [create a UIHook](#creating-an-integration/step-2-creating-a-uihook).
+
+The module we used is only available when using Node.js to build the UIHook, but a UIHook can be created using any programming language or framework.
+
+<Terminology />
+<UIHooksHttpBased />
+<HttpPayload />

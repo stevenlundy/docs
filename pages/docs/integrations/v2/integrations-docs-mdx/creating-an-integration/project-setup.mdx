@@ -1,0 +1,66 @@
+import Note from '~/components/text/note'
+import { TerminalInput } from '~/components/text/terminal'
+import { InlineCode } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/getting-started/project-setup.mdx',
+  lastEdited: '2019-05-20T12:48:18.000Z'
+}
+
+## Step 1: Project Setup
+
+### Install Node.js and Now CLI
+
+<Note>
+  If you already have the latest stable versions of Node.js and{' '}
+  <GenericLink href="/now">Now CLI</GenericLink>. You can{' '}
+  <GenericLink href="#creating-an-integration/step-1-project-setup/add-a-package-json-file">
+    skip this step
+  </GenericLink>
+  .
+</Note>
+
+Firstly, download and install [Node.js](https://nodejs.org/en/).
+
+Next, you can install Now CLI through a package manager or bundled with [Now Desktop](/download) with automatic updates. For more information on installation methods, see the [Installation documentation](/docs/v2/getting-started/installation).
+
+To install Now CLI with a [Yarn](https://yarnpkg.com), use the following from the terminal:
+
+<TerminalInput>yarn global add now</TerminalInput>
+<Caption>Installing Now CLI with Yarn.</Caption>
+
+### Add a package.json File
+
+We are using some npm modules inside this UIHook. So, let's create a file called `package.json` and the following content:
+
+```json
+{
+  "name": "my-ui-hook",
+  "dependencies": {
+    "@zeit/integration-utils": "latest"
+  }
+}
+```
+
+Then simply type: `npm install` to add dependencies.
+
+### Add a now.json File
+
+Since this UIHook will be deployed with Now, a `now.json` file is used to provide minimal configuration for the deployment and how it should behave. You should also use a `now.json` file when [running your Integration locally](/docs/v2/development/basics/) with `now dev`.
+
+Create a `now.json` file at the root of your project, then add the following content:
+
+```json
+{
+  "name": "my-ui-hook",
+  "version": 2,
+  "builds": [{ "src": "index.js", "use": "@now/node" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file for a ZEIT Integration.
+</Caption>

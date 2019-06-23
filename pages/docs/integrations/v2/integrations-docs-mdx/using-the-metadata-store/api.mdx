@@ -1,0 +1,62 @@
+import Endpoint from '~/components/api/endpoint'
+import Request from '~/components/api/request'
+import Caption from '~/components/text/caption'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/using-the-metadata-store/api.mdx',
+  lastEdited: '2019-05-20T23:31:58.000Z'
+}
+
+## API
+
+The following API endpoints can also be used to store metadata.
+
+In order to use that API, you need to get the related `configurationId`. You can find that in the [UIHook payload](/docs/integrations#understanding-uihooks/http-payload).
+
+You must also provide an authorization token in the requests, further information is available [here](/docs/api#api-basics/authentication).
+
+### Get Metadata
+
+<Endpoint
+  method="GET"
+  url="https://api.zeit.co/v1/integrations/configuration/:configurationId/metadata"
+/>
+
+The response type is a JSON string, the structure of this is determined by the Integration's Metadata, below is en example:
+
+```json
+{
+  "user": {
+    "username": "integrationuser",
+    "name": "Integration User",
+    "id": "id",
+    "email": "mail@email.com"
+  },
+  "token": "token",
+  "sandboxes": {
+    "sandbox": "sandbox"
+  }
+}
+```
+
+<Caption>An example response from the GET metadata endpoint.</Caption>
+
+### Set Metadata
+
+<Endpoint
+  method="POST"
+  url="https://api.zeit.co/v1/integrations/configuration/:configurationId/metadata"
+/>
+
+This endpoint, using the POST method and a JSON body, sets metadata for a [UIHook](#creating-an-integration/step-2-creating-a-uihook).
+
+The body to submit with the POST request should be a valid JSON object containing metadata. The following is an example request using JavaScript:
+
+<Request
+  type="js"
+  url="https://api.zeit.co/v1/integrations/configuration/:configurationId/metadata"
+  method="POST"
+  body={'{"mydata": "a value for mydata"}'}
+/>
+<Caption>An example POST request to the metadata endpoint using JavaScript.</Caption>

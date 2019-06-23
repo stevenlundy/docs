@@ -1,0 +1,87 @@
+import Note from '~/components/text/note'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/component-catalog/action-components.mdx',
+  lastEdited: '2019-06-04T13:51:46.000Z'
+}
+
+## Action Components
+
+These components create a new UIHook request with an action that forms part of the component.
+
+### Button
+
+This is a key part of your UIHook. When the user clicks the button, we call your UIHook with the action attached to the button.
+
+```jsx
+<Button action="create-db">Create Database</Button>
+```
+
+The Button component supports the following attributes:
+
+- `small`
+- `disabled`
+- `width` (in pixels)
+- `secondary`
+- `warning`
+- `highlight`
+- `abort`
+
+### ProjectSwitcher
+
+This component can be used when you want to provide your users with a way of switching between projects easily, or if you require them to select a project to start using your Integration initially.
+
+```jsx
+<ProjectSwitcher message="Choose a project from the list" />
+```
+
+The ProjectSwitcher component supports the following attribute:
+
+- `message` (default is `"Select a project"`)
+
+### AutoRefresh
+
+This can be use to refresh the UI by loading the UIHook again. This is useful when waiting for a background task to finish processing.
+
+```jsx
+<AutoRefresh timeout="<timeout-in-millis>" />
+```
+
+<Note>Timeouts must be greater than 3 seconds.</Note>
+
+The AutoRefresh component supports the following attributes:
+
+- `action`
+- `timeout`
+
+### Link
+
+The Link component allows you to link to either an external URL or an action:
+
+```jsx
+<Link href="https://zeit.co">Visit ZEIT</Link>
+```
+
+```jsx
+<Link action="doSomething">Do Something</Link>
+```
+
+The Link component supports the following attribute:
+
+- `target`
+
+### Select
+
+The Select component provides the user with a dropdown menu that contains specified options.
+By default, this is an [input component](/docs/integrations#component-catalog/input-components),
+however, adding the `action` attribute, the component can be converted into an [action](#component-catalog/action-components) component.
+
+When using the `action` attribute, when a user selects an option from the element, the UIHook will be called again containing the defined action within the [client state](#creating-user-interfaces/client-state).
+
+```jsx
+<Select name="dbName" value="selectedValue" action="change-db">
+  <Option value="mongodb" caption="MongoDB" />
+  <Option value="redis" caption="Redis" />
+</Select>
+```

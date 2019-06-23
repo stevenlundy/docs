@@ -1,0 +1,21 @@
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/understanding-uihooks/http-payload.mdx',
+  lastEdited: '2019-05-20T23:31:58.000Z'
+}
+
+## HTTP Payload
+
+The payload used in the UIHook receives a JSON payload with different pieces of information regarding the related configuration of the Integration, those being:
+
+- `action` - The [action](/docs/integrations#creating-user-interfaces/actions) of the UIHook (defaults to `view`)
+- `clientState` - An object containing the [values](/docs/integrations#creating-user-interfaces/client-state) of input components
+- `slug` - The slug of the Integration that sent the request
+- `configurationId` - The id of the configuration
+- `integrationId` - The id of the Integration
+- `team` - The team, if the Integration is added to a team
+- `user` - The user object of the user who is accessing the configuration
+- `project` - The [`project`](/docs/integrations#creating-user-interfaces/information/project-information) if the configuration is being accessing inside a project, otherwise `null`
+- `token` - A short-lived [token](/docs/integrations#creating-user-interfaces/tokens) which has authorization for the installed account
+- `installationUrl` - The URL of the current Integration configuration. (You can use this to redirect a user to another site using `installationUrl` as the redirect URL)
+- `query` - An object containing query parameters of the Integration installation page

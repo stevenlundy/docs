@@ -1,0 +1,128 @@
+import Note from '~/components/text/note'
+import { InlineCode } from '~/components/text/code'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/component-catalog/input-components.mdx',
+  lastEdited: '2019-06-11T22:29:09.000Z'
+}
+
+## Input Components
+
+To receive user inputs, you should use a component appropriate for your use case.
+
+<Note>
+  The name prop provided to the Input component will be used to populate the{' '}
+  <InlineCode>clientState</InlineCode> of the UIHook and must be used if using
+  multiple Inputs.
+</Note>
+
+### Input
+
+The Input component provides the user with an input field:
+
+```jsx
+<Input name="dbName" label="Name for the Database" value="the default value" />
+```
+
+The Input component supports the following attributes:
+
+- `type`
+- `disabled`
+- `errored`
+- `value`
+- `name`
+
+### Textarea
+
+The Textarea component provides the user with a text area:
+
+```jsx
+<Textarea name="description" label="Enter your description">
+  The value
+</Textarea>
+```
+
+The Textarea component supports the following attributes:
+
+- `disabled`
+- `errored`
+- `width` (in pixels)
+- `height` (in pixels)
+- `name`
+- `label`
+
+### Select
+
+The Select component provides the user with a drop down menu that contains the specified options:
+
+```jsx
+<Select name="dbName" value="selectedValue">
+  <Option value="mongodb" caption="MongoDB" />
+  <Option value="redis" caption="Redis" />
+</Select>
+```
+
+### Checkbox
+
+The Checkbox component provides the user with a Checkbox input:
+
+```jsx
+<Checkbox name="allowOptionA" label="Allow Option A" checked="true" />
+```
+
+The Checkbox component supports the following attributes:
+
+- `name` - the name of the `clientState` field
+- `label` - a label to show next to the Checkbox
+- `checked` - the default state of the Checkbox, either `"true"` or `"false"`
+
+If the user checks the Checkbox, or allows it to remain in the checked state from default, `clientState` will have a field with the name defined in the `Checkbox` component with the value as `true`.
+
+### ClientState
+
+The ClientState component allows you to store the current client state and retrieve it when required with an action.
+This is similar to an `<Input />` component, except the value is set on the server side and is not visible to the user.
+
+```jsx
+<ClientState key1="value1" key2="value2" />
+```
+
+In the above example, client state can be accessed at `payload.clientState` when the user triggers an action, for example, when clicking a button.
+
+Below is an example showing the format of the `clientState` object:
+
+```json
+{
+  "key1": "value1",
+  "key2": "value2"
+}
+```
+
+### ResetButton
+
+The ResetButton component allows the user to reset the values of `<Input />` components.
+Values are reset on the client side, which means that no server side request will be made.
+
+```jsx
+<ResetButton targets="username, password">Reset</ResetButton>
+```
+
+The ResetButton component supports the following attribute:
+
+- `targets` - comma separated values of the `<Input />` names. If the attribute is not defined it will reset the values of all `<Input />` components.
+
+Below is an example showing the component's usage:
+
+```jsx
+<Page>
+  <Input type="text" name="username" />
+  <Input type="text" name="password" />
+  <Input type="text" name="age" />
+
+  <Button action="submit">Submit</Button>
+  <ResetButton targets="username, password">Reset</ResetButton>
+</Page>
+```
+
+In the above example, the `username` and `password` fields will be reset, whilst the `age` field will remain unchanged.

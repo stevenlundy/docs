@@ -1,0 +1,35 @@
+import Note from '~/components/text/note'
+import Caption from '~/components/text/caption'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-user-interfaces/actions.mdx',
+  lastEdited: '2019-05-20T10:02:26.000Z'
+}
+
+## Actions
+
+In a user interface, we usually expose multiple different actions. In the example we looked at earlier there are two actions:
+
+```jsx
+<Container>
+  <Button action="submit">Submit</Button>
+  <Button action="reset">Reset</Button>
+</Container>
+```
+
+<Caption>An example of a UIHook using whitelisted components.</Caption>
+
+These actions are exposed as buttons, in this case `submit` and `reset`.
+
+When a user clicks a button, we send a request to the UIHook with the action. The UIHook then sends a response in the form of a string of components, this is what will be rendered.
+
+You can access the action from the `payload.action` property. The default action is `view` and will always be the `action` when the Integration is first loaded.
+
+<Note>
+  You have complete control over the names and amount of actions created.
+</Note>
+
+For a better understanding of how actions work, take a look at the [Counter example](/docs/integrations#examples/counter) discussed earlier in the documentation.
+
+You can discover all supported action components in the [component catalog](/docs/integrations#component-catalog).

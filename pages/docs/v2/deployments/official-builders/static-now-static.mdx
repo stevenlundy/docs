@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { InlineCode } from '~/components/text/code'
@@ -69,4 +70,6 @@ You can see the resulting deployment in action here: <https://builds-deployment-
 
 You can specify any file or set of files as the `src` of a build that uses `@now/static`.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

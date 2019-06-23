@@ -1,0 +1,112 @@
+import Note from '~/components/text/note'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/component-catalog/ui-components.mdx',
+  lastEdited: '2019-06-03T17:04:30.000Z'
+}
+
+## UI Components
+
+The following UI components are very similar to those found in HTML5, the main difference being we're providing the initial styling.
+
+### Box
+
+The Box component is a `div` that accepts style attributes:
+
+```jsx
+<Box display="flex" justifyContent="space-between">
+  <H1>Your Databases</H1>
+  <Button>+Create New</Button>
+</Box>
+```
+
+You can add as many CSS style attributes as you like.
+
+### P
+
+```jsx
+<P>A paragraph.</P>
+```
+
+### H1
+
+```jsx
+<H1>The Title</H1>
+```
+
+### H2
+
+```jsx
+<H2>The Secondary Title</H2>
+```
+
+### BR
+
+```jsx
+<BR />
+```
+
+### HR
+
+This component renders a horizontal rule, similar to the [HTML hr](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/hr), styled to match ZEIT's design.
+
+```jsx
+<HR />
+```
+
+### B
+
+```jsx
+<B>Some Bold Text</B>
+```
+
+### Img
+
+```jsx
+<Img src="url-to-image" />
+```
+
+The Img component supports the following attributes:
+
+- `title`
+- `width` (in pixels)
+- `height` (in pixels)
+
+### Code
+
+```jsx
+const code = `
+	<html>You can put anything here</html>
+`
+<Code>${code}</Code>
+```
+
+### Fieldset
+
+The Fieldset component allows you to group different sections in your UI.
+
+```jsx
+<Fieldset>
+  <FsContent>
+    <H2>This is the Title</H2>
+    <P>This is some content.</P>
+  </FsContent>
+  <FsFooter>
+    <P>This is the footer.</P>
+  </FsFooter>
+</Fieldset>
+```
+
+### Notice
+
+```jsx
+<Notice type="error">This is an error messgae.</Notice>
+```
+
+The Notice component supports the following types:
+
+- `error`
+- `warn`
+- `message`
+- `success`

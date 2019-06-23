@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { GenericLink } from '~/components/text/link'
@@ -118,7 +119,7 @@ In the example above, the three dynamic entrypoints we specified (two PHP script
 
 This has numerous benefits:
 
-- Ensures smaller package sizes which in term make **cold bootup times very fast**
+- Ensures smaller package sizes which in turn make **cold bootup times very fast**
 - Makes builds faster by [analyzing and re-building only changes](/docs/v2/deployments/builds)
 - Improves security by increasing isolation
 
@@ -208,7 +209,7 @@ This configuration option, `maxLambdaSize`, accepts any byte value up to `50mb`.
 
 ### Maximum Execution Duration
 
-A lambda can execute for at most **15 minutes**. This is not configurable as of now. If the limit is reached for a particular invocation, it will result in an error [504](/docs/v2/routing/status-codes).
+A lambda can execute for at most **5 minutes**. This is not configurable as of now. If the limit is reached for a particular invocation, it will result in an error [504](/docs/v2/routing/status-codes).
 
 ### In-memory Caches
 
@@ -216,10 +217,12 @@ It is possible to take advantage of global state from invocation to invocation i
 
 ### Filesystem
 
-The filesystem is writable inside `/tmp` and persisted if the underlying [container is re-used](/docs/v2/platform/regions-and-providers). The `/tmp` directory is writable for up to `512mb` or storage.
+The filesystem is writable inside `/tmp` and persisted if the underlying [container is re-used](/docs/v2/platform/regions-and-providers). The `/tmp` directory is writable for up to `512mb` of storage.
 
 ### Logging
 
 All output streams are captured and persisted. Each function can store up to 1,000 lines. Each deployment will aggregate up to 1,000 lines. Each line is defined as a string chunk of up to **1kb**.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

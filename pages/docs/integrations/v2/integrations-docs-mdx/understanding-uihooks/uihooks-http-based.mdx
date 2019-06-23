@@ -1,0 +1,82 @@
+import Note from '~/components/text/note'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/understanding-uihooks/uihooks-http-based.mdx',
+  lastEdited: '2019-05-20T23:31:58.000Z'
+}
+
+## UIHooks are HTTP-Based
+
+UIHooks are HTTP based, therefore they are not tied to any programming language or framework.
+
+The process a UIHook uses is as follows:
+
+- The UIHook receives a HTTP POST request, including a JSON payload as the request body
+- The UIHook returns a HTML string, with [components](#component-catalog), as the response
+- A UIHook can be called via client side, so it needs to support CORS
+
+The following example shows how you can implement a UIHook with Node.js and [micro](https://www.npmjs.com/package/micro).
+
+<Note>
+  This implementation is very similar to implementations in other languages.
+</Note>
+
+```js
+const micro = require('micro')
+
+let counter = 0
+
+async function uiHook(req, res) {
+  // Add CORS support. So UIHook can be called via client side.
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Authorization, Accept, Content-Type'
+  )
+
+  if (req.method === 'OPTIONS') {
+    return micro.send(res, 200)
+  }
+
+  // UIHook works only with HTTP POST.
+  if (req.method !== 'POST') {
+    return micro.send(res, 404, '404 - Not Found')
+  }
+
+  // Extract payload from the POST body.
+  const payload = await micro.json(req)
+  if (payload.action === 'reset') {
+    counter = 0
+  } else {
+    counter += 1
+  }
+
+  // Send HTML, with components, as the response
+  return micro.send(
+    res,
+    200,
+    `
+    <Page>
+      <P>Counter: ${counter}</P>
+      <Button>Count Me</Button>
+      <Button action="reset">Reset</Button>
+    </Page>
+  `
+  )
+}
+
+// Start the HTTP server
+const server = micro(uiHook)
+const port = process.env.PORT || 5005
+
+console.log(`UIHook started on http://localhost:${port}`)
+server.listen(port, err => {
+  if (err) {
+    throw err
+  }
+})
+```
+
+For more examples of Integration implementations including the above example and others in more languages, such as PHP, Python, Go and Rust, [see the Integration Gallery repository](https://github.com/zeit/integrations).

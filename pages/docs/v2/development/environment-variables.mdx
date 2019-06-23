@@ -1,0 +1,174 @@
+import { withAmp } from 'next/amp'
+import Doc from '~/components/layout/docs'
+import Now from '~/components/text/now'
+import { GenericLink } from '~/components/text/link'
+import { P } from '~/components/text/paragraph'
+import { TerminalInput } from '~/components/text/terminal'
+import Card from '~/components/card'
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Environment Variables',
+  description: 'Creating and using environment variables in Now Development',
+  editUrl: 'pages/docs/v2/development/environment-variables.mdx',
+  lastEdited: '2019-04-28T23:45:20.000Z'
+}
+
+If there are aspects of your project that need to differ depending on whether it is a local or cloud deployment, environment variables are the perfect solution.
+
+Not only do they avoid having to hardcode these settings (which is very important for sensitive information, which can't just be version-controlled), but they also allow you to access information about the **current environment your code is running in**.
+
+There are various ways to define environment variables in development, let's explore these options.
+
+### Using a `.env` File
+
+By using a `.env` file, you will define a set of key value pairs accessible from within your [Lambda](/docs/v2/deployments/concepts/lambdas/) functions.
+
+Each line in a `.env` file is written as a string and follows the format `KEY=VALUE` as seen in the example below:
+
+```shell
+MYSQL_PASSWORD=lambda
+```
+
+<Caption>
+  An example{' '}
+  <GenericLink href="/docs/v2/deployments/configuration">
+    <InlineCode>.env</InlineCode> file
+  </GenericLink>{' '}
+  specifying an environment variable.
+</Caption>
+
+The syntax required to use an environment variable inside a Lambda function differs for each language, in Node.js this would be:
+
+```
+process.env.MYSQL_PASSWORD
+```
+
+<Caption>Accessing the environment variable with Node.js.</Caption>
+
+This would return the value "lambda".
+
+### Using a `.env.build` File
+
+By using a `.env.build` file, you will define a set of key value pairs accessible from within the **build** object.
+
+Each line in a `.env.build` file is written as a string and follows the format KEY=VALUE as seen in the example below:
+
+```shell
+MYSQL_DATABASE=build
+```
+
+<Caption>
+  An example{' '}
+  <GenericLink href="/docs/v2/deployments/configuration">
+    <InlineCode>.env.build</InlineCode> file
+  </GenericLink>{' '}
+  specifying an environment build variable.
+</Caption>
+
+### Using `now.json`
+
+The last way of defining environment variables during development is made specifically for when the content of the variables you'd like to define will stay the same for every new deployment.
+
+If that fits your project, simply add the [`env` property](/docs/v2/deployments/configuration#env) to your `now.json` file:
+
+```json
+{
+  "env": {
+    "DATABASE_NAME": "test"
+  }
+}
+```
+
+<Caption>
+  An example{' '}
+  <GenericLink href="/docs/v2/deployments/configuration">
+    <InlineCode>now.json</InlineCode> configuration file
+  </GenericLink>{' '}
+  specifying an environment variable.
+</Caption>
+
+As you may have already noticed, this property holds an object which can contain as many environment variables as you need. Once again, this will assign an environment variable called "DATABASE_NAME" with a value of "test" to your deployments.
+
+You can also pass environment variables to [Build](/docs/v2/deployments/builds/) processes on a deployment via the `build.env` configuration property:
+
+```json
+{
+  "build": {
+    "env": {
+      "MY_KEY": "this is the value"
+    }
+  }
+}
+```
+
+<Caption>
+  An example{' '}
+  <GenericLink href="/docs/v2/deployments/configuration">
+    <InlineCode>now.json</InlineCode> configuration file
+  </GenericLink>{' '}
+  specifying a <P.B>build</P.B> environment variable.
+</Caption>
+
+The configuration above will pass the static env key `MY_KEY` to all [builds](/docs/v2/deployments/builds/).
+
+### Further Tips
+
+We implemented some sweet functionality into the command line interface and the platform, which makes adding environment variables and secrets to your deployment even easier.
+
+For example, you can also include `-e` multiple times:
+
+<TerminalInput>
+  now <P.B>-e</P.B> API_KEY=@my-key <P.B>-e</P.B> APP_NAME="ZEIT, Inc"
+</TerminalInput>
+
+<Caption>
+  Assigning multiple environment variables in one command using the terminal.
+</Caption>
+
+Additionally, there is also the capability to inherit from your shell environment. To do so, just skip the `=value` portion of the argument:
+
+<TerminalInput>
+  now -e <P.B>MY_SHELL_VAR</P.B>
+</TerminalInput>
+
+<Caption>
+  Inheriting an environment variable from the shell environment.
+</Caption>
+
+Users of the [API](/docs/api) can access the environment variables feature through the [`secrets` endpoint](/docs/api/v2#endpoints/secrets).
+
+### Built-In Variables
+
+By default, all deployments expose the `NOW_REGION` environment variable to [lambdas](/docs/v2/deployments/concepts/lambdas) which provides the [region](/docs/v2/platform/regions-and-providers/) that the lambda was deployed to.
+
+### Reserved Variables
+
+There are a few [variable names reserved](/docs/v2/deployments/environment-variables-and-secrets/#reserved-variables) and are therefore unavailable for use.
+
+Using either, or any, of [these environment variables](/docs/v2/deployments/environment-variables-and-secrets/#reserved-variables), will result in the deployment failing.
+
+## Read Next
+
+Read more on how development with Now works and get answers to frequently asked questions:
+
+<Card title="Development Basics" href="/docs/v2/development/basics">
+  Learn how development works in Now and how to get started.
+</Card>
+
+<Card
+  title="Frequently Asked Questions"
+  href="/docs/v2/development/frequently-asked-questions"
+>
+  Get answers to frequently asked questions about development in Now.
+</Card>
+
+<Card title="Support" href="/support">
+  Learn more about our Priority Support and setup a Custom Domain Suffix.
+</Card>
+
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Note from '~/components/text/note'
 import Card from '~/components/card'
@@ -106,6 +107,8 @@ If that same project adds a build step to target a single Go file with [the @now
 
 ### Builds Timeout
 
-If a Build is in progression for 15 minutes, the Build will timeout and throw an error.
+If a Build is in progression for 30 minutes, the Build will timeout and throw an error.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

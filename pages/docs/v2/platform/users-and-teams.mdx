@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { GenericLink } from '~/components/text/link'
 import { TerminalInput } from '~/components/text/terminal'
@@ -133,4 +134,6 @@ However, you still need to attach a token of your user account as described [her
   .
 </Note>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

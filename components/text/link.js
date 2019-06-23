@@ -46,13 +46,9 @@ export const InternalLink = (
         text-decoration: none;
       }
 
-      ${darkBg
-        ? `
-        span :global(a.dark) {
-          color: #fff;
-        }
-      `
-        : ``};
+      span :global(a.dark) {
+        color: #fff;
+      }
     `}</style>
   </span>
 )
@@ -77,7 +73,7 @@ export const AnchorLink = (
         }
 
         a:hover {
-          text-decoration: underline;
+          text-decoration: none;
         }
 
         a.dark {
@@ -114,7 +110,7 @@ export const ExternalLink = (
         }
 
         a:hover {
-          text-decoration: underline;
+          text-decoration: none;
         }
 
         a.no-underline:hover {

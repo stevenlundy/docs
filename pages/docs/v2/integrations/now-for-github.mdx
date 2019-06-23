@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Now from '~/components/text/now'
 import { Image } from '~/components/media'
@@ -121,7 +122,7 @@ This behavior protects you and your project from a leak of sensitive information
 
 Now for GitHub uses the deployment API to bring you an extended user interface both in GitHub, when showing deployments, and Slack, if you have notifications setup using the [Slack GitHub app](https://slack.github.com).
 
-You will see all of your deployments, production or staging, from within GitHub in its own page. See the page for this very documentation: https://github.com/zeit/docs/deployments
+You will see all of your deployments, production or staging, from within GitHub in its own page. See the page for this very documentation: <https://github.com/zeit/docs/deployments>
 
 Due to using GitHub's Deployments API, you will also be able to integrate with other services through [GitHub's checks](https://help.github.com/en/articles/about-status-checks). Now for GitHub will provide the deployment URL to the checks that require it, for example; to a testing suite such as [Ghost Inspector](https://ghostinspector.com/docs/integration/github/).
 
@@ -245,4 +246,6 @@ Learn more about deploying your apps with Now using the following resources:
   Control your deployment's paths in detail with routes.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

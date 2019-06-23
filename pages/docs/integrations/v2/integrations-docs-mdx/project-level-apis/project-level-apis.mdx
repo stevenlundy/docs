@@ -1,0 +1,26 @@
+import ProjectBasedEnvVars from './project-based-env-vars.mdx'
+import UtilsInsideIntegrationUtils from './utils-inside-integration-utils.mdx'
+import UsingTheApiDirectly from './using-the-api-directly.mdx'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/project-level-apis/project-level-apis.mdx',
+  lastEdited: '2019-05-20T23:31:58.000Z'
+}
+
+# Project Level APIs
+
+Deployments made with ZEIT Now are grouped into Projects. This means that each deployment is assigned a name and is grouped into a project with other deployments using that same name.
+
+Users can deploy projects for any type of app. For example, there could be:
+
+- A project for a marketing website.
+- A project for a backend API.
+- A project for an admin dashboard.
+- A project with all three in a monorepo.
+
+Using a ZEIT Integration, you can modify configuration for whole projects, for which we expose a set of API endpoints:
+
+<ProjectBasedEnvVars />
+<UtilsInsideIntegrationUtils />
+<UsingTheApiDirectly />

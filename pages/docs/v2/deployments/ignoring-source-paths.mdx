@@ -1,14 +1,17 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Caption from '~/components/text/caption'
 import { InlineCode } from '~/components/text/code'
 import Card from '~/components/card'
+import Note from '~/components/text/note'
+import { P } from '~/components/text/paragraph'
 
 export const meta = {
   title: 'Ignoring Source Paths',
   description:
     'Using a .nowignore file to prevent deploying source paths for speed and security.',
   editUrl: 'pages/docs/v2/deployments/ignoring-source-paths.mdx',
-  lastEdited: '2019-03-20T03:50:18.000Z'
+  lastEdited: '2019-05-07T12:36:05.000Z'
 }
 
 We highly recommend including the `.nowignore` file in your Now deployment. It is essential in uploading only the required paths to Now, increasing the speed of the initial deployment process.
@@ -36,6 +39,11 @@ dist
 
 We highly recommend taking advantage of this system for ignoring paths, as it will make creating deployments both faster and cheaper.
 
+<Note>
+  If you would like to check exactly which files are uploaded, you can do so
+  from the <P.B>Source</P.B> tab on the deployment dashboard.
+</Note>
+
 ## What Files Are Served
 
 Only files that are matched by the `src` property of a **Build** are "considered for serving", the **Builder** you defined decides whether a file is then actually served.
@@ -59,4 +67,6 @@ See the documentation on **Deployment Basics**, **Builds** and **Builders** to l
   Choose from a range of existing builders or make your own.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

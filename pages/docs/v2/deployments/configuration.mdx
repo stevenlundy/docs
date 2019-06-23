@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Now from '~/components/text/now'
 import Card from '~/components/card'
@@ -234,7 +235,7 @@ For more information on builds and builders, see the documentation:
   <Code lang="json">{`{
   "builds": [
     { "src": "*.html", "use": "@now/static" },
-    { "src": "*.js", "use": "@now/node" },
+    { "src": "*.js", "use": "@now/node" }
   ],
   "routes": [
     { "src": "/custom-page", "headers": {"cache-control": "s-maxage=1000"}, "dest": "/index.html" },
@@ -260,7 +261,7 @@ For more information on routes, see the documentation:
 
 **Valid values:** a list of valid [region identifiers](/docs/v2/platform/regions-and-providers).
 
-By setting and modifying this value, you can decide the deployment **regions** of the [Lambdas](/docs/v2/deployments/concepts/lambdas) that get created as a result of the [build steps](/docs/v2/deployments/builds).
+By setting and modifying this value, you can decide the deployment **regions** of the [Lambdas](/docs/v2/deployments/concepts/lambdas) that get created as a result of the [build steps](/docs/v2/deployments/builds). By default, the closest region to the geographical location of the deployment is used, or if using a Now for Git integration, SFO is used by default.
 
 This value does not impact static files or edge caches, since deployments always have a [CDN layer](/docs/v2/domains-and-aliases/cdn) in front.
 
@@ -365,4 +366,6 @@ When set to false, [Now for GitHub](/docs/v2/integrations/now-for-github) will a
   .
 </Note>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

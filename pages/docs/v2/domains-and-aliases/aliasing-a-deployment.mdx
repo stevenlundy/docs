@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Now from '~/components/text/now'
 import { GenericLink } from '~/components/text/link'
@@ -238,4 +239,6 @@ The following resources are related to this topic and helpful with any path you 
   Learn how to deploy your applications that you will alias to your domains.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

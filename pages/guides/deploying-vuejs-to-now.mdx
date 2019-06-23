@@ -15,7 +15,7 @@ export const meta = {
   image:
     'https://og-image.now.sh/**Deploy%20a%20Vue.js%20App**%20with%20Now.png?theme=light&md=1&fontSize=96px&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnow-black.svg&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Fv1551318573%2Ffront%2Fdocs%2Fogp%2Fvue-logo.svg',
   editUrl: 'pages/guides/deploying-vuejs-to-now.mdx',
-  lastEdited: '2019-02-28T02:00:22.000Z'
+  lastEdited: '2019-05-01T00:10:23.000Z'
 }
 
 Vue.js is an open source JavaScript framework for building user interfaces. It is popularly known for its gentle learning curve and is adopted by a lot of developers for crafting single-page applications (SPAs) globally.
@@ -40,9 +40,27 @@ An option to choose a preset will be presented to you after running the command 
 
 After choosing an option, Vue CLI installs all the required dependencies and provisions a new project for you.
 
-To see your new Vue.js project running, you can use the following command to start a development server locally:
+To see your new Vue.js project running, you should add a `now-dev` script to your `package.json`, this will allow you to [replicate the Now environment locally](/docs/v2/development/basics/):
 
-<TerminalInput>yarn serve</TerminalInput>
+```json
+{
+  "scripts": {
+    ...
+    "now-dev": "vue-cli-service serve  --port=$PORT"
+  }
+}
+```
+
+<Caption>
+  Adding a <InlineCode>now dev</InlineCode> script to the{' '}
+  <InlineCode>package.json</InlineCode> file.
+</Caption>
+
+The [`@now/static-build` Builder](/docs/v2/deployments/official-builders/static-build-now-static-build/#local-development) supports a custom `now-dev` script that allows you to define [custom development behavior](/docs/v2/development/basics/#custom-development-environment) while gaining extra features that mimic the Now platform locally.
+
+To run your project locally, all that's required is a **single command**:
+
+<TerminalInput>now dev</TerminalInput>
 
 Next, to extend the project with routing; install the [official Vue.js router](https://router.vuejs.org/) by running the following command in your terminal:
 

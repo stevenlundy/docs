@@ -143,7 +143,8 @@ class APIPage extends Component {
           ...components,
           h1: withPermalink(components.h1),
           h2: withPermalink(components.h2),
-          h3: withPermalink(components.h3)
+          h3: withPermalink(components.h3),
+          h4: withPermalink(components.h4)
         }}
       >
         <Layout>

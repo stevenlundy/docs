@@ -1,0 +1,61 @@
+import JSX from './jsx.mdx'
+import Actions from './actions.mdx'
+import ClientState from './client-state.mdx'
+import Information from './information.mdx'
+import Tokens from './tokens.mdx'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-user-interfaces/creating-user-interfaces.mdx',
+  lastEdited: '2019-05-20T10:02:26.000Z'
+}
+
+# Creating User Interfaces
+
+The core component of a ZEIT Integration is the UIHook. It can render different UI elements and receive inputs from the user.
+
+Here's what a typical user UIHook looks like:
+
+```js
+const { withUiHook } = require('@zeit/integration-utils')
+const store = { secretId: '', secretKey: '' }
+
+module.exports = withUiHook(({ payload }) => {
+  const { clientState, action } = payload
+
+  if (action === 'submit') {
+    store.secretId = clientState.secretId
+    store.secretKey = clientState.secretKey
+  }
+
+  if (action === 'reset') {
+    store.secretId = ''
+    store.secretKey = ''
+  }
+
+  return `
+    <Page>
+      <Container>
+        <Input label="Secret Id" name="secretId" value="${store.secretId}" />
+        <Input label="Secret Key" name="secretKey" type="password" value="${
+          store.secretKey
+        }" />
+      </Container>
+      <Container>
+        <Button action="submit">Submit</Button>
+        <Button action="reset">Reset</Button>
+      </Container>
+    </Page>
+  `
+})
+```
+
+As you may have noticed, a UIHook receives a set of inputs and returns a string of HTML, including [components](#component-catalog), as the response.
+
+You can see these inputs available in the payload object mentioned in the above code. It contains a structure as shown [here](/docs/integrations#understanding-uihooks/http-payload). We will discuss these in this section.
+
+<JSX />
+<Actions />
+<ClientState />
+<Information />
+<Tokens />

@@ -1,9 +1,11 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Code, InlineCode } from '~/components/text/code'
 import Image from '~/components/media'
 import Caption from '~/components/text/caption'
 import Example from '~/components/example'
+import Tag from '~/components/text/tag'
 
 export const meta = {
   title: 'Bash Builder (@now/bash)',
@@ -12,6 +14,8 @@ export const meta = {
   editUrl: 'pages/docs/v2/deployments/official-builders/bash-now-bash.mdx',
   lastEdited: '2019-03-15T18:14:39.000Z'
 }
+
+<Tag>Status: Alpha</Tag>
 
 The `@now/bash` Builder takes an entrypoint of a bash function, [imports](https://import.pw) its dependencies, and bundles them into a [Lambda](/docs/v2/deployments/concepts/lambdas).
 
@@ -210,4 +214,6 @@ This [limit is extendable](/docs/v2/deployments/builders/overview#configuring-ou
 }`}</Code>
 </Example>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

@@ -1,0 +1,110 @@
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/htm-support/use-cases.mdx',
+  lastEdited: '2019-05-10T16:22:38.000Z'
+}
+
+## Use Cases
+
+As mentioned already, using `htm` can greatly simplify the process of creating UIHook's.
+
+To help you understand the benefits of `htm` and how it differs slightly from JSX, we have created some examples below:
+
+### Variable Props
+
+```js
+const { withUiHook, htm } = require('@zeit/integration-utils')
+
+module.exports = withUiHook(({ payload }) => {
+  const url = 'https://zeit.co'
+  return htm`
+    <Page>
+      <Link href=${url}>ZEIT Homepage</Link>
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using <InlineCode>htm</InlineCode> to provide a{' '}
+  <InlineCode>url</InlineCode> prop inside a UIHook.
+</Caption>
+
+### Variable Content
+
+```js
+const { withUiHook, htm } = require('@zeit/integration-utils')
+
+module.exports = withUiHook(({ payload }) => {
+  const name = 'Arunoda Susirpala'
+  return htm`
+    <Page>
+      <P>My name is ${name}</P>
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using <InlineCode>htm</InlineCode> to provide variable content
+  inside a UIHook.
+</Caption>
+
+### Lists/Arrays
+
+```js
+const { withUiHook, htm } = require('@zeit/integration-utils')
+
+const urls = ['https://zeit.co', 'https://google.com']
+
+module.exports = withUiHook(({ payload }) => {
+  const name = 'Arunoda Susirpala'
+  return htm`
+    <Page>
+      <UL>
+        ${urls.map(url => htm`<LI>${url}</LI>`)}
+      </UL>
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using <InlineCode>htm</InlineCode> to make use of the{' '}
+  <InlineCode>map</InlineCode> array method inside a UIHook.
+</Caption>
+
+As you can see by looking at the `htm` inside the `urls.map` function, you need to use `htm` in front of any JavaScript template strings containing components.
+
+### Using Shared Components
+
+```js
+const { withUiHook, htm } = require('@zeit/integration-utils')
+
+const urls = ['https://zeit.co', 'https://google.com']
+
+const URL = ({ href }) => htm`
+  <LI><Link href=${href} target="_blank">${href}</Link></LI>
+`
+
+module.exports = withUiHook(({ payload }) => {
+  const name = 'Arunoda Susirpala'
+  return htm`
+    <Page>
+      <UL>
+        ${urls.map(url => htm`<${URL} href=${url} //>`)}
+      </UL>
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using <InlineCode>htm</InlineCode> to make it easier to share a
+  component between pages inside a UIHook.
+</Caption>
+
+This `URL` component can be easily shared, whether that be within the same UIHook, another Integration or even published on `npm` as a module.

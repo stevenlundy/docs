@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
@@ -75,4 +76,6 @@ Then, once a hostname is requested, the certificate and key are read from the da
 
 Any features of the encryption mechanism that were left uncovered are documented [here](https://www.ssllabs.com/ssltest/analyze.html?d=zeit.co). You only need to make sure to select any IP address of your choice (it does not matter which one you pick – the results are the same for all).
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

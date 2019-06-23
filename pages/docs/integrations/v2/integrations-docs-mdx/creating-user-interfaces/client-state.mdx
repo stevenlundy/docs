@@ -1,0 +1,34 @@
+import Note from '~/components/text/note'
+import Caption from '~/components/text/caption'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-user-interfaces/client-state.mdx',
+  lastEdited: '2019-05-10T01:21:31.000Z'
+}
+
+## Client State
+
+Just like actions, you need to be able to accept multiple different inputs from the user. This might include text boxes, password prompts, dropdowns - there are many options available.
+
+This is how we can define an input field:
+
+```jsx
+<Input name="username" value="my username" />
+```
+
+<Caption>An example of a UIHook using an Input component.</Caption>
+
+Now the user can enter a value into this input.
+
+When the user clicks on an action, we combine all of these inputs together into an object called `clientState`. For this example, if just the above input was submitted, the `clientState` would look like this:
+
+```json
+{
+  "username": "my username"
+}
+```
+
+Inside the UIHook you can access this object via `payload.clientState`.
+
+You can discover all supported input components in the [component catalog](/docs/integrations#component-catalog).

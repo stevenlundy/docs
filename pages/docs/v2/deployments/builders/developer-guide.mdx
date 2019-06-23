@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 
 export const meta = {
@@ -5,7 +6,7 @@ export const meta = {
   description:
     'How to create a Builder to take ZEIT Now deployment sources and output either static files or lambdas with almost limitless possibilities.',
   editUrl: 'pages/docs/v2/deployments/builders/developer-guide.mdx',
-  lastEdited: '2019-03-26T14:51:06.000Z'
+  lastEdited: '2019-04-25T14:24:10.000Z'
 }
 
 A builder is an npm module that exposes a `build` function and optionally an `analyze` function and `prepareCache` function.
@@ -15,6 +16,12 @@ However, the `use` property will work with any [npm install argument](https://do
 See the [Builders Overview](/docs/v2/deployments/builders/overview) to view example usage.
 
 ## Builder Exports
+
+### `version`
+
+A **required** exported constant that decides which version of the Builder API to use.
+
+The latest and suggested version is `2`.
 
 ### `analyze`
 
@@ -33,6 +40,7 @@ If you are using TypeScript, you should use the following types:
 
 ```ts
 import { AnalyzeOptions } from '@now/build-utils'
+
 export analyze(options: AnalyzeOptions) {
   return 'fingerprint goes here'
 }
@@ -49,16 +57,36 @@ build({
   files: Files,
   entrypoint: String,
   workPath: String,
-  config: Object
-}) : Files output
+  config: Object,
+  meta?: {
+    isDev?: Boolean,
+    requestPath?: String,
+    filesChanged?: Array<String>,
+    filesRemoved?: Array<String>
+  }
+}) : {
+  watch: Array<String>,
+  output: Files output,
+  routes: Object
+}
 ```
 
 If you are using TypeScript, you should use the following types:
 
 ```ts
 import { BuildOptions } from '@now/build-utils'
+
 export build(options: BuildOptions) {
-  return { 'path-to-file': File }
+  // Build the code here
+
+  return {
+    output: {
+      'path-to-file': File,
+      'path-to-lambda': Lambda
+    },
+    watch: [],
+    routes: {}
+  }
 }
 ```
 
@@ -80,10 +108,37 @@ If you are using TypeScript, you can import the types for each of these function
 
 ```ts
 import { PrepareCacheOptions } from '@now/build-utils'
+
 export prepareCache(options: PrepareCacheOptions) {
   return { 'path-to-file': File }
 }
 ```
+
+### `shouldServe`
+
+An **optional** exported function that is only used by `now dev` in [Now CLI](/download) and indicates whether a [Builder](/docs/v2/deployments/builders/overview/) wants to be responsible for building a certain request path.
+
+```js
+shouldServe({
+  entrypoint: String,
+  files: Files,
+  config: Object,
+  requestPath: String,
+  workPath: String
+}) : Boolean
+```
+
+If you are using TypeScript, you can import the types for each of these functions by using the following:
+
+```ts
+import { ShouldServeOptions } from '@now/build-utils'
+
+export shouldServe(options: ShouldServeOptions) {
+  return Boolean
+}
+```
+
+If this method is not defined, Now CLI will default to [this function](https://github.com/zeit/now-builders/blob/52994bfe26c5f4f179bdb49783ee57ce19334631/packages/now-build-utils/src/should-serve.ts).
 
 ### Builder Options
 
@@ -138,6 +193,8 @@ Builders can include dependencies of their liking. In this case, we'll use the [
 ```js
 const htmlMinifier = require('html-minifier')
 
+exports.version = 2
+
 exports.analyze = ({ files, entrypoint }) => files[entrypoint].digest
 
 exports.build = async ({ files, entrypoint, config }) => {
@@ -147,7 +204,14 @@ exports.build = async ({ files, entrypoint, config }) => {
   const content = data.toString()
   const minified = htmlMinifier(content, options)
   const result = new FileBlob({ data: minified })
-  return { [entrypoint]: result }
+
+  return {
+    output: {
+      [entrypoint]: result
+    },
+    watch: [],
+    routes: {}
+  }
 }
 ```
 
@@ -247,7 +311,7 @@ This is a [JavaScript class](https://developer.mozilla.org/en-US/docs/Web/JavaSc
 **Properties:**
 
 - `mode : Number` file mode
-- `fsPath : String` a path of the file in file system
+- `fsPath : String` the absolute path of the file in file system
 
 **Methods:**
 
@@ -338,8 +402,10 @@ This utility allows you to download the contents of a [`Files`](#files) data str
 
 Since `Files` is an abstract way of representing files, you can think of `download` as a way of making that virtual filesystem _real_.
 
+If the **optional** `meta` property is passed (the argument for [build](#build)), only the files that have changed are downloaded. This is decided using `filesRemoved` and `filesChanged` inside that object.
+
 ```js
-await download(files, workPath)
+await download(files, workPath, meta)
 ```
 
 ### `glob`
@@ -389,4 +455,6 @@ const originalFiles = { 'one.go': fileFsRef1, 'two.go': fileFsRef2 }
 const renamedFiles = rename(originalFiles, path => path.replace(/\.go$/, '')
 ```
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

@@ -9,6 +9,7 @@ pages/examples/*
 node_modules
 deploy-server/node_modules
 package-lock.json
+yarn.lock
 
 # logs
 *.log

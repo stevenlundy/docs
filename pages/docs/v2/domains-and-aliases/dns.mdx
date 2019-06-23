@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Now from '~/components/text/now'
 import Card from '~/components/card'
@@ -94,4 +95,6 @@ As of [now-client](https://github.com/zeit/now-client) version **0.7.0**, it com
 
 The endpoint is called `/domains/:domain/records` and is available in our <GenericLink href="/docs/api#get-domain-records">REST API</GenericLink>.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

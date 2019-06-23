@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { InlineCode } from '~/components/text/code'
@@ -52,6 +53,8 @@ The following example will focus on configuring Now to deploy an existing projec
   </GenericLink>
   .
 </Note>
+
+See the [Local Development section](#local-development) for more information on using this builder using [`now dev`](/docs/v2/development/basics).
 
 ### Static Builder Configuration for Next.js
 
@@ -147,6 +150,35 @@ The `@now/static-build` Builder can be used for multiple build steps in the same
 }
 ```
 
+## Local Development
+
+With the`@now/static-build` Builder, you are able to define a custom script that runs specified functionality along with the serverless replication that [`now dev` provides](/docs/v2/development/basics/).
+
+To do this, you can provide a `now-dev` script within a `package.json` file that defines the behavior of the `now dev` command. Doing so will not affect the functionality that the command provides, including mimicking the serverless environment locally.
+
+For example, if you would like to develop a Gatsby site locally, using a `now.json` file such as the following:
+
+```json
+{
+  "version": 2,
+  "builds": [{ "src": "package.json", "use": "@now/static-build" }]
+}
+```
+
+Your `package.json` file can define a `now-dev` script that uses the Gatsby CLI to run a development environment locally:
+
+```json
+{
+  ...
+  "scripts": {
+    ...
+    "now-dev": "gatsby develop -p $PORT"
+  }
+}
+```
+
+As you can see with the above example, we also pass a `$PORT` variable to the command. `now dev` will automatically pass the port it's looking to use with the `$PORT` variable for you to use in your custom scripts, so the command can attach the extended behaviour to the environment.
+
 ## Technical Details
 
 ### Entry Point
@@ -195,10 +227,8 @@ Using a file with a `.sh` file extension as an entry point for the `@now/static-
 For example, creating a shell file, with the name `build.sh`, with the following contents will install and build a [Hugo project](https://zeit.co/guides/deploying-hugo-with-now/):
 
 ```shell
-yum install -y wget
-
-wget https://github.com/gohugoio/hugo/releases/download/v0.31.1/hugo_0.31.1_Linux-64bit.tar.gz
-tar -xzf hugo_0.31.1_Linux-64bit.tar.gz
+curl -L -O https://github.com/gohugoio/hugo/releases/download/v0.55.6/hugo_0.55.6_Linux-64bit.tar.gz
+tar -xzf hugo_0.55.6_Linux-64bit.tar.gz
 
 ./hugo
 ```
@@ -300,4 +330,6 @@ The goal of the ZEIT Docs is to provide you with all the information you need to
   Discover the deployment basics of Now.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

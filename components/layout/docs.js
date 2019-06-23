@@ -20,11 +20,26 @@ import H1 from '~/components/text/h1'
 import H2 from '~/components/text/h2'
 import H3 from '~/components/text/h3'
 import H4 from '~/components/text/h4'
+import HR from '~/components/text/hr'
 import { P } from '~/components/text/paragraph'
 import dataV1 from '~/lib/data/v1/docs'
 import dataV2 from '~/lib/data/v2/docs'
 import Select from '~/components/select'
 import Note from '~/components/text/note'
+import { FooterFeedback } from '~/components/feedback-input'
+
+const DocH1 = ({ children }) => (
+  <>
+    <Heading noAnchor lean offsetTop={175}>
+      <H1>{children}</H1>
+    </Heading>
+    <style jsx>{`
+      :global(h1) {
+        margin: 40px 0 0 0;
+      }
+    `}</style>
+  </>
+)
 
 const DocH2 = ({ children }) => (
   <>
@@ -85,6 +100,8 @@ const AmpScripts = () => {
     </>
   )
 }
+
+const NonAmpOnly = ({ children }) => (useAmp() ? null : children)
 
 const VersionSelect = ({ onChange, version }) => {
   const isAmp = useAmp()
@@ -192,20 +209,18 @@ class withDoc extends React.Component {
                   </ToggleItem>
                 </ToggleGroup>
               </div>
-              <h5 className="platform-select-title">Now Platform Version</h5>
 
+              <DocsNavbarDesktop
+                data={versionData}
+                url={router}
+                scrollSelectedIntoView={true}
+              />
+
+              <h5 className="platform-select-title">Now Platform Version</h5>
               <VersionSelect
                 version={version}
                 onChange={this.handleVersionChange}
               />
-
-              <div className="navigation">
-                <DocsNavbarDesktop
-                  data={versionData}
-                  url={router}
-                  scrollSelectedIntoView={true}
-                />
-              </div>
             </Sidebar>
             <Content>
               <div className="heading content-heading">
@@ -223,10 +238,17 @@ class withDoc extends React.Component {
                     .
                   </Note>
                 )}
-                <H1 itemProp="headline">{meta.title}</H1>
+                <DocH1>{meta.title}</DocH1>
               </div>
 
               <div className="content">{this.props.children}</div>
+
+              <NonAmpOnly>
+                <>
+                  <HR />
+                  <FooterFeedback />
+                </>
+              </NonAmpOnly>
 
               <ContentFooter
                 lastEdited={meta.lastEdited}
@@ -252,13 +274,9 @@ class withDoc extends React.Component {
 
             .platform-select-title {
               font-size: 14px;
-              font-weight: bold;
+              font-weight: 400;
               margin-bottom: 16px;
-              margin-top: 0;
-            }
-
-            .navigation {
-              margin-top: 48px;
+              margin-top: 32px;
             }
 
             .toggle-group-wrapper {

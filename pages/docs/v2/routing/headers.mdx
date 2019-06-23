@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Note from '~/components/text/note'
 import { InlineCode } from '~/components/text/code'
@@ -10,37 +11,54 @@ export const meta = {
   lastEdited: '2019-04-07T00:32:00.000Z'
 }
 
-The following headers are included in Now deployments and indicate certain factors of the environment:
+[HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) can be found in both the HTTP Request and HTTP Response.
 
-## `now: 1`
+## Request Headers
 
-This header is used for identifying a response coming from [the Now platform](/docs/v2/platform/overview/).
+The following headers are sent to each Now deployment and can be used to process the request before sending back a response. These headers can be read from the [Request](https://nodejs.org/api/http.html#http_message_headers) object in your [Lambda](/docs/v2/deployments/concepts/lambdas/).
 
-## `server: now`
+### `host`
+
+This header represents the domain name as it was accessed by the client. If the deployment has been aliased and the client visited the alias URL, it contains the alias instead of the underlying deployment URL.
+
+### `x-forwarded-host`
+
+This header is identical to the `host` header.
+
+### `x-forwarded-proto`
+
+This header represents the protocol of the forwarded server, typically `https` in production and `http` in development.
+
+### `x-now-deployment-url`
+
+This header represents the unique deployment, not the alias. For example, `test-5uyfnapzg.now.sh`.
+
+## Response Headers
+
+The following headers are included in Now deployment responses and indicate certain factors of the environment. These headers can be viewed from the Browser's Dev Tools or using an HTTP client such as `curl -I <DEPLOYMENT_URL>`.
+
+### `server: now`
 
 Similar to [`now: 1`](#now:-1). This header can be overridden by other proxies (e.g., Cloudflare).
 
-## `x-now-cache`
+### `x-now-cache`
 
 This header's value indicates whether the response was served from ZEIT's edge cache.
 
 The following values are possible when the content being served [is static](/docs/v2/routing/caching#caching-static-files) or uses [a `Cache-Control` header](/docs/v2/routing/caching#caching-lambda-responses).
 
-| Value                                      | Description                                                                                                                                      |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| <RequestHeader>HIT</RequestHeader>         | The response was served from the edge.                                                                                                           |
-| <RequestHeader>MISS</RequestHeader>        | The response was not found in the edge and so was fetched from [an origin server](/docs/v2/platform/regions-and-providers/).                     |
-| <RequestHeader>BYPASS</RequestHeader>      | The cache was bypassed and so the response was served from an origin server.                                                                     |
-| <RequestHeader>EXPIRED</RequestHeader>     | The entry in the cache has expired. The response is served from an origin server.                                                                |
-| <RequestHeader>STALE</RequestHeader>       | The response from the cache is outdated but another visitor has already requested the response and the edge node is processing the revalidation. |
-| <RequestHeader>UPDATING</RequestHeader>    | The response is stale as the entry is currently being updated due to a previous request.                                                         |
-| <RequestHeader>REVALIDATED</RequestHeader> | The response from the cache was stale but it was revalidated by checking `If-Modified-Since` or `If-None-Match` headers.                         |
+| Value                                 | Description                                                                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| <RequestHeader>HIT</RequestHeader>    | The response was served from the edge.                                                                                                           |
+| <RequestHeader>MISS</RequestHeader>   | The response was not found in the edge and so was fetched from [an origin server](/docs/v2/platform/regions-and-providers/).                     |
+| <RequestHeader>BYPASS</RequestHeader> | The cache was bypassed and so the response was served from an origin server.                                                                     |
+| <RequestHeader>STALE</RequestHeader>  | The response from the cache is outdated but another visitor has already requested the response and the edge node is processing the revalidation. |
 
-## `x-now-id`
+### `x-now-id`
 
 The unique identifier for each request.
 
-## `x-now-trace`
+### `x-now-trace`
 
 Contains a list of [our data centers](/docs/v2/platform/regions-and-providers/) through which the request has traversed, usually the data center closest to you.
 
@@ -51,10 +69,10 @@ Contains a list of [our data centers](/docs/v2/platform/regions-and-providers/) 
   <InlineCode>now.json</InlineCode> file.
 </Note>
 
-# Custom Headers
+## Custom Headers
 
-In addition to regular [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) and Now headers, it is also possible to supply your own custom headers.
+Custom headers can be added dynamically to the [Response](https://nodejs.org/api/http.html#http_response_setheader_name_value) object in your [Lambda](/docs/v2/deployments/concepts/lambdas/) or they can be added statically to the [routes](/docs/v2/deployments/routes/#headers) property in your `now.json` file.
 
-Custom headers are added in the same way regular headers are, by making an addition to the `routes` property in your `now.json` file.
-
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

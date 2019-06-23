@@ -1,0 +1,25 @@
+import Note from '~/components/text/note'
+import { TerminalInput } from '~/components/text/terminal'
+import Caption from '~/components/text/caption'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/getting-started/deploy-to-production.mdx',
+  lastEdited: '2019-05-20T12:48:18.000Z'
+}
+
+## Step 6: Publishing Your Integration
+
+We recommend you create a separate Integration to deploy into production. That way you have two Integrations, one for development and one for production.
+
+This allows you to maintain a stable version of your Integration whilst still being free to develop new features for it in a safe environment.
+
+To deploy your UIHook into production, **all it takes is one command**:
+
+<TerminalInput>now --target=production</TerminalInput>
+<Caption>Deploying a UIHook to <GenericLink href="/docs/v2/domains-and-aliases/aliasing-a-deployment/#production">a production environment</GenericLink>.</Caption>
+
+The output from this command will contain the alias URL for your UIHook, you should add this to your Integration in the **UI Hook URL** field.
+
+<Note>You can change the UIHook URL of your Integration anytime you wish.</Note>

@@ -42,6 +42,8 @@ export default props => {
       .replace(/[?!]/g, '')
   }
 
+  const href = props.noAnchor ? '#' : '#' + id
+
   const targetStyle =
     null != offsetTop
       ? { marginTop: -offsetTop + 'px', paddingTop: offsetTop + 'px' }
@@ -53,7 +55,7 @@ export default props => {
       data-components-heading
     >
       <span id={id} className="target" style={targetStyle} />
-      <a href={'#' + id}>{children}</a>
+      <a href={href}>{children}</a>
       <span className="permalink">
         <PermalinkIcon size={11} />
       </span>
@@ -62,6 +64,7 @@ export default props => {
           a {
             border-bottom: 1px solid transparent;
             color: inherit;
+            cursor: pointer;
             margin-right: 10px;
             text-decoration: none;
           }

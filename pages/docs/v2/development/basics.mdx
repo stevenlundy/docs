@@ -1,0 +1,154 @@
+import { withAmp } from 'next/amp'
+import Doc from '~/components/layout/docs'
+import { GenericLink } from '~/components/text/link'
+import { InlineCode } from '~/components/text/code'
+import { TerminalInput, TerminalOutput } from '~/components/text/terminal'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+import Card from '~/components/card'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Development Basics',
+  description:
+    'Learning the basics of developing any application with ZEIT Now.',
+  editUrl: 'pages/docs/v2/development/basics.mdx',
+  lastEdited: '2019-05-16T17:59:25.000Z'
+}
+
+Getting started with development using Now is simple and only requires a **single command** - `now dev`.
+
+`now dev` is the **single command development experience** created with the aim of maximizing your productivity by simulating our Now platform locally.
+
+To get started with `now dev`, you will need the [Now CLI](/docs/v2/getting-started/installation#now-cli). If you have not installed it yet, please refer to the [installation instructions](/docs/v2/getting-started/installation) (otherwise, run `yarn add global now` if Node.js is installed).
+
+<Note>
+  <InlineCode>now dev</InlineCode> requires Now 2.0 and the latest version of
+  the <GenericLink href="/guides/updating-now-cli/">Now CLI </GenericLink>
+  to work. If you are currently using Now 1.0, you should consider
+  <GenericLink href="/docs/v2/platform/upgrade-to-2-0/"> upgrading</GenericLink>
+  .
+</Note>
+
+## Key Concepts
+
+### Development Secrets
+
+When working on a project with `now dev`, it is extremely important that you **do not use any production secrets** (like your database credentials, for example).
+
+Instead, you should use [secrets](/docs/v2/development/environment-variables) that are specific to the development environment and cannot cause any production damage. Those can be set in one of two files:
+
+- `.env` contains environment variables used during **runtime**
+- `.env.build` contains environment variables used during **buildtime**
+
+<Note>
+  It is also possible to define environment variables in your{' '}
+  <InlineCode>now.json</InlineCode> file.
+</Note>
+
+### Production-Like Environment, Locally
+
+By mimicking the behavior of the Now platform in almost every way, `now dev` **decreases the chance of unexpected surprises** when deploying to a minimum.
+
+Out of the box, `now dev` simulates the same model for [routing](/docs/v2/deployments/routes/), concurrency, and execution, and even accepts the exact same [`now.json` configuration](/docs/v2/deployments/configuration/).
+
+### Custom Development Environment
+
+If your project is built using the `@now/static-build` Builder or you are going to set up a project that is built statically when deployed; you can define custom development behavior for what `now dev` and its associated environment should attach to when you are developing locally.
+
+To do this, you can use a `now-dev` script inside of a `package.json` that is an entrypoint of the `@now/static-build` Builder.
+
+For more information on this, [see the `@now/static-build` Builder documentation](/docs/v2/deployments/official-builders/static-build-now-static-build#local-development).
+
+## Your First Project
+
+This guide shows you how to get started with local development in Now **in under a minute**.
+
+To get your first project up and running, you will be using the [Now CLI](/docs/v2/getting-started/installation#now-cli). If you have not installed it yet, please refer to the [installation instructions](/docs/v2/getting-started/installation) (otherwise, run `yarn add global now` if Node.js is installed).
+
+For your convenience, we have created a number of [examples](https://github.com/zeit/now-examples) that are ready to use with `now dev`. To create a project using an example, enter the following:
+
+<TerminalInput>now init</TerminalInput>
+
+This will load a list of examples for you to choose from:
+
+<TerminalOutput><b>{`> Select example:`}</b> (Use arrow keys)<br/>
+&nbsp;&nbsp;apollo<br/>
+&nbsp;&nbsp;bash<br/>
+&nbsp;&nbsp;create-elm-app<br/>
+&nbsp;&nbsp;create-react-app<br/>
+&nbsp;&nbsp;docz<br/>
+&nbsp;&nbsp;express<br/>
+&nbsp;&nbsp;express-twitter-dreamify<br/>
+<i style={{color: '#00C5C7', fontStyle: 'normal'}}>❯ gatsby</i><br/>
+&nbsp;&nbsp;go<br/>
+&nbsp;&nbsp;go-image-to-ascii<br/>
+&nbsp;&nbsp;gridsome<br/>
+&nbsp;&nbsp;html-minifier<br/>
+&nbsp;&nbsp;jekyll<br/>
+&nbsp;&nbsp;markdown<br/>
+&nbsp;&nbsp;mdx-deck<br/>
+(Move up and down to reveal more choices)
+</TerminalOutput>
+<Caption>Selecting a project using the <InlineCode>now init</InlineCode> command.</Caption>
+
+For this guide we'll use Gatsby, you're free to use whichever project you'd like to, however.
+
+<Note>
+  If you choose a project that requires{' '}
+  <GenericLink href="/docs/v2/development/environment-variables/">
+    environment variables
+  </GenericLink>
+  , you will need to create these before using <InlineCode>now dev</InlineCode>.
+</Note>
+
+Once you have found a project you want to use, hit enter (if the list does not include what you are looking for, read about [adding it](https://github.com/zeit/docs#adding-a-new-guide)). You will then see a directory created containing the project starter you selected:
+
+<TerminalOutput>
+  <b>{`> Select example:`}</b>{' '}
+  <i style={{ color: '#00C5C7', fontStyle: 'normal' }}>gatsby</i>
+  <br />
+  <i style={{ color: '#00C5C7', fontStyle: 'normal' }}>{`>`} Success!</i>{' '}
+  Initialized <b>"gatsby"</b> example in <b>~/gatsby</b>.
+</TerminalOutput>
+
+Next, you should follow the option given in the terminal and use the following command:
+
+<TerminalInput>cd gatsby && now dev</TerminalInput>
+
+After a short build you will see a success message, you are now developing locally with Now!
+
+## Read More
+
+Extend your projects with all that Now offers:
+
+<Card title="Deployment" href="/docs/v2/deployments/basics">
+  Learn how to deploy your projects with Now.
+</Card>
+
+<Card
+  title="Environment Variables"
+  href="/docs/v2/development/environment-variables"
+>
+  Define behavior in your project, dependent upon environment.
+</Card>
+
+<Card title="Routes" href="/docs/v2/deployments/routes">
+  Control your project's paths in detail with routes.
+</Card>
+
+<Card title="Builds" href="/docs/v2/deployments/builds">
+  Understand how Now handles build steps for you.
+</Card>
+
+<Card title="Aliases" href="/docs/v2/domains-and-aliases/aliasing-a-deployment">
+  Discover how to generate shareable URL's for your project.
+</Card>
+
+<Card title="Support" href="/support">
+  Learn more about our Priority Support and setup a Custom Domain Suffix.
+</Card>
+
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

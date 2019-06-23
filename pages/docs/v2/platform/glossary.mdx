@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 
 export const meta = {
@@ -62,4 +63,6 @@ The command line interface client for **Now**.
 
 The graphical user interface (desktop application) for **Now**.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Note from '~/components/text/note'
 import { InlineCode } from '~/components/text/code'
@@ -49,4 +50,6 @@ All of these actions are performed on-demand and with maximum performance (ensur
 
 At the moment, we only support [HTTPS](https://en.wikipedia.org/wiki/HTTPS) and [WSS](https://en.wikipedia.org/wiki/WebSocket) (this list will be updated in the event that support for an additional protocol is added to the Routing layer).
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

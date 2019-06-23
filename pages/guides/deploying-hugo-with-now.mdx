@@ -103,10 +103,10 @@ The `now.json` file allows you to achieve a few things with your deployment:
 Now, create the `build.sh` file in the `my-hugo-project` root directory and add the following code to it:
 
 ```bash
-yum install -y wget
+#!/usr/bin/env bash
 
-wget https://github.com/gohugoio/hugo/releases/download/v0.31.1/hugo_0.31.1_Linux-64bit.tar.gz
-tar -xzf hugo_0.31.1_Linux-64bit.tar.gz
+curl -L -O https://github.com/gohugoio/hugo/releases/download/v0.55.6/hugo_0.55.6_Linux-64bit.tar.gz
+tar -xzf hugo_0.55.6_Linux-64bit.tar.gz
 
 ./hugo
 ```
@@ -134,29 +134,6 @@ Then, you can deploy from your terminal with just one command:
 Otherwise, if you want your application to deploy automatically, you can [install the Now for GitHub app](/docs/v2/integrations/now-for-github/) and have updates for your GitHub repository deploy and alias on every push.
 
 When your app is deployed, you will receive a deployment URL like the following: <https://my-hugo-project-9c5t1giwu.now.sh/>
-
-## Bonus: Cache Your Hugo Assets
-
-Caching makes your site fast and reduces bandwidth consumption for your users and cost for you. You can configure Now's routes within your `now.json` configuration file to set up caching headers.
-
-In the `now.json` configuration file, add the following `routes` property:
-
-```json
-{
-  ...
-  "routes": [
-    {"src": "^/dist/js/(.*)", "headers": {"cache-control": "public,max-age=31536000,immutable"} },
-    {"src": "^/dist/css/(.*)", "headers": {"cache-control": "public,max-age=31536000,immutable"} },
-    {"src": "^/images/(.*)", "headers": {"cache-control": "max-age=31536000,immutable"} },
-    {"src": "^/(.*).html", "headers": {"cache-control": "public,max-age=0,must-revalidate"} }
-  ]
-}
-```
-
-<Caption>
-  Routes configuration for setting caching headers in a{' '}
-  <InlineCode>now.json</InlineCode> configuration file.
-</Caption>
 
 ## Resources
 

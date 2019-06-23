@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 
 export const meta = {
@@ -8,18 +9,20 @@ export const meta = {
   lastEdited: '2019-02-18T14:28:37.000Z'
 }
 
-The routing layer equates to the number of regions contained within the [**Basic CDN**](/docs/v2/deployments/concepts/cdn-and-global-distribution#basic-cdn). On every single one of those regions, we are able to cache your content using an LRU mechanism.
+The routing layer equates to the number of regions contained within the [**Smart CDN**](/smart-cdn). On every single one of those regions, we are able to cache your content using an LRU mechanism.
 
 Whether you need to apply manual adjustments to your code in order for the responses to be cached depends on what kind of resources the **Builds** you defined are creating:
 
 ## Caching Static Files
 
-There are no manual adjustments needed for caching **Static Files**. We set the `Cache-Control` header to `s-maxage=86400`, which ensures that the responses are cached for one day on all the regions within the **Basic CDN**.
+There are no manual adjustments needed for caching **Static Files**. We cache the responses for 31 days on all the regions within the **Smart CDN**. By default we return a `Cache-Control` header containing `public, max-age=0, must-revalidate` that specifies the client should not cache. This can be overridden with the [routes](/docs/v2/deployments/routes/#headers) property in your `now.json` file.
 
 ## Caching Lambda Responses
 
 In order to cache the response of a **Lambda** that was created by any of your **Builds**, you need to make sure to manually set the `Cache-Control` header and assign it a value that contains the `s-maxage` parameter (the equivalent of `max-age`, but for shared caches).
 
-You can read more about the suggested way to define this property [here](/docs/v2/deployments/concepts/cdn-and-global-distribution#full-cdn).
+You can read more about the suggested way to define this property [here](/docs/v2/deployments/concepts/cdn-and-global-distribution#smart-cdn).
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

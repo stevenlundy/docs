@@ -13,7 +13,7 @@ const ContentFooter = ({ lastEdited, editUrl }) => (
         border-top: 1px solid #eaeaea;
         display: flex;
         justify-content: space-between;
-        margin-top: 24px;
+        margin-top: 40px;
         padding: 24px 0;
         font-size: 12px;
         color: #666666;

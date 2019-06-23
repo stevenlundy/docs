@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { Code, InlineCode } from '~/components/text/code'
 import { TerminalInput } from '~/components/text/terminal'
@@ -6,13 +7,14 @@ import Note from '~/components/text/note'
 import Example from '~/components/example'
 import Tag from '~/components/text/tag'
 import Card from '~/components/card'
+import Caption from '~/components/text/caption'
 
 export const meta = {
   title: 'Next.js Builder (@now/next)',
   description:
     'The official Next.js Builder for ZEIT Now. Deploy Next.js applications with ease.',
   editUrl: 'pages/docs/v2/deployments/official-builders/next-js-now-next.mdx',
-  lastEdited: '2019-03-12T15:18:33.000Z'
+  lastEdited: '2019-06-22T00:05:12.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -118,6 +120,131 @@ The installation algorithm of dependencies works as follows:
 
 To install private npm modules, define `NPM_TOKEN` as a [build environment](/docs/v2/deployments/configuration#build.env) in `now.json`.
 
+### Exposing Configuration
+
+To support configuration, Next.js inlines the provided values into the JavaScript bundle at build. This circumvents the performance concerns with runtime configuration along with the subtle issues associated with sharing configuration with the client.
+
+You can add the `env` key to the `next.config.js` file:
+
+```js
+module.exports = {
+  env: {
+    customKey: process.env.customKey,
+    mySecret: process.env.mySecret
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>next.config.js</InlineCode> file.
+</Caption>
+
+Then, [expose the build env](/docs/v2/deployments/environment-variables-and-secrets) in your `now.json`:
+
+```json
+{
+  ...
+  "build": {
+    "env": {
+      "customKey": "value",
+      "mySecret": "@my-secret-name"
+    }
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file specifying a build
+  environment variable.
+</Caption>
+
+This will allow you to use `process.env.customKey` and `process.env.mySecret` in your code, for example:
+
+```js
+function Index() {
+  return (
+    <div>
+      <h1>The value of customKey is: {process.env.customKey}</h1>
+      <h2>Your secret is: {process.env.mySecret}</h2>
+    </div>
+  )
+}
+
+export default Index
+```
+
+<Caption>
+  An example <InlineCode>index.js</InlineCode> file that references environment
+  variables.
+</Caption>
+
+Which will be replaced with:
+
+```js
+function Index() {
+  return (
+    <div>
+      <h1>The value of customKey is: {'value'}</h1>
+      <h2>Your secret is: {'secret-value'}</h2>
+    </div>
+  )
+}
+
+export default Index
+```
+
+<Caption>
+  An example <InlineCode>index.js</InlineCode> file that shows the value of the
+  referenced environment variables.
+</Caption>
+
+<Note>
+  For local development with{' '}
+  <GenericLink href="https://zeit.co/docs/v2/development/basics">
+    now dev
+  </GenericLink>
+  , you should add your <GenericLink href="https://zeit.co/docs/v2/development/environment-variables/#using-a-.env.build-file">
+    environment variables
+  </GenericLink> to a <InlineCode>.env.build</InlineCode> file.
+</Note>
+
+### Build Step
+
+You can run build tasks by creating a `now-build` script within a `package.json` file. If no `now-build` script is defined, then `next build` is assumed. If `now-build` is defined, it will replace `next build`.
+
+<Example>
+<span>An example <InlineCode>package.json</InlineCode> with a <InlineCode>now-build</InlineCode> script:</span>
+<Code lang="json">{`{
+  "scripts": {
+    "now-build": "node build.js && next build"
+  }
+}`}</Code>
+
+<span>An example build script, named <InlineCode>build.js</InlineCode>:</span>
+<Code lang="javascript">{`const fs = require('fs');
+const path = require('path');
+const filename = path.join('pages', 'time.js');
+const contents = \`module.exports = "\${new Date().toISOString()}"\`;
+fs.writeFile(filename, contents, (err) => {
+  if (err) throw err
+  console.log('time.js file created successfully!')
+});`}</Code>
+
+<span>
+  To tie it all together, add a <InlineCode>now.json</InlineCode> file:
+</span>
+
+<Code lang="json">{`{
+  "version": 2,
+  "builds": [
+    { "src": "package.json", "use": "@now/next" }
+  ]
+}`}</Code>
+
+The resulting Lambda contains the build time: <https://nextjs-build-pqo9ri0y2.now.sh/>
+
+</Example>
+
 ### Node.js version
 
 The Node.js version used is the **v8.10**.
@@ -144,4 +271,6 @@ This [limit is extendable](/docs/v2/deployments/builders/overview#configuring-ou
 }`}</Code>
 </Example>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

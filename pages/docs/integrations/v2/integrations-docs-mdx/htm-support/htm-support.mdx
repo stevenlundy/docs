@@ -1,0 +1,44 @@
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+
+import Background from './background.mdx'
+import WhyUseHtm from './why-use-htm.mdx'
+import UseCases from './use-cases.mdx'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/htm-support/htm-support.mdx',
+  lastEdited: '2019-05-10T16:22:38.000Z'
+}
+
+# htm Support
+
+If you have looked at some of the example Integrations, you may have noticed the use of `htm` in a few places like this:
+
+```js
+const { withUiHook, htm } = require('@zeit/integration-utils')
+
+let count = 0
+
+module.exports = withUiHook(({ payload }) => {
+  count += 1
+  return htm`
+    <Page>
+      <P>Counter: ${count}</P>
+      <Button>Count Me</Button>
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using <InlineCode>htm</InlineCode> to create a UIHook.
+</Caption>
+
+`htm` is a JavaScript tagged template which allows you to use JSX-like-Syntax for creating HTML components.
+
+This is based on the implementation created by [developit/htm](https://github.com/developit/htm).
+
+<Background />
+<WhyUseHtm />
+<UseCases />

@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
@@ -7,7 +8,7 @@ export const meta = {
   description:
     'Status codes are given in different circumstances to give you as much insight as possible into your deployments.',
   editUrl: 'pages/docs/v2/routing/status-codes.mdx',
-  lastEdited: '2019-03-29T02:01:47.000Z'
+  lastEdited: '2019-06-17T15:07:40.000Z'
 }
 
 In order to give you the best possible insight into what exactly is wrong with your deployment, we implemented several status codes into the [Routing Layer](/docs/v2/routing/overview) of Now.
@@ -87,6 +88,12 @@ No <b>Lambda</b> was found in the region identifier attached to the deployment.
 
 ### 500
 
+Type: `INTERNAL_INVALID_LAMBDA_ACCOUNTS`
+
+No valid **AWS Accounts** were found for the [Lambda](https://zeit.co/docs/v2/deployments/concepts/lambdas/). This is a problem with Now itself. Please reach out to us [for support](mailto:support@zeit.co) with a deployment URL so we may help resolve this error.
+
+### 500
+
 Type: `INTERNAL_LAMBDA_INVOCATION_FAILED`
 
 The <b>Routing layer</b> was not able to invoke the <b>Lambda</b>.
@@ -109,4 +116,6 @@ Type: `LAMBDA_INVOCATION_TIMEOUT`
 
 The <b>Lambda</b> responsible for the path you tried to access did not reply in time.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

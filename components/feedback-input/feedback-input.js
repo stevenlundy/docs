@@ -88,7 +88,7 @@ class FeedbackInput extends Component {
   render() {
     return (
       <main
-        title="Share any feedback about our products and services"
+        title="Share any feedback this documentation page."
         className={`
           ${this.props.focused ? 'focused' : ''}
           ${this.props.errorMessage != null ? 'error' : ''}
@@ -99,7 +99,6 @@ class FeedbackInput extends Component {
         `}
       >
         <textarea
-          type="text"
           ref={this.handleTextAreaRef}
           onFocus={this.onFocus}
           disabled={

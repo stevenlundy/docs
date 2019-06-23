@@ -1,0 +1,38 @@
+import { Code, InlineCode } from '~/components/text/code'
+import Note from '~/components/text/note'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/building-oauth-apps/hybrid-mode.mdx',
+  lastEdited: '2019-05-31T08:46:32.000Z'
+}
+
+## Hybrid Mode
+
+Sometimes, your Integration will use a [UIHook](/docs/integrations#understanding-uihooks) but also need to access the ZEIT API in a background worker.
+
+In this situation you **cannot use the UIHook's token** since it is only valid for the execution period of the UIHook.
+
+That's where Hybrid Mode comes in handy. Hybrid Mode is a combination of both UIHooks and OAuth. This is how it works:
+
+- When you create your Integration, you can add both the **Redirect URL** and **UI Hook URL**
+- You will receive a **public URL** for your Integration in the following format:
+
+<Code>https://zeit.co/integration/:slug</Code>
+
+- When the Integration installs, the OAuth authorization process is started
+- The user is then sent to the **Redirect URL**
+
+The **Redirect URL** supports the following query parameters:
+
+- `teamId` - The `teamId` of the installation
+- `configurationId` - The `id` of the related configuration
+- `code` - OAuth authorization code (you can [exchange](/docs/api#endpoints/oauth2/exchanging-code-for-an-access-token) an `accessToken` using this)
+- `next` - The installation URL of your Integration in the ZEIT Dashboard
+
+<Note>
+  You can redirect the user to the <InlineCode>next</InlineCode> URL after
+  obtaining the <InlineCode>accessToken</InlineCode>.
+</Note>
+
+Now you can use UIHook's to display reports and receive inputs from the user. You can also use the obtained `accessToken` to access the ZEIT API from anywhere, at anytime.

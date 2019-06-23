@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Image, Video } from '~/components/media'
@@ -119,4 +120,6 @@ Using the [`alias`](/docs/v2/deployments/configuration/#alias) property inside o
   Buying an automatically setup domain with ZEIT.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

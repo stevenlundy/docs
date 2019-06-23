@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { GenericLink } from '~/components/text/link'
@@ -30,4 +31,6 @@ By appending `/_logs` to a [deployment URL](/docs/v2/deployments/concepts/urls) 
 
 These pathnames redirect to `https://zeit.co` and _require logging in_ to access any sensitive information. A 3rd-party can _never_ access your source or logs by crafting a deployment URL with one of these paths.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

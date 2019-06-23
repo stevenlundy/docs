@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Image, Video } from '~/components/media'
@@ -5,6 +6,8 @@ import Caption from '~/components/text/caption'
 import Card from '~/components/card'
 import { GenericLink } from '~/components/text/link'
 import Note from '~/components/text/note'
+import { InlineCode } from '~/components/text/code'
+import { P } from '~/components/text/paragraph'
 
 export const meta = {
   title: 'Zero-Downtime Domain Migration',
@@ -12,10 +15,18 @@ export const meta = {
     'Migrating your domain from an external service to ZEIT with no downtime, in only a few steps.',
   editUrl:
     'pages/docs/v2/domains-and-aliases/zero-downtime-domain-migration.mdx',
-  lastEdited: '2019-03-28T20:30:31.000Z'
+  lastEdited: '2019-05-04T22:02:57.000Z'
 }
 
 When migrating to another set of nameservers, there can often be downtime incurred. In this guide we will walk you through adding your domain to ZEIT and setting it up before migrating the nameservers, ensuring no downtime at any point.
+
+<Note warning>
+  We <P.B>strongly advise against using external verification</P.B> as it
+  prevents you from receiving the full benefits of ZEIT's platform and services, such as the
+  automatic renewal of wildcard certificates. Furthermore, many DNS providers{' '}
+  <P.B>do not have a global connection capable of low-latency geo-routing</P.B>,
+  which is likely to <P.B>slow down your applications</P.B>.
+</Note>
 
 ## Step 1: Adding and Verifying Your Domain
 
@@ -41,7 +52,13 @@ To avoid pointing the nameservers to Now prematurely, use the TXT method for ver
 
 With your domain provider, create the TXT record using the `name` (also known as `host` or `alias`) `_now` and the value provided when adding the domain.
 
-Note: If you have lost the value before verifying the domain, you can use `now domains inspect <domain>` to retrieve the verification methods and value again.
+<Note>
+  If you have forgotten or misplaced the value before verifying the domain, you can use{' '}
+  <InlineCode>
+    now domains inspect <P.B>domain</P.B>
+  </InlineCode>{' '}
+  to retrieve the verification methods and value again.
+</Note>
 
 Now will check in a loop for whether the TXT record (or nameservers in another case) has been added and then mark the domain as verified when it detects them. You can force Now to check for the verification by using the following command:
 
@@ -149,4 +166,6 @@ Extend your ZEIT experience by reading more of what you can do with your new dom
   Using Now to handle the DNS of your domain.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

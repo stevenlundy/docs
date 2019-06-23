@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Image, Video } from '~/components/media'
@@ -18,7 +19,7 @@ Domains on ZEIT Now can be used as [aliases](/docs/v2/domains-and-aliases/aliasi
 If you do not have a domain with your ZEIT account yet, you can do one of the following:
 
 <Card
-  title="Zero-Domain Migration"
+  title="Zero-Downtime Domain Migration"
   href="/docs/v2/domains-and-aliases/zero-downtime-domain-migration"
 >
   Migrate your domain to use ZEIT DNS with zero downtime.
@@ -151,4 +152,6 @@ As explained in the "[pointing to Now](/docs/v2/domains-and-aliases/adding-a-dom
 
 A tool for transferring domains between accounts is in the works and will bypass this need.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

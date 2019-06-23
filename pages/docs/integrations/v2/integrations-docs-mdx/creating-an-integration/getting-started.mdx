@@ -1,0 +1,27 @@
+import ProjectSetup from './project-setup.mdx'
+import CreateAUiHook from './create-a-uihook.mdx'
+import CreateAnIntegration from './create-an-integration.mdx'
+import TestingTheIntegration from './testing-the-integration.mdx'
+import IntegrationInstallation from './integration-installation.mdx'
+import DeployToProduction from './deploy-to-production.mdx'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/getting-started/getting-started.mdx',
+  lastEdited: '2019-05-20T12:48:18.000Z'
+}
+
+# Creating An Integration
+
+A ZEIT Integration is delivered to the user through a [UIHook](#understanding-uihooks).
+
+A UIHook is an HTTP POST endpoint that returns a HTML string, composed of custom [ready-made](#component-catalog), or user-made, components, as the response.
+
+The following is a walkthrough for how to make an Integration, comprising of a UIHook. This example uses the Node.js wrapper for the UIHook which is optimized for [Now 2.0](/docs/v2/platform/overview/#versioning) deployments.
+
+<ProjectSetup />
+<CreateAUiHook />
+<CreateAnIntegration />
+<IntegrationInstallation />
+<TestingTheIntegration />
+<DeployToProduction />

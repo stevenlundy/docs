@@ -2,7 +2,8 @@ import { Component, Fragment } from 'react'
 import { parse } from 'querystring'
 import cn from 'classnames'
 import Link from 'next/link'
-import Router, { withRouter } from 'next/router'
+import { useAmp } from 'next/amp'
+import Router, { withRouter, useRouter } from 'next/router'
 import logout from '~/lib/logout'
 import getDashboardHref from '~/lib/utils/get-dashboard-href'
 import algoliasearch from 'algoliasearch/lite'
@@ -11,10 +12,30 @@ import { Menu, MenuItem, MenuDivider } from '~/components/menu'
 import { Navigation, NavigationItem } from '~/components/navigation'
 import AutoComplete from '~/components/search'
 import Avatar from '~/components/avatar'
-import ChatCount from '~/components/chat-count'
 import LayoutHeader from './header-wrapper'
 import Logo from '~/components/icons/logo'
 import Plus from '~/components/icons/plus'
+import { HeaderFeedback } from '~/components/feedback-input'
+import { API_DOCS_FEEDBACK } from '~/lib/constants'
+
+function AmpUserFeedback() {
+  const isAmp = useAmp()
+  if (!isAmp) return null
+  const router = useRouter()
+  return (
+    <>
+      <a href={router.pathname} className="feedback-link">
+        <HeaderFeedback textAreaStyle={{ height: 24, top: 0 }} />
+      </a>
+      <NavigationItem customLink>
+        <a href="https://zeit.co/support">Support</a>
+      </NavigationItem>
+      <NavigationItem customLink>
+        <a href="https://zeit.co/login">Login</a>
+      </NavigationItem>
+    </>
+  )
+}
 
 function getAlgoliaClient() {
   const algoliaClient = algoliasearch(
@@ -113,30 +134,14 @@ class Header extends Component {
     }))
   }
 
-  handleClickEditProfile = e => {
-    if (!e.metaKey) {
-      e.preventDefault()
-
-      const { user } = this.props
-      if (!user) return
-
-      const urlSegment = user.username || 'profile'
-
-      if (window.location.pathname.includes(urlSegment)) {
-        Router.push(
-          { pathname: '/user-profile', query: { editing: '1' } },
-          `/profile/${urlSegment}/edit`,
-          { shallow: true }
-        )
-      } else {
-        Router.push(
-          { pathname: '/user-profile', query: { editing: '1' } },
-          `/profile/${urlSegment}/edit`
-        )
-      }
-
-      return
-    }
+  handleFeedbackSubmit = async (feedback, done) => {
+    const res = await fetch(API_DOCS_FEEDBACK, {
+      method: 'POST',
+      body: JSON.stringify(feedback)
+    })
+    if (res.status !== 200) {
+      done('Sorry, something went wrong, please try again.')
+    } else done()
   }
 
   renderMenuTrigger = ({ handleProviderRef, menu }) => {
@@ -209,8 +214,8 @@ class Header extends Component {
           }
 
           .team {
-            padding: 8px 20px !important;
-            margin: -8px -20px !important;
+            padding: 8px 20px;
+            margin: -8px -20px;
           }
 
           .user {
@@ -300,6 +305,7 @@ class Header extends Component {
       user,
       teams = [],
       userLoaded,
+      zenModeActive,
       isAmp
     } = this.props
     const { menuActive } = this.state
@@ -339,54 +345,75 @@ class Header extends Component {
           data-amp-bind-class={buildAmpNavClass('main-navigation')}
           className={cn('main-navigation', { active: navigationActive })}
         >
-          <NavigationItem
-            href="/docs"
-            active={
-              router.pathname.startsWith('/docs') &&
-              !router.pathname.startsWith('/docs/api')
-            }
-            onClick={handleIndexClick}
-          >
-            Docs
-          </NavigationItem>
-          <NavigationItem
-            href="/guides"
-            active={router.pathname.startsWith('/guides')}
-            onClick={handleIndexClick}
-          >
-            Guides
-          </NavigationItem>
-          <NavigationItem
-            href="/docs/api"
-            active={router.pathname.startsWith('/docs/api')}
-            onClick={handleIndexClick}
-          >
-            API Reference
-          </NavigationItem>
-          <NavigationItem
-            href="/examples"
-            active={router.pathname.startsWith('/examples')}
-            onClick={handleIndexClick}
-          >
-            Examples
-          </NavigationItem>
-          <span className="desktop_search">{this.renderSearch()}</span>
+          {!zenModeActive && (
+            <span>
+              <NavigationItem
+                href="/docs"
+                active={
+                  router.pathname.startsWith('/docs') &&
+                  !router.pathname.startsWith('/docs/api') &&
+                  !router.pathname.startsWith('/docs/addons')
+                }
+                onClick={handleIndexClick}
+              >
+                Docs
+              </NavigationItem>
+              <NavigationItem
+                href="/guides"
+                active={router.pathname.startsWith('/guides')}
+                onClick={handleIndexClick}
+              >
+                Guides
+              </NavigationItem>
+              <NavigationItem
+                href="/docs/api"
+                active={router.pathname.startsWith('/docs/api')}
+                onClick={handleIndexClick}
+              >
+                API Reference
+              </NavigationItem>
+              <NavigationItem
+                href="/examples"
+                active={router.pathname.startsWith('/examples')}
+                onClick={handleIndexClick}
+              >
+                Examples
+              </NavigationItem>
+              <NavigationItem
+                href="/docs/integrations"
+                active={router.pathname.startsWith('/docs/integrations')}
+                onClick={handleIndexClick}
+              >
+                Integrations
+              </NavigationItem>
+              <span className="desktop_search">{this.renderSearch()}</span>
+            </span>
+          )}
         </Navigation>
 
         <Navigation className="user-navigation">
-          {userLoaded && (
+          <AmpUserFeedback />
+          {!zenModeActive && userLoaded && (
             <Fragment>
               {!user ? (
                 <Fragment>
-                  <NavigationItem className="chat" href="https://zeit.co/chat">
-                    Chat <ChatCount className="chat-count" />
+                  <HeaderFeedback onFeedback={this.handleFeedbackSubmit} />
+                  <NavigationItem
+                    className="chat"
+                    href="https://zeit.co/support"
+                  >
+                    Support
                   </NavigationItem>
                   <NavigationItem href="/login">Login</NavigationItem>
                 </Fragment>
               ) : (
                 <Fragment>
-                  <NavigationItem className="chat" href="https://zeit.co/chat">
-                    Chat <ChatCount className="chat-count" />
+                  <HeaderFeedback onFeedback={this.handleFeedbackSubmit} />
+                  <NavigationItem
+                    className="chat"
+                    href="https://zeit.co/support"
+                  >
+                    Support
                   </NavigationItem>
                   <Menu
                     tip
@@ -417,17 +444,6 @@ class Header extends Component {
                             </a>
                           </Link>
                         )}
-                        <a
-                          className="edit-profile"
-                          href={
-                            this.props.user.username
-                              ? `/profile/${this.props.user.username}/edit`
-                              : '/profile'
-                          }
-                          onClick={this.onEditProfileClick}
-                        >
-                          Edit Profile
-                        </a>
                       </div>
                     </MenuItem>
                     <MenuDivider />
@@ -468,7 +484,6 @@ class Header extends Component {
             </Fragment>
           )}
         </Navigation>
-
         <button
           onClick={onToggleNavigation}
           className={cn('arrow-toggle', { active: navigationActive })}
@@ -485,6 +500,10 @@ class Header extends Component {
           <div className="line bottom" />
         </button>
         <style jsx>{`
+          :global(.header .feedback-link) {
+            display: inherit;
+          }
+
           :global(.header .main-navigation) {
             margin-right: auto;
           }
@@ -573,27 +592,13 @@ class Header extends Component {
             margin-bottom: 3px;
             text-decoration: none;
           }
-          .avatar-user-info .edit-profile {
-            color: #0076ff;
-            font-weight: 500;
-            font-size: 12px;
-            text-decoration: none;
-            border: 0;
-            background: none;
-            padding: 0;
-            margin: 0;
-            outline: 0;
-            cursor: pointer;
-          }
           .avatar-link:hover,
-          .username:hover,
-          .edit-profile:hover {
+          .username:hover {
             background-color: white;
             opacity: 0.7;
           }
           .avatar-link,
-          .username,
-          .edit-profile {
+          .username {
             transition: opacity 0.2s ease;
           }
           span.settings {
@@ -604,7 +609,7 @@ class Header extends Component {
             display: none;
           }
           .desktop_search {
-            display: block;
+            display: inline-block;
           }
 
           :global(.amp-search) {
@@ -632,6 +637,11 @@ class Header extends Component {
 
           :global(.amp-search:focus ~ .search-border) {
             border: 1px solid #eaeaea;
+          }
+
+          :global(.geist-feedback-input:not(.focused) > textarea) {
+            height: 24px ${isAmp ? '' : '!important'};
+            top: 0 ${isAmp ? '' : '!important'};
           }
 
           @media screen and (max-width: 950px) {

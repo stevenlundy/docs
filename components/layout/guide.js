@@ -16,7 +16,7 @@ import H5 from '~/components/text/h5'
 import { P } from '~/components/text/paragraph'
 import { Avatar } from '~/components/avatar'
 import HR from '~/components/text/hr'
-import { GuidesFeedback } from '~/components/feedback-input'
+import { FooterFeedback } from '~/components/feedback-input'
 
 const DocH2 = ({ children }) => (
   <>
@@ -97,10 +97,7 @@ class Guide extends React.PureComponent {
               <section className="guide content">
                 {this.props.children}
                 <HR />
-                <div className="rate-guide">
-                  <H5>How Was This Guide?</H5>
-                  <GuidesFeedback />
-                </div>
+                <FooterFeedback />
                 <HR />
                 <div className="guide-author" id="authors">
                   <H5>Written By</H5>
@@ -133,6 +130,8 @@ class Guide extends React.PureComponent {
               width: 100%;
               padding-bottom: 96px;
               padding-top: 32px;
+              display: flex;
+              flex-direction: column;
             }
 
             .guide-heading {
@@ -152,6 +151,10 @@ class Guide extends React.PureComponent {
             .guide-meta :global(.avatar-group) {
               width: auto;
               margin-right: 16px;
+            }
+
+            .guide-author :global(h5) {
+              margin-top: 0;
             }
 
             .authors-list {

@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { GenericLink } from '~/components/text/link'
@@ -25,9 +26,9 @@ The deployment process involves two phases we handle on your behalf:
 
 The resulting deployment is:
 
-- Immutable
-- Globally Distributed (CDN)
-- Serverless
+- [Immutable](/docs/v2/deployments/concepts/immutability)
+- [Globally Distributed](/smart-cdn)
+- [Serverless](/docs/v2/deployments/concepts/lambdas/#conceptual-model)
 
 ### Your First Deployment
 
@@ -151,4 +152,6 @@ Extend your deployments with all that Now offers:
   Control your deployment's paths in detail with routes.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

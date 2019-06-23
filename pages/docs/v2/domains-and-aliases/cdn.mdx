@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Image } from '~/components/media'
@@ -60,4 +61,6 @@ The cache is also always skipped when an [HTTP cookie](https://developer.mozilla
   Learn how to manage the DNS records for your domains.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

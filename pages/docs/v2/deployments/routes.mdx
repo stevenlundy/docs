@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { InlineCode } from '~/components/text/code'
 import Caption from '~/components/text/caption'
@@ -14,6 +15,8 @@ export const meta = {
 }
 
 Now uses routes to define the behavior of how a request is handled on the routing side. For example, you might use a route to rewrite a URL to another, redirect a user, or apply a header with the response to a request.
+
+By default, routing is defined by the filesystem of your deployment. For example, if a user makes a request to `/123.png`, and your [`now.json` file](/docs/v2/deployments/configuration/#routes) does not contain any routes with a valid `src` matching that path, it will fallback to the filesystem and serve `/123.png` if it exists.
 
 A route can be defined within a project's [`now.json` configuration file](/docs/v2/deployments/configuration/#routes) as an object within an array assigned to the `routes` property, like the following which creates a simple rewrite from one path to another:
 
@@ -59,27 +62,44 @@ The following example shows a `now.json` configuration that takes a `src` path a
 
 **Type**: String
 
-`dest` is used to rewrite the [`src`](#src) path to another path.
+`dest` is used to rewrite the [`src`](#src) path to another path, such as another URL or Now hosted lambda.
 
 [The example for the `src` property](#src) shows how both methods work together to create a rewrite.
 
 ```json
 {
   "version": 2,
-  "routes": [{ "src": "/about", "dest": "https://about.me" }]
+  "routes": [
+    { "src": "/about", "dest": "https://about.me" },
+    { "src": "/action", "dest": "my-lambda-action/index" }
+  ]
 }
 ```
 
 <Caption>
-  An example <InlineCode>now.json</InlineCode> file with a{' '}
-  <InlineCode>routes</InlineCode> property that rewrites one path to another
-  upon request.
+  An example <InlineCode>now.json</InlineCode> file with{' '}
+  <InlineCode>routes</InlineCode> properties that rewrite paths to another upon
+  request.
 </Caption>
 
 <Note>
-  You can point the <InlineCode>dest</InlineCode> path to any URL, including
-  non-Now hosted URLs as shown in the code below.
+  You can point the <InlineCode>dest</InlineCode> path to any URL, Now hosted
+  lambda, or even non-Now hosted URLs as shown in the code above. If you don't
+  perform any rewriting, you can safely remove <InlineCode>dest</InlineCode>.
 </Note>
+
+```json
+{
+  "version": 2,
+  "routes": [{ "src": "/about" }]
+}
+```
+
+<Caption>
+  This will route to <InlineCode>/about</InlineCode> without rewriting, but
+  routes like this are usually redundant with{' '}
+  <GenericLink href="#wildcard-routes">handle filesystem</GenericLink>.
+</Caption>
 
 ### `headers`
 
@@ -93,7 +113,7 @@ An example of using the `headers` property to add [shared caching](https://devel
 {
   "version": 2,
   "routes": [
-    { "src": "/images/.+", "headers": { "cache-control": "s-maxage=604800" } }
+    { "src": "/images/(.*)", "headers": { "cache-control": "s-maxage=604800" }, "dest": "/images/$1" }
   ]
 }
 ```
@@ -108,13 +128,43 @@ An example of using the `headers` property to add [shared caching](https://devel
   are defined in the same way.
 </Note>
 
+### `continue`
+
+**Type**: Boolean
+
+The `continue` property allows routing to continue even though the `src` was matched.
+
+For example, you can use this property in combination with [the `headers` property](#headers) to append headers to a broader group of routes instead of applying it to every route. `continue` **can not** be used with `dest`.
+
+```json
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/blog.*",
+      "headers": { "Cache-Control": "max-age=3600" },
+      "continue": true
+    },
+    {
+      "src": "/blog/([^/]+)",
+      "dest": "/blog?slug=$1"
+    }
+  ]
+}
+```
+
+<Caption>
+  In this case, the <InlineCode>Cache-Control</InlineCode> header will be
+  applied to any route starting with <InlineCode>/blog</InlineCode>.
+</Caption>
+
 ### `status`
 
 **Type**: Integer
 
 The `status` property defines the status code that Now should respond with when a path is requested.
 
-For example, you can use this property in combinations with [the `headers` property](#headers) to create a redirect with the initial status code of 301 (Moved Permanently).
+For example, you can use this property in combination with [the `headers` property](#headers) to create a redirect with the initial status code of 301 (Moved Permanently). Using `status` will not route to any lambda or static file.
 
 ```json
 {
@@ -162,7 +212,7 @@ As an example, you can use this property when you have an API endpoint and only 
 ```json
 {
   "version": 2,
-  "routes": [{ "src": "/api/user.js", "methods": ["POST", "GET"] }],
+  "routes": [{ "src": "/api/user.js", "methods": ["POST", "GET"], "dest": "/api/user.js" }],
   "builds": [{ "src": "*.js", "use": "@now/node" }]
 }
 ```
@@ -243,6 +293,45 @@ If you are using a Next.js app and want to learn more about using custom routes 
   Custom Routes with Next.js and Now
 </Card>
 
+## Wildcard Routes
+
+Sometimes, you will have wildcard routes that overlap with other routes. For example,
+
+```json
+{
+  "version": 2,
+  "routes": [
+    { "src": "/about" },
+    { "src": "/contact" },
+    { "src": "/([^/]+)", "dest": "/blog?slug=$1" }
+  ]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file where filesystem routes are
+  explicitly defined.
+</Caption>
+
+You might find that there are many routes without a `dest`. These routes can be handled without being explicitly defined by using handle filesystem. Handle filesystem works the same as if you hardcoded all the routes in its place.
+
+```json
+{
+  "version": 2,
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/([^/]+)", "dest": "/blog?slug=$1" }
+  ]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file, using handle filesystem to route to
+  filesystem routes.
+</Caption>
+
+In this example, handle filesystem expands to route `/about` and `/contact`.
+
 ## Testing Routes
 
 You can use this [online visual PCRE tester](https://www.debuggex.com/?flavor=pcre) to quickly test your `src` paths before deploying them to Now.
@@ -310,4 +399,6 @@ See more documentation or guides to help you get where you want:
   The basics of deployments on Now, to help you deploy anything.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

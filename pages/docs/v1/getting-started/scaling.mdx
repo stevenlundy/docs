@@ -28,11 +28,11 @@ Each deployment has a minimum and maximum amount of instances it can have. Based
 By default, all of the deployments are configured like this:
 
 - min: 0
-- max: 1
+- max: auto
 
 This means, when your deployment receives some traffic <Now color="#000"/> will start an instance. If your deployment doesn't receive any traffic for a while, <Now color="#000"/> will kill that instance.
 
-There's a fixed number of concurrent instances you can have based on the [plan](/pricing/v1) you've chosen. But with this configuration, you can have as many deployments as you want.
+With this configuration, your deployment will scale to up to 10 instances automatically, depending on the incoming traffic load.
 
 _Having older deployments which are **not active** will cost you nothing._
 

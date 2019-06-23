@@ -1,0 +1,31 @@
+import Note from '~/components/text/note'
+import { InlineCode } from '~/components/text/code'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-user-interfaces/information.mdx',
+  lastEdited: '2019-05-20T10:02:26.000Z'
+}
+
+## Information
+
+### Project Information
+
+Inside the ZEIT Dashboard, a user can access different configurations for an Integration inside either:
+
+- The team or user dashboard
+- Each and every project
+
+A UIHook can identify this by looking at the `payload.project` property. It can then change the user interface selectively.
+
+<Note>
+  If the user is looking at a configurations inside the main dashboard,{' '}
+  <InlineCode>payload.project</InlineCode> will be empty.
+</Note>
+
+### Account Information
+
+You can access the account information of the installation inside the UIHook. Here's a list of such properties:
+
+- `payload.user` - The `user` who is accessing the UIHook
+- `payload.team` - The `team` of the configuration if the Integration is added into a team, otherwise empty

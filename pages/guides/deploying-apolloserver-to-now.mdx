@@ -21,14 +21,14 @@ The first step is to create a directory for the project and `cd` into it via you
 
 <TerminalInput>mkdir apolloserver && cd apolloserver</TerminalInput>
 
-Next, install the `apollo-server` and `graphql` packages via your terminal.
+Next, install the `apollo-server-micro` and `graphql` packages via your terminal.
 
-<TerminalInput>yarn add apollo-server graphql</TerminalInput>
+<TerminalInput>yarn add apollo-server-micro graphql</TerminalInput>
 
 Once the dependencies are installed, go ahead and create an `index.js` file at the root of the project directory with the following code as its contents:
 
 ```js
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql } = require('apollo-server-micro')
 
 const typeDefs = gql`
   type Query {
@@ -51,9 +51,7 @@ const server = new ApolloServer({
   playground: true
 })
 
-server.listen({ port: 3000 }).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`)
-})
+module.exports = server.createHandler();
 ```
 
 <Caption>
@@ -68,7 +66,7 @@ Create a [`now.json` configuration file](https://zeit.co/docs/v2/deployments/con
 ```json
 {
   "version": 2,
-  "builds": [{ "src": "index.js", "use": "@now/node-server" }],
+  "builds": [{ "src": "index.js", "use": "@now/node" }],
   "routes": [{ "src": "/.*", "dest": "index.js" }]
 }
 ```
@@ -77,7 +75,7 @@ Create a [`now.json` configuration file](https://zeit.co/docs/v2/deployments/con
 - The [`routes` property](/docs/v2/deployments/configuration#routes) allows Now to route your deployment either by using a source and destination, or by way of a source, status, and headers.
 - The [`builds` property](https://zeit.co/docs/v2/deployments/builds) allows Now to use a [builder](https://zeit.co/docs/v2/deployments/builders/overview/) with a specific source target.
 
-We used the `@now/node-server` [builder](https://zeit.co/docs/v2/deployments/builders/overview) to enable a Node.js server deployment.
+We used the `@now/node` [builder](https://zeit.co/docs/v2/deployments/builders/overview) to enable a Node.js deployment.
 
 Next, deploy the app with the Now CLI.
 

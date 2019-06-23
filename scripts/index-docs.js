@@ -13,13 +13,14 @@ async function main() {
   // Initialise Algolia client
   const client = algoliasearch('NNTAHQI9C5', process.env.ALGOLIA_API_KEY)
 
-  const tmpIndex = client.initIndex('prod_docs_tmp')
+  const tmpIndex = await client.initIndex('prod_docs_tmp')
+  const mainIndex = await client.initIndex('prod_docs')
 
   // Array to store object with content from pages
   let index = []
 
   // Build project
-  // await exec(`next build && next export -o dist`)
+  await exec(`next build && next export -o dist`)
 
   // Scan pages and add titles and content as objects in an `index` array
   let files
@@ -29,6 +30,7 @@ async function main() {
       'dist/guides/**/*.html',
       'dist/docs/v2/**/*.html',
       'dist/docs/api/v2/**/*.html',
+      'dist/docs/integrations/v2/**/*.html',
       'dist/examples/**/*.html'
     ])
     // filter out AMP pages
@@ -40,6 +42,7 @@ async function main() {
   // Loop through files
   files.forEach(file => {
     const isAPISection = !!file.startsWith('dist/docs/api/v2')
+    const isIntegrations = !!file.startsWith('dist/docs/integrations/v2')
     const isDocs = !!file.startsWith('dist/docs/v2')
     const isGuides = !!file.startsWith('dist/guides')
 
@@ -87,8 +90,8 @@ async function main() {
 
         // Create record with title, (if it exists) section heading, url (inferred), paragraph content, and order
         const record = {
-          title: isAPISection ? currentSection : pageTitle,
-          ...(isAPISection
+          title: isAPISection || isIntegrations ? currentSection : pageTitle,
+          ...(isAPISection || isIntegrations
             ? currentSubSection && { section: currentSubSection }
             : currentHeading && { section: currentHeading.text }),
           url,
@@ -99,6 +102,7 @@ async function main() {
           objectID: `v2-${url}-${md5(currentEl.text())}`,
           _tags: [
             (isAPISection && 'api') ||
+              (isIntegrations && 'integrations') ||
               (isDocs && 'docs') ||
               (isGuides && 'guide')
           ]
@@ -115,13 +119,10 @@ async function main() {
 
   // Test file
   // fs.writeFileSync(`test.json`, JSON.stringify(index))
-  const { taskID } = await client.copyIndex('prod_docs', tmpIndex.indexName, [
-    'settings',
-    'synonyms',
-    'rules'
-  ])
 
-  await tmpIndex.waitTask(taskID)
+  // Get settings of main index and set them to the temp index
+  const indexSettings = await mainIndex.getSettings()
+  await tmpIndex.setSettings(indexSettings)
 
   const indexTmp = [...index]
 
@@ -131,7 +132,7 @@ async function main() {
     await tmpIndex.waitTask(taskID)
   }
 
-  client.moveIndex(tmpIndex.indexName, 'prod_docs')
+  client.moveIndex(tmpIndex.indexName, mainIndex.indexName)
 }
 
 // Execute main function

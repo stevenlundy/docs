@@ -1,0 +1,64 @@
+import Note from '~/components/text/note'
+import { TerminalInput } from '~/components/text/terminal'
+import { InlineCode } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/getting-started/create-a-uihook.mdx',
+  lastEdited: '2019-05-20T12:48:18.000Z'
+}
+
+## Step 2: Creating a UIHook
+
+This step will detail the creation of a UIHook for a counter application. This example explains the basics for how an UIHook works.
+
+First, create an `index.js` file and add the following code:
+
+```js
+const { withUiHook } = require('@zeit/integration-utils')
+
+let count = 0
+
+module.exports = withUiHook(({ payload }) => {
+  count += 1
+  return `
+    <Page>
+      <P>Counter: ${count}</P>
+      <Button>Count Me</Button>
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example <InlineCode>index.js</InlineCode> file for a ZEIT Integration.
+</Caption>
+
+Inside the [UIHook](/docs/integrations#understanding-uihooks) there is a variable, `count`. Every time the [Button](#component-catalog/action-components/button) is clicked, the UIHook is called, thus updating the counter and **providing the updated HTML as a response**.
+
+This is happening inside the ZEIT Dashboard under a configuration page for this Integration.
+
+<Note>
+  You can find more complex examples{' '}
+  <GenericLink href="/docs/integrations#examples/">
+    later in the documentation
+  </GenericLink>{' '}
+  or you can view the code on the{' '}
+  <GenericLink href="https://github.com/zeit/integrations">
+    Integrations Gallery
+  </GenericLink>
+  .
+</Note>
+
+### Running the UIHook Locally
+
+With the [help of `now dev`](/docs/v2/development/basics), you can run your UIHook locally inside a **simulation of the Now platform**.
+
+By running your UIHook locally, you can test that your Integration, after creating the Integration with ZEIT, behaves as expected before deploying your Integration to production. This will be explored further in the next section.
+
+To run the UIHook locally, use the following command:
+
+<TerminalInput>now dev -p 5005</TerminalInput>
+<Caption>Running the created UIHook locally on port 5005.</Caption>

@@ -1,0 +1,162 @@
+import Guide from '~/components/layout/guide'
+import { TerminalInput } from '~/components/text/terminal'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+import Card from '~/components/card'
+import { Code } from '~/components/text/code'
+import Note from '~/components/text/note'
+import Request from '~/components/api/request'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  title: 'Handling Node.js Request Bodies With Micro',
+  description:
+    'Learn how to parse Node.js request bodies with Micro for use inside serverless functions.',
+  published: '2019-05-10T09:03:14.819Z',
+  authors: ['msweeneydev'],
+  url: '/guides/handling-node-request-body-with-micro',
+  editUrl: 'pages/guides/handling-node-request-body-with-micro.mdx',
+  lastEdited: '2019-05-10T15:39:54.000Z'
+}
+
+In this guide, we will show you how to parse a [Node.js request body](https://nodejs.org/en/docs/guides/anatomy-of-an-http-transaction/), for use inside a [serverless function](/docs/v2/deployments/concepts/lambdas/) deployed to [Now](/now), without requiring a framework such as Express.
+
+This guide assumes the request is sent with a [`Content-Type`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) of [`application/json`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON). However, many more content types can be parsed using the [`micro` module](https://github.com/zeit/micro).
+
+## Step 1: Creating the Function
+
+To get started, create a project directory and `cd` into it.
+
+Next, initialize the project with the following command:
+
+<TerminalInput>yarn init</TerminalInput>
+<Caption>Initializing a project with <GenericLink href="https://yarnpkg.com">Yarn</GenericLink>.</Caption>
+
+After answering the questions given, you should add the only dependency required for this example, `micro`:
+
+<TerminalInput>yarn add micro</TerminalInput>
+<Caption>Adding the <InlineCode>micro</InlineCode> dependency to the project.</Caption>
+
+To illustrate the parsing of a request body, create an `index.js` file at the root of your project directory with the following code:
+
+```js
+const { json } = require('micro')
+
+module.exports = async (req, res) => {
+  const body = await json(req)
+  res.end(`Hello ${body.name}, you just parsed the request body!`)
+}
+```
+
+<Caption>
+  An example of how to parse a request body using{' '}
+  <GenericLink href="https://nodejs.org/dist/latest-v12.x/docs/api/">
+    Node.js
+  </GenericLink>{' '}
+  and <GenericLink href="https://github.com/zeit/micro">Micro</GenericLink>.
+</Caption>
+
+This function takes a POST request, parses the body, and uses data from the body in the response.
+
+The key part here is line 4. For those used to working with Express, it should be similar to accessing `req.body`.
+
+`json`, imported from `micro` on line 1, is a function that returns the request body in the JSON format, fully parsed and ready to access inside your function.
+
+This is illustrated in the response, as the JSON object is accessed to use the `name` property that was sent in the initial request.
+
+## Step 2: Deploying the Function
+
+Deploying your function to [Now](/now) is easy. First, create a [`now.json` file](/docs/v2/deployments/configuration/) in the root of your project directory with the following code:
+
+```json
+{
+  "version": 2,
+  "builds": [{ "src": "index.js", "use": "@now/node" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file in your project.
+</Caption>
+
+After creating your `now.json` file, you should deploy your project with **just a single command**:
+
+<TerminalInput>now</TerminalInput>
+<Caption>Deploying your project with just a single command.</Caption>
+
+You have now created and deployed your project, all that's left to do is test that it works.
+
+## Step 3: Sending the Request
+
+To verify that the JSON is being parsed correctly, make a POST request to your new deployment using [curl](https://curl.haxx.se/) by executing the below code inside your terminal:
+
+<Request
+  method="POST"
+  url="https://your-deployments-url.now.sh/"
+  headers={{
+    'Content-Type': 'application/json'
+  }}
+  body={{
+    name: 'Reader'
+  }}
+/>
+<Caption>
+    Making a POST request using <GenericLink href="https://curl.haxx.se/">curl</GenericLink>.
+</Caption>
+
+<Note>
+  You should change the URL to match the one for your deployment given to you in
+  the Now CLI.
+</Note>
+
+You will receive a response similar to the following:
+
+<Code>Hello Reader, you just parsed the request body!</Code>
+<Caption>
+    An example response from making a POST request.
+</Caption>
+
+Congratulations, now you know how to parse request bodies in Node.js!
+
+## Bonus: Understanding Why this Works
+
+When [Node.js](https://nodejs.org/docs/latest-v8.x/api/) receives a request, the [body](https://nodejs.org/en/docs/guides/anatomy-of-an-http-transaction/#request-body) is in the format of a [ReadableStream](https://nodejs.org/api/stream.html#stream_class_stream_readable).
+
+To get the data from the stream, you need to listen to its `data` and `end` events. To do this requires a few lines of code which you would much rather not have to repeat.
+
+By using [`micro`](https://github.com/zeit/micro), parsing [request bodies](https://nodejs.org/en/docs/guides/anatomy-of-an-http-transaction/#request-body) is concise and straightforward as it handles everything for you, all you need to do is specify the format you want to receive the data in.
+
+## More Resources
+
+For more information on using Node.js with [Now](/now), take a look at the [`@now/node` builder](/docs/v2/deployments/official-builders/node-js-now-node/).
+
+To configure Now further, please see these additional topics and guides:
+
+<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
+  Deploy any of your applications with ZEIT Now.
+</Card>
+
+<Card
+  title="Aliasing"
+  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
+>
+  Learn more about aliasing to your deployments.
+</Card>
+
+<Card title="Routes" href="/docs/v2/deployments/routes">
+  Learn more about how Now uses routes to define the behavior of how a request
+  is handled on the routing side.
+</Card>
+
+<Card title="More Guides" href="/guides">
+  See more guides that help you move forward with your projects and automatic
+  deployments from Now for GitLab.
+</Card>
+
+<Card title="Support" href="/support">
+  Learn more about our Priority Support and discover how we can help you
+  further.
+</Card>
+
+export default ({ children }) => <Guide meta={meta}>{children}</Guide>

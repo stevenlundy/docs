@@ -1,0 +1,21 @@
+import Note from '~/components/text/note'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/project-level-apis/project-based-env-vars.mdx',
+  lastEdited: '2019-05-20T23:31:58.000Z'
+}
+
+## Project-Based Environment Variables
+
+When building a ZEIT Integration, you may want to expose an API secret or a configuration URL for deployments within a project.
+
+For example, say you want to expose the `MONGO_URL` environment variable; the following would be the process to do so:
+
+- Create a secret to store the value for `MONGO_URL` (This is an account wide operation). For this example, we'll assume the value for the secret key is `mongo_url_for_my_db`.
+- Next, add `MONGO_URL=@mongo_url_for_my_db` for the projects where `MONGO_URL` is needed.
+
+<Note>
+  The pattern is to create a secret once per account then use it many times with
+  different projects.
+</Note>

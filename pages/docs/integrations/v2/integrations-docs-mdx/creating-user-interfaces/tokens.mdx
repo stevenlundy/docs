@@ -1,0 +1,30 @@
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-user-interfaces/tokens.mdx',
+  lastEdited: '2019-05-20T10:02:26.000Z'
+}
+
+## Tokens
+
+Every request to a UIHook will receive a token which can be used to make requests to the ZEIT API for the related account.
+
+This is a **short-lived token**. Therefore, you should only use it inside the UIHook. You **should not use it** inside asynchronous functions which are executed even after you return the UIHook response.
+
+If you need a **long-lived token**, you can ask for a [OAuth2 token](/docs/integrations#building-oauth-integrations).
+
+You can access this property inside `payload.token`.
+
+When you use the `@zeit/integration-utils` utility, you **do not** need to extract this token manually. You will receive an instance called `zeitClient` which is initialized with the above token and account information. You can use that to consume the ZEIT token.
+
+This is how you can get that instance:
+
+```js
+const { withUiHook } = require('@zeit/integration-utils')
+
+module.exports = withUiHook(({ payload, zeitClient }) => {
+  // Do something with the zeitClient and payload
+  return `<Page>and return some JSX.</Page>`
+})
+```
+
+You can inspect the [API and methods of `zeitClient`](https://github.com/zeit/integration-utils/blob/master/src/zeit-client.ts) to understand its capabilities.

@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { GenericLink } from '~/components/text/link'
 import { Image } from '~/components/media'
@@ -295,4 +296,6 @@ With Now, you can split this into three discrete underlying Lambdas instead, whi
   Learn how to deploy your own applications by looking at more examples.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

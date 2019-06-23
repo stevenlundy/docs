@@ -1,0 +1,31 @@
+import AccessViaIntegrationUtils from './access-via-integration-utils.mdx'
+import API from './api.mdx'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/using-the-metadata-store/metadata-store.mdx',
+  lastEdited: '2019-05-20T23:31:58.000Z'
+}
+
+# Using the Metadata Store
+
+When installing an Integration, most of the time it will need to persist different configurations and information.
+
+This may include but is not limited to:
+
+- User preferences
+- Different API secrets/tokens
+- Cached results for faster access
+
+Usually, a database is used to persist this information, but for ZEIT Integrations, we provide a Metadata Store for this very purpose.
+
+Every [UIHook](#creating-an-integration/step-2-creating-a-uihook) has access to a Metadata Store.
+
+Each configuration of the Integration gets its own Metadata Store. It is limited to 100KB in size for a single configuration.
+
+It's very common to load metadata inside the UIHook for every request. That's why we limit its size to 100KB. With that, we strike the balance between a generous amount of storage and lightning fast loading times.
+
+If you need more storage capacity, we recommend using an external database.
+
+<AccessViaIntegrationUtils />
+<API />

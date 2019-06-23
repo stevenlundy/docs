@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { Code, InlineCode } from '~/components/text/code'
@@ -22,8 +23,9 @@ The `@now/php` builder allows you to use any `.php` file.
 
 <Note>
   This builder will only include one PHP source file per{' '}
-  <GenericLink href="/docs/v2/deployments/concepts/lambdas">Lambda</GenericLink>.
-  In the future, it will automatically include its dependencies via static analysis.
+  <GenericLink href="/docs/v2/deployments/concepts/lambdas">Lambda</GenericLink>
+  . In the future, it will automatically include its dependencies via static
+  analysis.
 </Note>
 
 ## When to use it
@@ -85,4 +87,6 @@ This [limit is extendable](/docs/v2/deployments/builders/overview#configuring-ou
 }`}</Code>
 </Example>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

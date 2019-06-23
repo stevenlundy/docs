@@ -288,6 +288,7 @@ class AutoComplete extends Component {
           @media screen and (max-width: 950px) {
             .react-autosuggest__input {
               font-size: 16px;
+              width: 100%;
             }
 
             .react-autosuggest__suggestions-container--open {

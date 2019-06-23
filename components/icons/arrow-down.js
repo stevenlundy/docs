@@ -1,15 +1,29 @@
-const ArrowDown = () => (
-  <svg
-    width="13"
-    height="6"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    stroke="#979797"
-    fillRule="evenodd"
-    strokeLinecap="square"
-  >
-    <path d="M1.367.375l5.185 5.303M11.685.375L6.5 5.678" />
-  </svg>
-)
+import PropTypes from 'prop-types'
+
+const ArrowDown = ({ fill, width, height, strokeWidth }) => {
+  return (
+    <svg
+      width={width || '22'}
+      height={height || '12'}
+      viewBox="0 0 22 12"
+      fill="none"
+    >
+      <path
+        d="M1 1L11 11L21 1"
+        stroke={fill || '#000'}
+        strokeWidth={strokeWidth || '1.5'}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+ArrowDown.propTypes = {
+  // Width and height support both `width={20}` and `width="20px"`
+  width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  fill: PropTypes.string
+}
 
 export default ArrowDown

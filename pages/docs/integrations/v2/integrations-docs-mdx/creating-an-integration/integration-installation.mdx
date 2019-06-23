@@ -1,0 +1,41 @@
+import Note from '~/components/text/note'
+import { TerminalInput } from '~/components/text/terminal'
+import { Code } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import { Image } from '~/components/media'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/getting-started/integration-installation.mdx',
+  lastEdited: '2019-05-20T12:48:18.000Z'
+}
+
+## Step 4: Add a Configuration
+
+You can visit the [Marketplace URL](#creating-an-integration/step-3-creating-your-integration/marketplace-url) from the previous step and **click the "Add" button** to add a configuration to your installation.
+
+Then, you can select a ZEIT account to add the configuration to:
+
+<Image
+  src={`${process.env.ASSETS}/docs/integrations/getting-started/account-switcher.png`}
+  width={2434/2}
+  height={1618/2}
+/>
+<Caption>Selecting a ZEIT account to add the configuration to.</Caption>
+
+Once added, the user will be taken to the configuration page, it will look like this:
+
+<Image
+  src={`${process.env.ASSETS}/docs/integrations/getting-started/counter-configuration.png`}
+  width={2434/2}
+  height={1618/2}
+/>
+<Caption>A UIHook running inside a configuration page.</Caption>
+
+### Finding Configurations
+
+Once added, finding the configuration can be done by clicking the Integrations section through main navigation on the [ZEIT Dashboard](https://zeit.co/dashboard).
+
+If you are inside a project, there is a section called **Integrations** as well. It will show all the configurations affecting that particular project.
+
+When the UIHook receives a request, it contains [information related](#understanding-uihooks/http-payload) to the project being viewed currently. Based on that, your UIHook can decide what HTMl components should be sent as the response.

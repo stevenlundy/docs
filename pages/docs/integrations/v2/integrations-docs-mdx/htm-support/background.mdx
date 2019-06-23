@@ -1,0 +1,20 @@
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/htm-support/background.mdx',
+  lastEdited: '2019-05-10T16:22:38.000Z'
+}
+
+## Background
+
+A [UIHook](/docs/integrations#understanding-uihooks) accepts a set of inputs, such as a `token` or `projectId`, and sends back a string of HTML, including [components](#component-catalog), as the response.
+
+The [components](#component-catalog) are sent as a string. It's just like a HTML page but with a set of [rich components](#component-catalog/) we have defined and exposed for you to use.
+
+Therefore, it is the role of the UIHook to create that HTML string. This is achieved through the use of string manipulation.
+
+With JavaScript template literals, this is relatively straightforward. However, there are a few things to be aware of:
+
+- Escaping prop names and values
+- Escaping the content that goes into components
+- No [array.map()](https://reactjs.org/docs/lists-and-keys.html#rendering-multiple-components) support
+- Difficult to share common components across different Integrations and teams

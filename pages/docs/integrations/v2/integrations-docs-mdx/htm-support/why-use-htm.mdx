@@ -1,0 +1,52 @@
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/htm-support/why-use-htm.mdx',
+  lastEdited: '2019-05-10T16:22:38.000Z'
+}
+
+## Why Use htm
+
+Using htm greatly simplifies the process of creating UIHook's, let's take a look at a basic comparison.
+
+This is a UIHook created using a JavaScript template string:
+
+```js
+const { withUiHook } = require('@zeit/integration-utils')
+
+module.exports = withUiHook(({ payload }) => {
+  return `
+    <Page>
+      Hello World
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using a JavaScript template string to create a UIHook.
+</Caption>
+
+This is the same UIHook created using `htm`:
+
+```js
+const { withUiHook, htm } = require('@zeit/integration-utils')
+
+module.exports = withUiHook(({ payload }) => {
+  return htm`
+    <Page>
+      Hello World
+    </Page>
+  `
+})
+```
+
+<Caption>
+  An example of using <InlineCode>htm</InlineCode> to create a UIHook.
+</Caption>
+
+The key thing to note is the inclusion of `htm` just before the start of the JavaScript template string.
+
+We have included a number of additional and more realistic use-cases in the next section.

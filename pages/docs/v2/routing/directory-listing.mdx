@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { GenericLink } from '~/components/text/link'
 import { Image } from '~/components/media'
@@ -70,4 +71,6 @@ In the example above, the `/example` route (which is a directory without an **In
 
 Furthermore, we are setting a status code of `404` to accompany the response.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { GenericLink } from '~/components/text/link'
 import { Code } from '~/components/text/code'
@@ -10,7 +11,7 @@ export const meta = {
   title: 'Global Configuration',
   description: 'Configure your use of the ZEIT Now clients.',
   editUrl: 'pages/docs/v2/platform/global-configuration.mdx',
-  lastEdited: '2019-01-11T22:35:24.000Z'
+  lastEdited: '2019-05-21T21:08:02.000Z'
 }
 
 <Note>
@@ -141,6 +142,20 @@ This option defines the order that teams are shown in the footer of Now Desktop.
 }`}</Code>
 </Example>
 
+#### `collectMetrics`
+
+**Type**: `Boolean`.
+
+**Valid values**: `true` (default), `false`.
+
+This option defines whether [Now CLI](/download) should collect anonymous metrics about which commands are invoked the most, how long they take to run, and which errors customers are running into.
+
+<Example>
+  <Code lang="json">{`{
+  "collectMetrics": true
+}`}</Code>
+</Example>
+
 ## auth.json
 
 This file should not be edited manually. It exists to contain the authentication information for the Now clients.
@@ -157,4 +172,6 @@ In the case that you are uploading your global configuration setup to a potentia
   deployments are handled and what their result will be.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

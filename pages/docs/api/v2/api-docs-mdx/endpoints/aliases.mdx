@@ -6,7 +6,7 @@ import Request from '~/components/api/request'
 
 export const meta = {
   editUrl: 'pages/docs/api/v2/api-docs-mdx/endpoints/aliases.mdx',
-  lastEdited: '2019-03-22T02:48:37.000Z'
+  lastEdited: '2019-05-25T14:40:39.000Z'
 }
 
 ## Aliases
@@ -15,7 +15,18 @@ export const meta = {
 
 <Endpoint method="GET" url="/v2/now/aliases" />
 
-Retrieves all of the active aliases for the authenticated user.
+Retrieves all of the active aliases for the authenticated account.
+
+#### Request Query Parameters
+
+The response of this API can be controlled with the following optional query parameters.
+
+| Key           | Description                                          |
+| ------------- | ---------------------------------------------------- |
+| **limit**     | Maximum number of aliases to list from a request.    |
+| **from**      | Get aliases created after this JavaScript timestamp. |
+| **projectId** | Filter aliases from the given `projectId`.             |
+
 The body will contain an entry for each alias.
 
 #### Response Parameters

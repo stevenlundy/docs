@@ -1,11 +1,22 @@
 import { GenericLink } from '~/components/text/link'
 import cn from 'classnames'
 
-const NavigationItem = ({ active, children, className, href, onClick }) => (
+const NavigationItem = ({
+  active,
+  children,
+  className,
+  href,
+  onClick,
+  customLink
+}) => (
   <span className={cn({ active }, className, 'navigation-item')}>
-    <GenericLink prefetch href={href} as={href} onClick={onClick}>
-      {children}
-    </GenericLink>
+    {customLink ? (
+      children
+    ) : (
+      <GenericLink href={href} as={href} onClick={onClick}>
+        {children}
+      </GenericLink>
+    )}
     <style jsx>{`
       .navigation-item :global(a) {
         color: #666;

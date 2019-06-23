@@ -1,0 +1,53 @@
+import { Code, InlineCode } from '~/components/text/code'
+import Note from '~/components/text/note'
+import Caption from '~/components/text/caption'
+import { Image } from '~/components/media'
+import { P } from '~/components/text/paragraph'
+
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-an-integration/create-an-integration.mdx',
+  lastEdited: '2019-06-12T10:09:24.000Z'
+}
+
+## Step 3: Creating Your Integration
+
+With a UIHook created, you can now create the Integration on ZEIT.
+
+To do this, visit the [Integrations Developer Console](https://zeit.co/dashboard/integrations/console) and **click the Create button**.
+
+<Image
+  src={`${process.env.ASSETS}/docs/integrations/getting-started/create-integration.png`}
+  width={2434/2}
+  height={1626/2}
+/>
+<Caption>Creating an Integration using the Integrations dashboard.</Caption>
+
+Complete the form and at the end you will find two fields named:
+
+- **Redirect URL**
+- **UI Hook URL**
+
+For now, you can leave the Redirect URL empty and add <http://localhost:5005> to the **UI Hook URL** field.
+
+<Note warning>
+We recommend using <P.B>Google Chrome</P.B> for local UIHook development.
+
+To work with UIHooks using either Safari or Firefox, you will require the use of a tunnelling service such as [`ngrok`](https://ngrok.com/).
+
+When using `ngrok`, the command `ngrok http 5000` will provide you with an address that can be used in the **UI Hook URL** field.
+
+</Note>
+
+### Marketplace URL
+
+Once you create your Integration, you can see it listed on the [Integrations Developer Console](https://zeit.co/dashboard/integrations/console).
+
+Inside your Integration, you can **click the View In Marketplace button** to see it in the marketplace.
+
+Clicking this button will take you the **Public URL** for your Integration. This URL can be shared with anyone who wishes to install and use your Integration.
+
+The Public URL has the following format:
+
+<Code>https://zeit.co/integrations/:slug</Code>
+<Caption>An example <P.B>Public URL</P.B> for an Integration.</Caption>

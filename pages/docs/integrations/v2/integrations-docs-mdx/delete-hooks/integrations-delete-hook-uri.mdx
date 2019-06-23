@@ -1,0 +1,26 @@
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/delete-hooks/integrations-delete-hook-uri.mdx',
+  lastEdited: '2019-06-13T11:13:36.000Z'
+}
+
+## Setting Up
+
+The **Delete Hook** is a HTTP endpoint which is configured to receive HTTP [DELETE requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE). After you create the endpoint in your app, you can add it to the Integration via the [Integration Console](https://zeit.co/dashboard/integrations/console).
+
+Inside your Integration's configuration page, there is an input to set the **Delete Hook URL**. This is where you should add the HTTP endpoint mentioned above.
+
+With the Delete Hook URL set, when a user removes a configuration for your Integration, a HTTP DELETE request will be sent to the defined endpoint.
+The payload your delete endpoint receives is a JSON encoded HTTP body with the following fields:
+
+- `configurationId`
+- `userId`
+- `teamId` - `null` if the user does not belong to a team
+
+Take a look at [this example integration](https://github.com/zeit/integrations/tree/master/delete-hooks) to learn more about how Delete Hooks work.
+
+## HTTP Response
+
+You should consider this HTTP request as an event. Once you receive the request, you should schedule a task for the cleanup action.
+
+This request has a timeout of 10 seconds. That means, if a HTTP 200 response is not received within 10 seconds, the request will be aborted.

@@ -1,0 +1,22 @@
+export const meta = {
+  editUrl:
+    'pages/docs/integrations/v2/integrations-docs-mdx/creating-user-interfaces/jsx.mdx',
+  lastEdited: '2019-05-20T10:02:26.000Z'
+}
+
+## Components
+
+Inside an UIHook you can use a set of whitelisted components. These components will be parsed and rendered in the ZEIT Dashboard.
+
+For security reasons, these components have some minor limitations:
+
+- No HTML elements are allowed
+- Script and Style tags are not supported
+- JavaScript support is disabled
+- Only a set of whitelisted components are supported
+
+These limitations may seem restrictive, but with very good reason.
+
+These limitations allow us to expose a way for you to introduce UI elements into the ZEIT Dashboard without requiring manual verification.
+
+We also provide a set of [rich components](/docs/integrations#component-catalog) that allow you to receive user inputs, implement styling and even poll for changes.

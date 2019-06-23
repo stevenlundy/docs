@@ -1,9 +1,12 @@
 import Guide from '~/components/layout/guide'
 
 import { Image } from '~/components/media'
-import { TerminalOutput, TerminalInput } from '~/components/text/terminal'
+import { TerminalInput } from '~/components/text/terminal'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
+import { InlineCode } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import Card from '~/components/card'
 
 export const meta = {
   title: 'How to Update Now CLI',
@@ -22,9 +25,12 @@ This guide will take you through your options for updating Now CLI and how to st
 
 ## Option 1: Now Desktop
 
-If you have Now Desktop installed, you need not do anything more than to let Now Desktop update Now CLI for you.
+Now Desktop updates Now CLI automatically when there is an update to install, so you never have to think about it again.
 
-Now Desktop comes packaged with Now CLI and updates it automatically.
+Now Desktop also lets you:
+
+- Create deployments with drag-and-drop
+- View your team’s event feed
 
 To have automatic updates to Now CLI using Now Desktop, ensure that automatic updates are enabled from Now Desktop's settings menu:
 
@@ -42,40 +48,46 @@ If you don't have Now Desktop installed yet and would prefer to have automatic u
 
 ## Option 2: Updating Now CLI Manually
 
+As of version 15.4.0 of Now CLI, you can **update Now CLI with a single command**:
+
+<TerminalInput>now update</TerminalInput>
+<Caption>Updating Now CLI with the <InlineCode>update</InlineCode> command.</Caption>
+
 To update to the latest version of Now CLI yourself, you can use a package manager, such as [Yarn](#updating-with-yarn) or [npm](#updating-with-npm).
 
 We do, however, recommend that you install [Now Desktop](#option-1:-now-desktop) for automatic updates to Now CLI.
 
 <Note>
   If you do not have Now CLI installed yet, see our{' '}
-  <GenericLink href="/docs/v2/getting-started/installation">
-    Installation
-  </GenericLink>{' '}
-  guide.
+  <GenericLink href="/download">download page</GenericLink>.
 </Note>
 
-### With Yarn
+If you have not yet updated to a version that supports the above command, you can also use any of the following methods:
 
-Use one of the following commands to update Now CLI using the [Yarn package manager](https://yarnpkg.com/lang/en/).
+- Using [Yarn](https://yarnpkg.com/), for the latest Now CLI update, run the following command from your terminal:
 
-For the latest **stable update**, run the following command from your terminal:
+  <TerminalInput>yarn global add now</TerminalInput>
 
-<TerminalInput>yarn global add now</TerminalInput>
+- Using [npm](https://npmjs.com), for the latest Now CLI update, run the following command from your terminal:
+  <TerminalInput>npm install -g now</TerminalInput>
 
-To get the latest beta channel **canary update**, run the following command instead:
+## Read Next
 
-<TerminalInput>yarn global add now@canary</TerminalInput>
+With a fully up-to-date Now CLI, read the following resources for how you can deploy your applications and control them, all from the terminal.
 
-### Updating with npm
+<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
+  Deploy any of your applications with ZEIT Now.
+</Card>
 
-Use one of the following commands to update Now CLI using [npm](https://npmjs.com)
+<Card
+  title="Aliasing"
+  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
+>
+  Learn more about aliasing to your deployments.
+</Card>
 
-For the latest **stable update**, run the following command from your terminal:
-
-<TerminalInput>npm install -g now</TerminalInput>
-
-To get the latest beta channel **canary update**, instead run the following:
-
-<TerminalInput>npm install -g now@canary</TerminalInput>
+<Card title="Guides" href="/guides">
+  See guides that help you move forward with your projects and deployments.
+</Card>
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>

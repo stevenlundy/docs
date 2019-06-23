@@ -1,15 +1,17 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { InlineCode, Code } from '~/components/text/code'
 import Caption from '~/components/text/caption'
 import Example from '~/components/example'
 import Tag from '~/components/text/tag'
+import Note from '~/components/text/note'
 
 export const meta = {
   title: 'Go Builder (@now/go)',
   description:
     'The official Go Builder for ZEIT Now. Serverless invokable functions from Go source code for ZEIT Now deployments.',
   editUrl: 'pages/docs/v2/deployments/official-builders/go-now-go.mdx',
-  lastEdited: '2019-03-22T19:14:02.000Z'
+  lastEdited: '2019-05-21T10:34:57.000Z'
 }
 
 <Tag>Status: Alpha</Tag>
@@ -25,7 +27,7 @@ Whenever you want to expose an API or a function written in Go.
 Define a `index.go` file inside a folder as follows:
 
 ```go
-package main
+package handler
 
 import (
         "fmt"
@@ -46,7 +48,7 @@ And define a `now.json` like:
 }
 ```
 
-Notice that the API is cohesive with the `net/http` Go API. Your main entrypoint function **must be** called `Handler`.
+Notice that the API is cohesive with the `net/http` Go API. Your main entrypoint function **must be** an exported function.
 
 The example above can be seen live from the following URL: <https://go-deployment-l78bij0fj.now.sh/>
 
@@ -56,7 +58,31 @@ Also, the source code of the deployment can be checked by appending `/_src` e.
 
 ### Entrypoint
 
-The entrypoint file must be a `.go` source file with a `Handler` function inside implementing the `net/http` API.
+The entrypoint file must be a `.go` source file containing an exported function that implements the `net/http` API.
+
+<Note>
+  <InlineCode>@now/go</InlineCode> will automatically detect a{' '}
+  <InlineCode>go.mod</InlineCode> file to install dependencies at the entrypoint
+  level.
+</Note>
+
+### Private packages
+
+To install private packages with `go get`, define `GIT_CREDENTIALS` as a [build environment variable](/docs/v2/deployments/configuration#build-env) in `now.json`.
+
+All major Git providers are supported including GitHub, GitLab, Bitbucket, as well as a self-hosted Git server.
+
+With GitHub, you will need to [create a personal token](https://github.com/settings/tokens) with permission to access your private repository.
+
+```json
+{
+  "build": {
+    "env": {
+      "GIT_CREDENTIALS": "https://username:token@github.com"
+    }
+  }
+}
+```
 
 ### Version
 
@@ -79,4 +105,6 @@ This [limit is extendable](/docs/v2/deployments/builders/overview#configuring-ou
 }`}</Code>
 </Example>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

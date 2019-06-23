@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { Image } from '~/components/media'
 import { TerminalInput } from '~/components/text/terminal'
@@ -134,4 +135,6 @@ With a project set up, you can now go on to learn about what to do when deployin
   alias URL.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

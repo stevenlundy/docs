@@ -74,6 +74,7 @@ class Button extends React.Component {
     } = this.props
     let { width } = this.props
     const { animationStartAt, animationX, animationY } = this.state
+    props.width = undefined
 
     // backwards compatibility
     if (width === undefined && !small) {

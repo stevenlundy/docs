@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { TerminalInput } from '~/components/text/terminal'
 import { GenericLink } from '~/components/text/link'
@@ -51,7 +52,10 @@ For enhanced isolation and security, we recommend configuring a [Custom Deployme
 
 The following resources are related to this topic and helpful with any path you would like to take next:
 
-<Card title="Aliasing a Deployment" href="/docs/v2/domains-and-aliases/aliasing-a-deployment/">
+<Card
+  title="Aliasing a Deployment"
+  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
+>
   Learn how to alias your deployments to a custom URL including automatic
   aliases.
 </Card>
@@ -67,4 +71,6 @@ The following resources are related to this topic and helpful with any path you 
   Learn how to deploy your applications that you will alias to your domains.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

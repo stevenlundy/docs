@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import Now from '~/components/text/now'
 import { Image } from '~/components/media'
@@ -156,4 +157,6 @@ Learn more about deploying your apps with Now using the following resources:
   Control your deployment's paths in detail with routes.
 </Card>
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

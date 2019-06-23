@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 
 export const meta = {
@@ -30,4 +31,6 @@ Accept-Encoding: gzip
 
 Assuming that the program requesting resources from any of your deployments defines the header like mentioned above, it is served compressed responses automatically.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

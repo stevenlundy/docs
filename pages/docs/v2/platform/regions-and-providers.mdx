@@ -1,14 +1,16 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { GenericLink } from '~/components/text/link'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
+import Card from '~/components/card'
 
 export const meta = {
   title: 'Regions and Providers',
   description:
     'An listing and explanation of the regions and providers Now implements.',
   editUrl: 'pages/docs/v2/platform/regions-and-providers.mdx',
-  lastEdited: '2019-04-12T16:49:49.000Z'
+  lastEdited: '2019-06-17T13:09:04.000Z'
 }
 
 The Now Platform acts as a Universal API and Overlay Network on top of existing cloud infrastructure providers.
@@ -47,4 +49,15 @@ During development via `now dev`, the region is assigned `dev1` to mimic the Now
 | --------- | ------------------ |
 | dev1      | localhost          |
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+## Read Next
+
+<Card
+  title="Configuring Regions"
+  href="/docs/v2/deployments/configuration/#regions"
+>
+  Control which regions are used to execute your serverless functions.
+</Card>
+
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})

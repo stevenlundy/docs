@@ -1,3 +1,4 @@
+import { withAmp } from 'next/amp'
 import Doc from '~/components/layout/docs'
 import { GenericLink } from '~/components/text/link'
 import { P } from '~/components/text/paragraph'
@@ -72,4 +73,6 @@ In also comes with a short version:
 
 If you do not specify a version, [Now CLI](/docs/v2/getting-started/installation#now-cli) and [Now for GitHub](/docs/v2/integrations/now-for-github) will render a warning. If you do not have time to migrate an application to the latest platform version, you can always specify `"version": 1`.
 
-export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+export default withAmp(({ children }) => <Doc meta={meta}>{children}</Doc>, {
+  hybrid: true
+})
