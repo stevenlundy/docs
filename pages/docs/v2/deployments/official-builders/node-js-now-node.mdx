@@ -15,7 +15,7 @@ export const meta = {
   description:
     'The official Node.js Builder for ZEIT Now. Deploy serverless Node.js applications with ease.',
   editUrl: 'pages/docs/v2/deployments/official-builders/node-js-now-node.mdx',
-  lastEdited: '2019-06-17T08:18:07.000Z'
+  lastEdited: '2019-06-24T14:13:20.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -353,7 +353,9 @@ The resulting lambda contains both the build and current time: <https://build-ti
 
 ### Node.js Version
 
-The Node.js version used is the **v8.10**.
+The default Node.js version used is **8.10.x**.
+
+The version can be changed to **10.x** by defining [engines](https://docs.npmjs.com/files/package.json#engines) in `package.json`.
 
 ### Maximum Lambda Bundle Size
 

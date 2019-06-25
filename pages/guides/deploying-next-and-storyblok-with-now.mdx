@@ -6,52 +6,70 @@ import Caption from '~/components/text/caption'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
 import Card from '~/components/card'
+import { P } from '~/components/text/paragraph'
 
 export const meta = {
   title:
-    'Create a Next.js and ButterCMS Application That Builds and Deploys with Now',
+    'Create a Next.js and Storyblok Application That Builds and Deploys with Now',
   description:
-    'How to deploy your Next.js and ButterCMS application with Now in a serverless environment',
-  published: '2019-06-21T16:51:04.000Z',
+    'How to deploy your Next.js and Storyblok application with Now in a serverless environment',
+  published: '2019-06-24T16:51:04.000Z',
   authors: ['msweeneydev'],
-  url: '/guides/deploying-next-and-buttercms-with-now',
+  url: '/guides/deploying-next-and-storyblok-with-now',
   image: `${
     process.env.ASSETS
-  }/guides/deploying-next-buttercms-with-now/deploying-next-buttercms-with-now.png`,
-  editUrl: 'pages/guides/deploying-next-and-buttercms-with-now.mdx',
-  lastEdited: '2019-06-24T14:36:27.000Z'
+  }/guides/deploying-next-storyblok-with-now/deploying-next-storyblok-with-now.png`,
+  editUrl: 'pages/guides/deploying-next-and-storyblok-with-now.mdx',
+  lastEdited: '2019-06-24T13:50:08.000Z'
 }
 
-In this guide, you will discover how to create a [Next.js](https://nextjs.org/) app that displays links to posts from the [ZEIT blog](/blog) by utilizing the [ButterCMS](https://buttercms.com/) content management system, before deploying **with just a single command** to [ZEIT Now](/docs/v2).
+In this guide, you will discover how to create a [Next.js](https://nextjs.org/) app that displays links to posts from the [ZEIT blog](/blog) by utilizing the [Storyblok](https://www.storyblok.com/) headless CMS, before deploying **with just a single command** to [ZEIT Now](/docs/v2).
 
-[Next.js](https://nextjs.org/) from [ZEIT](https://zeit.co) is a **production-ready framework** that helps you create fast React applications. [ButterCMS](https://buttercms.com/) is a drop-in headless CMS with zero headaches that allows you to **never worry about hosting, upgrades, uptime, security or performance** whilst storing all your content in one place.
+[Next.js](https://nextjs.org/) from [ZEIT](https://zeit.co) is a **production-ready framework** that helps you create fast React applications. [Storyblok](https://www.storyblok.com/) is a headless CMS with a **visual editor, block system, custom field types and localization built in**.
 
-By following this guide, you will create a clone of the [example app](https://nextjs-buttercms.now-examples.now.sh/), a starting point to get you up and running with your own Next.js + ButterCMS app in minutes.
+By following this guide, you will create a clone of the [example app](https://nextjs-storyblok.now-examples.now.sh/), a starting point to get you up and running with your own Next.js + Storyblok app in minutes.
 
 <Image
   src={`${
     process.env.ASSETS
-  }/guides/deploying-next-buttercms-with-now/deploying-next-buttercms-with-now.png`}
+  }/guides/deploying-next-storyblok-with-now/deploying-next-storyblok-with-now.png`}
   width={650}
   height={380}
   oversize
 />
 
-## Step 1: Create your ButterCMS Content
+## Step 1: Create your Storyblok Content
 
-From your [ButterCMS Collections dashboard](https://buttercms.com/content/collections/), create a new **Collection** called **Posts** by clicking the **+ New Collection** button.
+From your **Content Dashboard**, create a new **Entry** with a **Content type** of **Post** by clicking the **+ Entry** button.
 
 <Image
   src={`${
     process.env.ASSETS
-  }/guides/deploying-next-buttercms-with-now/creating-collection.png`}
+  }/guides/deploying-next-storyblok-with-now/creating-entry.png`}
   width={650}
-  height={274}
+  height={243}
   oversize
 />
-<Caption>Creating a Collection for your Next.js + ButterCMS project using the ButterCMS Collections dashboard.</Caption>
+<Caption>Creating an Entry for your Next.js + Storyblok project using the Storyblok Content Dashboard.</Caption>
 
-Add the following fields to your **Collection**, all of type **Short Text**, by clicking the **Add New Property** button:
+<Note>
+  When you type in the <P.B>Content type</P.B> field, you will be given the
+  option to <P.B>Create new "post"</P.B>, you should select this option.
+</Note>
+
+After completing the details in the modal, click **Create**, this will take you to a new view. Now, click the **Define schema** button, you should see the following in the sidebar:
+
+<Image
+  src={`${
+    process.env.ASSETS
+  }/guides/deploying-next-storyblok-with-now/define-schema.png`}
+  width={650}
+  height={328}
+  oversize
+/>
+<Caption>Defining a <P.B>Post Schema</P.B> for your Next.js + Storyblok project.</Caption>
+
+Add the following fields to your **Post Schema**, by typing in the input and clicking the **+ Add** button:
 
 - `title`
 - `date`
@@ -59,29 +77,31 @@ Add the following fields to your **Collection**, all of type **Short Text**, by 
 - `image`
 - `url`
 
-Your **Posts Collection** should look like this:
+Your **Post Schema** should look like this:
 
 <Image
   src={`${
     process.env.ASSETS
-  }/guides/deploying-next-buttercms-with-now/completed-collection.png`}
+  }/guides/deploying-next-storyblok-with-now/defined-schema.png`}
   width={650}
-  height={255}
+  height={471}
   oversize
 />
-<Caption>An example Collection for your Next.js + ButterCMS project.</Caption>
+<Caption>An example <P.B>Post Schema</P.B> for your Next.js + Storyblok project.</Caption>
 
-Next, click the **+ Add to Posts** button to create a post, providing the relevant details.
+Next, click the arrow back at the top left of the page to return to the **Content dashboard**. Then, click **+ Entry** once more, this time choosing your **Post Schema** as the **Content Type**.
 
-That's it for creating content! You can edit both the **Posts Collection** and its content at any time, either by adding or removing **Posts** or changing the **Collection Item Properties**.
+All that's required is to add the content where requested, then click **Save** at the top right of the screen followed by **Publish** for each post you wish to add.
 
-Next, select **Settings** from the account dropdown menu at the top left of the screen. Here you will find your **Read API Token**, make a note of this so you can use it later on in your app.
+That's it for creating content! You can edit both the **Post** and **Post Schema** at any time, giving you complete flexibility over your content.
+
+At this point, return back to your **Content Dashboard** and click **Settings** from the sidebar on the left. Select the **API-Keys** tab and create a new **Public** key, you should make a note of this so it can be used later.
 
 ## Step 2: Creating your Next.js Application
 
 Firstly, create a project directory and `cd` into it like so:
 
-<TerminalInput>mkdir my-nextjs-buttercms-project && cd my-nextjs-buttercms-project</TerminalInput>
+<TerminalInput>mkdir my-nextjs-storyblok-project && cd my-nextjs-storyblok-project</TerminalInput>
 <Caption>Creating and entering into the project directory.</Caption>
 
 Next, initialize your project, creating a `package.json` file in the process:
@@ -115,20 +135,19 @@ function HomePage() {
   useEffect(() => {
     async function getPosts() {
       const res = await fetch(
-        `https://api.buttercms.com/v2/content/?keys=posts&auth_token=${
+        `https://api.storyblok.com/v1/cdn/stories?token=${
           process.env.API_TOKEN
         }`
       )
-      const { data } = await res.json()
-      const allPosts = data.posts
-      setPosts([...allPosts])
+      const { stories } = await res.json()
+      setPosts([...stories])
     }
     getPosts()
   }, [])
   return (
     <>
       <Head>
-        <title>Next.js + ButterCMS</title>
+        <title>Next.js + Storyblok</title>
         <link
           rel="stylesheet"
           href="https://css.zeit.sh/v1.css"
@@ -138,12 +157,12 @@ function HomePage() {
       {posts.length > 0
         ? posts.map(p => (
             <Post
-              alt={p.alt}
-              date={p.date}
-              key={p.title}
-              image={p.image}
-              title={p.title}
-              url={p.url}
+              alt={p.content.alt}
+              date={p.content.date}
+              key={p.content.title}
+              image={p.content.image}
+              title={p.content.title}
+              url={p.content.url}
             />
           ))
         : null}
@@ -155,7 +174,7 @@ export default HomePage
 ```
 
 <Caption>
-  An example <InlineCode>index.js</InlineCode> page for your Next.js + ButterCMS
+  An example <InlineCode>index.js</InlineCode> page for your Next.js + Storyblok
   project.
 </Caption>
 
@@ -216,7 +235,7 @@ export default Post
 
 <Caption>
   An example <InlineCode>post.js</InlineCode> component for your Next.js +
-  ButterCMS project.
+  Storyblok project.
 </Caption>
 
 Now that your page and component files have been created, the next step will show you how to use the [`now.json` file](/docs/v2/deployments/configuration/) to allow for both [local development](/docs/v2/development/basics/) and [cloud deployment](/docs/v2/deployments/basics/).
@@ -238,7 +257,7 @@ With your project ready, the `now.json` file provides an opportunity to instruct
 ```
 
 <Caption>
-  An example <InlineCode>now.json</InlineCode> file for your Next.js + ButterCMS
+  An example <InlineCode>now.json</InlineCode> file for your Next.js + Storyblok
   project.
 </Caption>
 
@@ -261,7 +280,7 @@ module.exports = {
 
 <Caption>
   An example <InlineCode>next.config.js</InlineCode> file for your Next.js +
-  ButterCMS project.
+  Storyblok project.
 </Caption>
 
 The `next.config.js` file achieves two things:
@@ -269,9 +288,9 @@ The `next.config.js` file achieves two things:
 - Instructs Next.js to build for a serverless environment
 - Provides access to [environment variables](/docs/v2/deployments/environment-variables-and-secrets/) inside your Next.js app
 
-Next, you will make your API key available to your application during [local development](/docs/v2/development/basics/) by creating a `.env.build` file.
+Next, you will make your API keys available to your application during [local development](/docs/v2/development/basics/) by creating a `.env.build` file.
 
-Create a `.env.build` file at the root of your project directory with the following code, adding your API key obtained in [step 1](#step-1:-create-your-buttercms-content) where instructed:
+Create a `.env.build` file at the root of your project directory with the following code, adding your API keys where instructed:
 
 ```bash
 API_TOKEN=your-api-token
@@ -279,7 +298,7 @@ API_TOKEN=your-api-token
 
 <Caption>
   An example <InlineCode>.env.build</InlineCode> file for your Next.js +
-  ButterCMS project.
+  Storyblok project.
 </Caption>
 
 Lastly, to make your API key available for [cloud deployment](/docs/v2/deployments/basics/), create a [Now Secret](/docs/v2/deployments/environment-variables-and-secrets#securing-environment-variables-using-secrets) with the command below:
@@ -307,11 +326,11 @@ With your application ready, it is time to deploy it using **just a single comma
   Using the <InlineCode>now</InlineCode> command to deploy your project to Now.
 </Caption>
 
-You will see a short build step in your terminal followed by the news that your project has been [deployed](https://zeit.co/docs/v2/deployments/basics/), it should look similar to the [example app](https://nextjs-buttercms.now-examples.now.sh/).
+You will see a short build step in your terminal followed by the news that your project has been [deployed](https://zeit.co/docs/v2/deployments/basics/), it should look similar to the [example app](https://nextjs-storyblok.now-examples.now.sh/).
 
 ## Resources
 
-For more information on working with [ButterCMS](https://www.buttercms.com/) and [Next.js](https://nextjs.org/), please refer to their documentation.
+For more information on working with [Storyblok](https://www.storyblok.com/) and [Next.js](https://nextjs.org/), please refer to their documentation.
 
 To configure [Now](/docs/v2/getting-started/introduction-to-now) further, please see these additional topics and guides:
 

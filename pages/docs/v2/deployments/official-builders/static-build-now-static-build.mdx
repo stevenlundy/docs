@@ -14,7 +14,7 @@ export const meta = {
     'The official Static Builds Builder for ZEIT Now. Run any package.json build script for your source files and deploy the result.',
   editUrl:
     'pages/docs/v2/deployments/official-builders/static-build-now-static-build.mdx',
-  lastEdited: '2019-02-26T13:27:30.000Z'
+  lastEdited: '2019-06-24T14:13:20.000Z'
 }
 
 <Tag>Status: Stable</Tag>
@@ -291,7 +291,9 @@ To install private npm modules, define `NPM_TOKEN` as a [build environment](/doc
 
 ### Node.js Version
 
-The Node.js version used is the latest in the **8 branch**.
+The default Node.js version used is **8.10.x**.
+
+The version can be changed to **10.x** by defining [engines](https://docs.npmjs.com/files/package.json#engines) in `package.json`.
 
 ## Resources
 

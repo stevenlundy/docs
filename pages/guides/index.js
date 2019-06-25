@@ -29,7 +29,7 @@ const Guides = () => (
           <div className="actions">
             <span className="caption">Sorted by Newest</span>
             <GenericLink
-              href="https://github.com/zeit/docs/blob/master/contributing.md#guides"
+              href="https://github.com/zeit/docs/blob/master/CONTRIBUTING.md#guides"
               underlineOnHover={false}
             >
               <Button secondary small>
@@ -64,7 +64,7 @@ const Guides = () => (
             </GenericLink>
           ))}
 
-          <GenericLink href="https://github.com/zeit/docs/blob/master/contributing.md#guides">
+          <GenericLink href="https://github.com/zeit/docs/blob/master/CONTRIBUTING.md#guides">
             <article className="guide contribute">
               <div className="titles">
                 <H4>Write Your Guide →</H4>
