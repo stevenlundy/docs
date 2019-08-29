@@ -11,14 +11,12 @@ import LoadingDots from '~/components/loading-dots'
 const example = {
   name: 'simple-now-deployment',
   files: {
-    'index.html':
-      '<!doctype html>\n<html>\n  <head>\n    <title>A simple deployment with the Now API!</title>\n    <link rel="stylesheet" href="style.css"> \n </head>\n  <body>\n    <h1>Welcome to a simple static file</h1>\n    <p>Deployed with <a href="https://zeit.co/docs">ZEIT Now</a>!</p>\n    <p>This deployment includes three files. A static index.html file as the homepage, a static style.css file for styling, and a date.js serverless function that returns the date on invocation. Try <a href="/date.js">getting the date here.</a></p> \n</body>\n</html>',
-    'style.css':
-      'h1 {\n margin-top: 70px; \n text-align: center; \n font-size: 45px; \n} \n h1, p {\n font-family: Helvetica; \n} \n a {\n color: #0076FF; \n text-decoration: none; \n} \n p {\n text-align: center; \n font-size: 30px; \n} \n p:nth-child(3) { \n font-size: 25px; \n margin-left: 15%; \n margin-right: 15%; \n}',
-    'date.js':
-      'module.exports = (req, res) => {\n  res.end(`The time is ${new Date()}`)\n}',
-    'now.json':
-      '{\n   "version": 2, \n   "builds": [\n      { "src": "*.js", "use": "@now/node" },\n      { "src": "*.html", "use": "@now/static" },\n      { "src": "*.css", "use": "@now/static" } \n  ] \n}'
+    'pages/index.js':
+      'export default () => (\n  <section>\n    <h1>Welcome to Now!</h1>\n    <p>To test the API, <a href="/api/date">check todays date</a>.</p>\n  </section> \n);',
+    'api/date.js':
+      'module.exports = (req, res) => {\n  res.send(new Date());\n};',
+    'package.json':
+      '{\n  "scripts": {\n    "build": "next build"\n  },\n  "dependencies": {\n    "next": "^9.0.1",\n    "react": "^16.8.6",\n    "react-dom": "^16.8.6"\n  }\n}'
   }
 }
 
@@ -130,7 +128,8 @@ class Introduction extends React.PureComponent {
           }
 
           p {
-            font-size: 14px;
+            font-size: var(--font-size-primary);
+            line-height: var(--line-height-primary);
             text-align: center;
             margin: 24px 0;
           }
@@ -191,7 +190,7 @@ export class Editor extends React.PureComponent {
     this.state = {
       deploying: false,
       fileBrowserOpen: false,
-      selectedFilename: 'index.html',
+      selectedFilename: 'pages/index.js',
       vimMode: false,
       windowWidth: null
     }
@@ -711,7 +710,7 @@ export class Editor extends React.PureComponent {
             margin-bottom: -30px;
             margin-right: -30px;
             padding-bottom: 30px;
-            height: 358px;
+            height: 195px;
             outline: none; /* Prevent dragging from highlighting the element */
             position: relative;
           }
@@ -943,8 +942,9 @@ export class Editor extends React.PureComponent {
             align-items: center;
             color: #999999;
             display: flex;
-            font-size: 14px;
-            height: 413px;
+            font-size: var(--font-size-primary);
+            line-height: var(--line-height-primary);
+            height: 250px;
             justify-content: center;
           }
 
@@ -1026,7 +1026,7 @@ export class Editor extends React.PureComponent {
             list-style: none;
             margin: 15px 0;
             padding-left: 15px;
-            width: 130px;
+            width: 150px;
           }
           .code .file {
             align-items: center;
@@ -1046,7 +1046,7 @@ export class Editor extends React.PureComponent {
             margin-left: 8px;
           }
           .code .file-content {
-            padding-left: 110px;
+            padding-left: 130px;
           }
           .note {
             text-align: center;

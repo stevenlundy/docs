@@ -1,0 +1,1057 @@
+import Doc from '~/components/layout/docs'
+import Snippet from '~/components/snippet'
+import Caption from '~/components/text/caption'
+import { InlineCode, Code } from '~/components/text/code'
+import Example from '~/components/example'
+import { GenericLink } from '~/components/text/link'
+import Note from '~/components/text/note'
+import Tag from '~/components/text/tag'
+
+export const meta = {
+  title: 'Builders Reference',
+  description:
+    'A look at what Builders are and how they are used with ZEIT Now deployment Builds to achieve production-ready outputs.',
+  editUrl: 'pages/docs/v2/advanced/builders.mdx',
+  lastEdited: '2019-08-24T00:35:20.000Z'
+}
+
+Builders are modules that transform your source code into compiled outputs, being either static files and/or [Serverless Functions](https://zeit.co/docs/v2/advanced/concepts/lambdas/), which are served by our [CDN at the edge](https://zeit.co/docs/v2/advanced/concepts/cdn-and-global-distribution/).
+
+<Note warning>
+  In most cases, advanced Builders usage with configuration is not necessary.
+  See{' '}
+  <GenericLink href="/docs/v2/introduction">
+    the ZEIT Now Introduction documentation
+  </GenericLink>{' '}
+  or the{' '}
+  <GenericLink href="/docs/v2/serverless-functions/introduction">
+    Serverless Functions documentation
+  </GenericLink>{' '}
+  for more information.
+</Note>
+
+## Official Builders
+
+Listed below are all official Builders from ZEIT.
+
+| Builder                         | Description                                                                                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Static](#static)               | The Static Builder takes any file as an entrypoint and moves it to the deployment as a static file.                                                                               |
+| [Static Builds](#static-builds) | The Static Builds Builder takes a `package.json` or `build.sh` file as an entrypoint and executes a command within them to produce static files in a `public` directory to serve. |
+| [Node.js](#node.js)             | The Node.js Builder takes an entrypoint of a Node.js function, builds its dependencies (if any) and bundles them into a Serverless Function.                                      |
+| [Next.js](#next.js)             | The Next.js Builder takes a Next.js application, defined by a `next.config.js` entrypoint and pages directory, and converts those pages into a series of Serverless Functions.    |
+| [Go](#go)                       | The Go Builder takes in a Go program that defines a singular HTTP handler and outputs it as a Serverless Function.                                                                |
+| [Python](#python)               | The Python Builder takes in a Python program that defines a singular HTTP handler and outputs it as a Serverless Function.                                                        |
+| [Ruby](#ruby)                   | The Ruby Builder takes in a Ruby program that defines a singular HTTP handler and outputs it as a Serverless Function.                                                            |
+
+## Static
+
+<Tag>Status: Stable</Tag>
+
+The Static Builder is used to serve files statically in a project by default when there is no [static build](#static-builds) defined, or if a `public` directory exists, that directory is served instead.
+
+<Note>
+  Files inside an <InlineCode>/api</InlineCode> directory are not served
+  statically.
+</Note>
+
+To configure the behavior of this Builder to affect specific files explicitly, see the [Advanced Builders Usage section](#advanced-builders-usage).
+
+---
+
+## Static Builds
+
+<Tag>Status: Stable</Tag>
+
+By default, the Static Builds Builder is used when Now detects a `build` script inside a `package.json` file at the root of a project. This script is executed when deploying, and if the output is built to a `public` directory, that directory is served.
+
+For example, to build a Gatsby project, you would use the following `scripts` object in a `package.json` file:
+
+```json
+{
+  ...
+  "scripts": {
+    "build": "gatsby build"
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>package.json</InlineCode> file with a{' '}
+  <InlineCode>build</InlineCode> script to build Gatsby.
+</Caption>
+
+To configure the behavior of this Builder to affect specific files explicitly, see the [Advanced Static Builds Configuration section](#advanced-static-builds-configuration).
+
+### Static Build Project Node.js Version
+
+The default Node.js version used is **8.10.x** but can be changed to **10.x** by defining [engines](https://docs.npmjs.com/files/package.json#engines) in `package.json`.
+
+### Static Build npm Dependencies
+
+For dependencies listed in the `package.json` file, the following behavior is used:
+
+- If a `package-lock.json` file is present in the project, `npm install` is used.
+- Otherwise, `yarn` is used, by default.
+
+---
+
+## Node.js
+
+<Tag>Status: Stable</Tag>
+
+The Node.js Builder, by default, builds and serves Serverless Functions within the `/api` directory of a project, providing the files have a file extension of either `.js` or `.ts`.
+
+A Node.js Serverless Function must export a default function handler, for example:
+
+```js
+module.exports = (req, res) => {
+  const { name = 'World' } = req.query
+  res.send(`Hello ${name}!`)
+}
+```
+
+<Caption>
+  An example serverless Node.js function using{' '}
+  <GenericLink href="#node.js-request-and-response-objects">
+    the Request and Response objects
+  </GenericLink>
+  .
+</Caption>
+
+<Note>
+  The Node.js Builder also supports{' '}
+  <GenericLink href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function">
+    {' '}
+    asynchronous functions
+  </GenericLink>
+  .
+</Note>
+
+If you need more advanced behavior, such as a custom build step or private npm modules, see the [Advanced Node.js Usage section](#advanced-node.js-usage).
+
+### Node.js Version
+
+The default Node.js version used is **8.10.x** but can be changed to **10.x** by defining [engines](https://docs.npmjs.com/files/package.json#engines) in `package.json`.
+
+### Node.js Dependencies
+
+**For dependencies** listed in a `package.json` file at the root of a project, the following behavior is used:
+
+- If a `package-lock.json` file is present in the project, `npm install` is used.
+- Otherwise, `yarn` is used, by default.
+
+### Using TypeScript with the Node.js Builder
+
+The Node.js Builder supports files ending with `.ts` inside of the `/api` directory as TypeScript files to compile and serve when deploying.
+
+An example TypeScript file that exports a default Node.js function and takes in [the standard Node.js Request and Response](#request-and-response-objects) objects is as follows:
+
+```js
+import { NowRequest, NowResponse } from '@now/node'
+
+export default function(req: NowRequest, res: NowResponse) {
+  const { name = 'World' } = req.query
+  res.send(`Hello ${name}!`)
+}
+```
+
+<Caption>
+  An example serverless Node.js function written in TypeScript, using types from
+  the <InlineCode>@now/node</InlineCode> module for the helper methods.
+</Caption>
+
+The `NowRequest` and `NowResponse` imports in the above example are types that we provide for [the Request and Response objects](#node.js-request-and-response-objects), including the [helper methods](#node.js-helpers) with ZEIT Now. These types can be installed from npm with the following command:
+
+<Snippet dark text="npm install @now/node --save-dev" />
+<Caption>Installing <InlineCode>@now/node</InlineCode> for types when using Node.js on ZEIT Now.</Caption>
+
+You can also use a `tsconfig.json` file at the root of your project to configure the TypeScript compiler. Most options are supported aside from ["Path Mappings"](https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping) and ["Project References"](https://www.typescriptlang.org/docs/handbook/project-references.html).
+
+### Node.js Request and Response Objects
+
+Each request to a Node.js Serverless Function gives access to Request and Response objects. These objects are the standard HTTP [Request](https://nodejs.org/api/http.html#http_event_request) and [Response](https://nodejs.org/api/http.html#http_class_http_serverresponse) objects from Node.js.
+
+#### Node.js Helpers
+
+ZEIT Now additionally provides helper methods inside of the Request and Response objects passed to Node.js Serverless Functions. These methods are:
+
+| method             | description                                                                                                                                                                                    | object   |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `req.query`        | An object containing the request's [query string](https://en.wikipedia.org/wiki/Query_string), or `{}` if the request does not have a query string.                                            | Request  |
+| `req.cookies`      | An object containing the cookies sent by the request, or `{}` if the request contains no cookies.                                                                                              | Request  |
+| `req.body`         | An object containing the body sent by the request, or `null` if no body is sent.                                                                                                               | Request  |
+| `res.status(code)` | A function to set the status code sent with the response where `code` must be a valid [HTTP status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). Returns `res` for chaining. | Response |
+| `res.send(body)`   | A function to set the content of the response where `body` can be a `string`, an `object` or a `Buffer`.                                                                                       | Response |
+| `res.json(obj)`    | A function to send a JSON response where `obj` is the JSON object to send.                                                                                                                     | Response |
+
+The following Node.js Serverless Function example showcases the use of `req.query`, `req.cookies` and `req.body` helpers:
+
+```js
+module.exports = (req, res) => {
+  let who = 'anonymous'
+
+  if (req.body && req.body.who) {
+    who = req.body.who
+  } else if (req.query.who) {
+    who = req.query.who
+  } else if (req.cookies.who) {
+    who = req.cookies.who
+  }
+
+  res.status(200).send(`Hello ${who}!`)
+}
+```
+
+<Caption>
+  Example Node.js Serverless Function using the{' '}
+  <InlineCode>req.query</InlineCode>, <InlineCode>req.cookies</InlineCode>, and{' '}
+  <InlineCode>req.body</InlineCode> helpers. It returns greetings for the user
+  specified using <InlineCode>req.send()</InlineCode>.
+</Caption>
+
+<Note>
+  If needed, you can opt-out of Now providing <InlineCode>helpers</InlineCode>{' '}
+  using{' '}
+  <GenericLink href="#disabling-helpers-for-node.js">
+    advanced configuration
+  </GenericLink>
+  .
+</Note>
+
+#### `req.body`
+
+We populate the `req.body` property with a parsed version of the content sent with the request when possible.
+
+We follow a set of rules on the `Content-type` header sent by the request to do so:
+
+| `Content-Type` header               | Value of `req.body`                                                                     |
+| ----------------------------------- | --------------------------------------------------------------------------------------- |
+| No header                           | `undefined`                                                                             |
+| `application/json`                  | An object representing the parsed JSON sent by the request.                             |
+| `application/x-www-form-urlencoded` | An object representing the parsed data sent by with the request.                        |
+| `text/plain`                        | A string containing the text sent by the request.                                       |
+| `application/octet-stream`          | A [Buffer](https://nodejs.org/api/buffer.html) containing the data sent by the request. |
+
+With the `req.body` helper, you can build applications without extra dependencies or having to [parse the content of the request manually](https://nodejs.org/ja/docs/guides/anatomy-of-an-http-transaction/#request-body).
+
+---
+
+## Next.js
+
+<Tag>Status: Stable</Tag>
+
+The [Next.js](https://nextjs.org) Builder is used to deploy production-ready Next.js applications when a `pages` directory exists (along with the `next` dependency existing in a `package.json` file).
+
+The Next.js Builder converts pages into a series of individual Serverless Functions or static files, depending on their implementation, and caches `node_modules` and compiler artifacts by default for faster deployment.
+
+To build your Next.js projects with each deployment, provide the following `build` script in your `package.json` file:
+
+```json
+{
+  ...
+  "scripts": {
+    "build": "next build"
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>package.json</InlineCode> file with a{' '}
+  <InlineCode>build</InlineCode> script to build Next.js when deploying.
+</Caption>
+
+<Note>
+  This Builder separates your pages into individual Serverless Functions, so you
+  cannot use a custom server. You can still achieve most of the logic that you
+  have in a custom server by using{' '}
+  <GenericLink href="https://nextjs.org/docs/#fetching-data-and-component-lifecycle">
+    <InlineCode>getInitialProps()</InlineCode>
+  </GenericLink>
+  . For more on advanced routing, see the <GenericLink href="/guides/custom-next-js-server-to-routes">
+    Custom Routes Guide for Next.js on ZEIT Now
+  </GenericLink>.
+</Note>
+
+For more advanced usage of Next.js on ZEIT Now, such as environment variables or private npm modules, see [the Advanced Next.js Usage section](#advanced-next.js-usage).
+
+### Next.js Project Node.js Version
+
+The default Node.js version used is **8.10.x** but can be changed to **10.x** by defining [engines](https://docs.npmjs.com/files/package.json#engines) in `package.json`.
+
+### Next.js Project Dependencies
+
+**For dependencies** listed in a `package.json` file at the root of a project, the following behavior is used:
+
+- If a `package-lock.json` file is present in the project, `npm install` is used.
+- Otherwise, `yarn` is used, by default.
+
+---
+
+## Go
+
+<Tag>Status: Alpha</Tag>
+
+The Go Builder is used by Now to compile Go Serverless Functions that expose a single HTTP handler, including using the `net/http` Go API, from a `.go` file within an `/api` directory at your project's root.
+
+For example, define an `index.go` file inside an `/api` directory as follows:
+
+```go
+package handler
+
+import (
+  "fmt"
+  "net/http"
+)
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+  fmt.Fprintf(w, "<h1>Hello from Go on Now!</h1>")
+}
+```
+
+<Caption>
+  An example <InlineCode>index.go</InlineCode> file inside an{' '}
+  <InlineCode>/api</InlineCode> directory.
+</Caption>
+
+For advanced usage, such as using private packages with your Go projects, see the [Advanced Go Usage section](#advanced-go-usage).
+
+### Go Version
+
+Go version 1.x is used for Go projects deployed with ZEIT Now.
+
+### Go Dependencies
+
+The Go Builder will automatically detect a `go.mod` file to install dependencies at the root of a project.
+
+---
+
+## Python
+
+<Tag>Status: Beta</Tag>
+
+The Python Builder is used by Now to compile Python Serverless Functions, that defines a singlular HTTP `handler` variable, inheritting from the `BaseHTTPRequestHandler` class, from a `.py` file within an `/api` directory at your project's root.
+
+For example, define an `index.py` file inside a `/api` directory as follows:
+
+```python
+from http.server import BaseHTTPRequestHandler
+from cowpy import cow
+
+class handler(BaseHTTPRequestHandler):
+
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type','text/plain')
+        self.end_headers()
+        message = cow.Cowacter().milk('Hello from Python from a ZEIT Now Serverless Function!')
+        self.wfile.write(message.encode())
+        return
+```
+
+<Caption>
+  An example <InlineCode>index.py</InlineCode> file inside an{' '}
+  <InlineCode>/api</InlineCode> directory.
+</Caption>
+
+Inside `requirements.txt` define:
+
+```
+cowpy==1.0.3
+```
+
+<Caption>
+  An example <InlineCode>requirements.txt</InlineCode> file that defines{' '}
+  <InlineCode>cowpy</InlineCode> as a dependency.
+</Caption>
+
+For advanced usage, such as using WSGI or ASGI for your Python projects, see the [Advanced Python Usage section](#advanced-python-usage).
+
+### Python Version
+
+Python projects deployed with ZEIT Now use Python version 3.6.
+
+### Python Dependencies
+
+You can install dependencies for your Python projects by defining them in a `requirements.txt` or a `Pipfile.lock` file.
+
+---
+
+## Ruby
+
+<Tag>Status: Alpha</Tag>
+
+The Ruby Builder is used by Now to compile Ruby Serverless Functions that define a singlular HTTP handler from `.rb` files within an `/api` directory at your project's root.
+
+Ruby files must have one of the following variables defined:
+
+- `Handler` proc that matches the `do |req, res|` signature.
+- `Handler` class that inherits from the `WEBrick::HTTPServlet::AbstractServlet` class.
+
+For example, define a `index.rb` file inside a `/api` directory as follows:
+
+```ruby
+require 'cowsay'
+
+Handler = Proc.new do |req, res|
+    res.status = 200
+    res['Content-Type'] = 'text/plain'
+    res.body = Cowsay.say('hello world', 'cow')
+end
+```
+
+<Caption>
+  An example <InlineCode>index.rb</InlineCode> file inside an{' '}
+  <InlineCode>/api</InlineCode> directory.
+</Caption>
+
+Inside a `Gemfile` define:
+
+```ruby
+source "https://rubygems.org"
+
+gem "cowsay", "~> 0.3.0"
+```
+
+<Caption>
+  An example <InlineCode>Gemfile</InlineCode> file that defines{' '}
+  <InlineCode>cowpy</InlineCode> as a dependency.
+</Caption>
+
+For advanced usage, such as using a Rack Interface for your Ruby projects, see the [Advanced Ruby Usage section](#advanced-ruby-usage).
+
+### Ruby Version
+
+Ruby 2.5.3 is used.
+
+### Ruby Dependencies
+
+This Builder supports installing dependencies defined in the `Gemfile`. Alternatively, dependencies can be vendored with the `bundler install --deployment` command (useful for gems that require native extensions). In this case, dependencies are not built on deployment.
+
+---
+
+## Advanced Builders Usage
+
+<Note warning>
+  Using Builders in advanced configuration will disable the zero configuration
+  functionality of ZEIT Now.
+</Note>
+
+If your project has source files that need to be built requiring a different structure than Now provides by default, you can use Builders with advanced configuration to achieve that structure.
+
+Builders can be used with Now by creating a `now.json` file in a project and then [using a `builds` property](/docs/v2/advanced/configuration#builds) within that configuration:
+
+```json
+{
+  "builds": [
+    { "src": "*.html", "use": "@now/static" },
+    { "src": "date.js", "use": "@now/node" }
+  ]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file using build steps.
+</Caption>
+
+The `builds` property is an array of objects where each object is a build step, including a `src` and a `use` property, at least.
+
+The Builder will receive a list of files based on the `src` property's [glob](<https://en.wikipedia.org/wiki/Glob_(programming)>) value.
+
+<Note>
+  It is important to remember that the <InlineCode>src</InlineCode> property is
+  a glob. In the above example, this will only use the Static Builder for the
+  HTML files in the root directory. If you need it to be used throughout
+  subdirectories, you need the appropriate glob syntax:{' '}
+  <InlineCode>**/*.html</InlineCode>.
+</Note>
+
+The `use` property of a build step can contain the name of a Builder module published to npm. For example, the following list contains the Official Builders and their module names to use.
+
+| Builder      | Builder Module      |
+| ------------ | ------------------- |
+| Static       | `@now/static`       |
+| Static Build | `@now/static-build` |
+| Node.js      | `@now/node`         |
+| Next.js      | `@now/next`         |
+| Go           | `@now/go`           |
+| Python       | `@now/python`       |
+| Ruby         | `@now/ruby`         |
+
+Since Builders are published to [npm](https://npmjs.com), the `use` statement in your [`now.json` file](/docs/v2/advanced/configuration) uses a similar syntax to `npm install`, meaning that versioning can be used by tagging the builders, like for example:
+
+```json
+{
+  "builds": [{ "src": "api/**/*.js", "use": "@now/node@0.12.3" }]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file that lists a build step with a
+  Builder using a pinned version.
+</Caption>
+
+#### Community Builders
+
+The following is a list of community maintained Builders.
+
+| Builder | Builder Module | Docs                                     |
+| ------- | -------------- | ---------------------------------------- |
+| PHP     | `now-php`      | <https://github.com/juicyfx/now-php>     |
+| Rust    | `now-rust`     | <https://github.com/mike-engel/now-rust> |
+
+<Note>
+  If you need to create a custom Builder, see the{' '}
+  <GenericLink href="#developing-your-own-builder">
+    Developing Your Own Builder section
+  </GenericLink>
+  .
+</Note>
+
+### Advanced Static Builds Configuration
+
+<Note alert>
+  The following configuration step will disable the{' '}
+  <GenericLink href="/docs/v2/introduction">
+    zero configuration nature
+  </GenericLink>{' '}
+  of ZEIT Now, and you will have to define build steps for all source files that
+  you intend to serve from your deployments.
+</Note>
+
+You can configure your own build step using the Static Builds Builder by providing configuration like the following, inside of a `now.json` file:
+
+```json
+{
+  "builds": [{ "src": "package.json", "use": "@now/static-build" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that lists a build step
+  using the Static Builds Builder.
+</Caption>
+
+**The entry point for `src` must be a `package.json` file** with a `build` script that, when executed, compiles the built application into a `public` directory.
+
+#### Configuring the Build Output Directory with Static Builds Builder
+
+If you want to configure a directory other than `public` for your build output, you can pass an optional `distDir` option in the builder's config:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/static-build",
+      "config": { "distDir": "www" }
+    }
+  ]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that uses the Static Builds
+  Builder with a configured output directory.
+</Caption>
+
+#### Shell File Entry Point for Static Builds
+
+Using a file with a `.sh` file extension as an entry point for the `@now/static-build` Builder allows you to define build instructions in a shell file.
+
+For example, creating a shell file, with the name `build.sh`, with the following contents, will install and build a [Hugo project](https://zeit.co/guides/deploying-hugo-with-now/):
+
+```shell
+curl -L -O https://github.com/gohugoio/hugo/releases/download/v0.55.6/hugo_0.55.6_Linux-64bit.tar.gz
+tar -xzf hugo_0.55.6_Linux-64bit.tar.gz
+
+./hugo
+```
+
+<Caption>
+  An example shell file that installs and builds a Hugo project.
+</Caption>
+
+For depencency installation with [shell file entry points](#shell-file-entry-point), `yum` is available.
+
+#### Private npm Modules for Static Builds
+
+To install private npm modules, define `NPM_TOKEN` as a [build environment variable](/docs/v2/advanced/configuration#build-env) in a `now.json` file.
+
+Alternatively, define `NPM_RC` as a [build environment variable](/docs/v2/advanced/configuration#build.env) with the contents of `~/.npmrc`.
+
+### Advanced Node.js Usage
+
+<Note alert>
+  The following configuration step will disable the{' '}
+  <GenericLink href="/docs/v2/serverless-functions/introduction">
+    zero configuration nature
+  </GenericLink>{' '}
+  of ZEIT Now, and you will have to define build steps for all source files that
+  you intend to serve from your deployments.
+</Note>
+
+You can configure your own build step using the Node.js Builder, to compile Node.js source files into Serverless Functions, by providing configuration like the following, inside of a `now.json` file:
+
+```json
+{
+  "builds": [{ "src": "index.js", "use": "@now/node" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that lists a build step
+  using the Node.js Builder.
+</Caption>
+
+**The entry point for `src` must be a glob matching `.js` or `.ts` files** that export a default function. For more information on using this Builder, [see the Node.js Builder section](#node.js).
+
+#### Disabling Helpers for Node.js
+
+Within a `now.json` configuration file at your project's root, use the following build step with config to disable [helpers](#node.js-helpers).
+
+```json
+{
+  "builds": [
+    {
+      "src": "my-file.js",
+      "use": "@now/node",
+      "config": { "helpers": "false" }
+    }
+  ]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that has a build step using
+  the Node.js Builder with configuration.
+</Caption>
+
+#### Private npm Modules for Node.js
+
+To install private npm modules, define `NPM_TOKEN` as a [build environment variable](/docs/v2/advanced/configuration#build.env) in `now.json`.
+
+Alternatively, define `NPM_RC` as a [build environment variable](/docs/v2/advanced/configuration#build.env) with the contents of `~/.npmrc`.
+
+#### Custom Build Step for Node.js
+
+You can run build tasks by creating a `now-build` script within a `package.json` file at the entry point's level or higher. For example:
+
+```json
+{
+  "scripts": {
+    "now-build": "node ./build.js"
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>package.json</InlineCode> file with a{' '}
+  <InlineCode>now-build</InlineCode> script to execute in the build step.
+</Caption>
+
+Along with build script named `build.js`:
+
+```js
+const fs = require('fs')
+fs.writeFile('built-time.js', (module.exports = '${new Date()}'), err => {
+  if (err) throw err
+  console.log('Build time file created successfully!')
+})
+```
+
+<Caption>
+  An example Node.js file, executed by the above{' '}
+  <InlineCode>package.json</InlineCode> build script.
+</Caption>
+
+And a `.js` file for the built Serverless Functions, `index.js` inside the `/api` directory:
+
+```js
+const BuiltTime = require('./built-time')
+module.exports = (req, res) => {
+  res.setHeader('content-type', 'text/plain')
+  res.send(`
+    This Serverless Function was built at ${new Date(BuiltTime)}.
+    The current time is ${new Date()}
+  `)
+}
+```
+
+<Caption>
+  An example Node.js Serverless Function, using information from the created
+  file from the build script.
+</Caption>
+
+#### Legacy Serverful Behavior
+
+A Node.js Builder entrypoint can contain one of the following to retain legacy serverful behavior:
+
+- Default export server, such as `module.exports = http.createServer((req, res) => { res.end('hello') })`.
+- Server listens on a port, such as `http.createServer((req, res) => { res.end('hello') }).listen(3000)`.
+
+### Advanced Next.js Usage
+
+<Note alert>
+  The following configuration step will disable the{' '}
+  <GenericLink href="/docs/v2/introduction">
+    zero configuration nature
+  </GenericLink>{' '}
+  of ZEIT Now, and you will have to define build steps for all source files that
+  you intend to serve from your deployments.
+</Note>
+
+You can configure your own build step using the Next.js Builder, to compile Next.js source files into Serverless Functions, by providing configuration like the following, inside of a `now.json` file:
+
+```json
+{
+  "builds": [{ "src": "package.json", "use": "@now/next" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that lists a build step
+  using the Next.js Builder.
+</Caption>
+
+**The entry point of this Builder** is a `package.json` file with Next.js 9 or newer defined in `dependencies`. For more information on using this Builder, [see the Next.js Builder section](#next.js).
+
+For more information on this, see [the Next.js documentation](https://github.com/zeit/next.js#serverless-deployment).
+
+#### Private npm Modules for Next.js
+
+To install private npm modules, define `NPM_TOKEN` as a [build environment variable](/docs/v2/advanced/configuration#build.env) in `now.json`.
+
+Alternatively, define `NPM_RC` as a [build environment variable](/docs/v2/advanced/configuration#build.env) with the contents of `~/.npmrc`.
+
+#### Environment Variables with Next.js
+
+To support environment variables, Next.js inlines the provided values into the JavaScript bundle at build.
+
+You can add the `env` key to the `next.config.js` file:
+
+```js
+module.exports = {
+  env: {
+    customKey: process.env.customKey,
+    mySecret: process.env.mySecret
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>next.config.js</InlineCode> file.
+</Caption>
+
+Then, [expose the build env](/docs/v2/deployments/environment-variables-and-secrets) in your `now.json`:
+
+```json
+{
+  ...
+  "build": {
+    "env": {
+      "customKey": "value",
+      "mySecret": "@my-secret-name"
+    }
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file specifying a build
+  environment variable.
+</Caption>
+
+This will allow you to use `process.env.customKey` and `process.env.mySecret` in your code.
+
+### Advanced Go Usage
+
+<Note alert>
+  The following configuration step will disable the{' '}
+  <GenericLink href="/docs/v2/serverless-functions/introduction">
+    zero configuration nature
+  </GenericLink>{' '}
+  of ZEIT Now, and you will have to define build steps for all source files that
+  you intend to serve from your deployments.
+</Note>
+
+You can configure your own build step using the Go Builder, to compile Go source files into Serverless Functions, by providing configuration like the following, inside of a `now.json` file:
+
+```json
+{
+  "builds": [{ "src": "index.go", "use": "@now/go" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that lists a build step
+  using the Go Builder.
+</Caption>
+
+**The entry point of this Builder is a global matching `.go` files** that export a function that implements the `net/http` API. For more information on using this Builder, [see the Go Builder section](#go).
+
+#### Private Packages for Go
+
+To install private packages with `go get`, define `GIT_CREDENTIALS` as a [build environment variable](/docs/v2/advanced/configuration#build-env) in `now.json`.
+
+All major Git providers are supported including GitHub, GitLab, Bitbucket, as well as a self-hosted Git server.
+
+With GitHub, you will need to [create a personal token](https://github.com/settings/tokens) with permission to access your private repository.
+
+```json
+{
+  "build": {
+    "env": {
+      "GIT_CREDENTIALS": "https://username:token@github.com"
+    }
+  }
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file containing a build
+  environment variable with the value of GitHub credentials.
+</Caption>
+
+### Advanced Python Usage
+
+<Note alert>
+  The following configuration step will disable the{' '}
+  <GenericLink href="/docs/v2/serverless-functions/introduction">
+    zero configuration nature
+  </GenericLink>{' '}
+  of ZEIT Now, and you will have to define build steps for all source files that
+  you intend to serve from your deployments.
+</Note>
+
+You can configure your own build step using the Python Builder, to compile Python source files into Serverless Functions, by providing configuration like the following, inside of a `now.json` file:
+
+```json
+{
+  "builds": [{ "src": "index.py", "use": "@now/python" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that lists a build step
+  using the Python Builder.
+</Caption>
+
+**The entry point of this Builder is a glob matching `.py` source files** with one of the following variables defined:
+
+- `handler` that inherits from the `BaseHTTPRequestHandler` class.
+- `app` that exposes a WSGI or ASGI Application.
+
+#### Web Server Gateway Interface
+
+The Web Server Gateway Interface (WSGI) is a calling convention for web servers to forward requests to web applications written in Python. You can use WSGI with frameworks such as Flask or Django.
+
+Instead of defining a `handler`, define an `app` variable in your Python file, when using `now.json` config. For example, define a `index.py` file inside your project as follows:
+
+```python
+from flask import Flask, Response
+app = Flask(__name__)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return Response("<h1>Flask on Now</h1><p>You visited: /%s</p>" % (path), mimetype="text/html")
+```
+
+<Caption>
+  An example <InlineCode>index.py</InlineCode> file, using Flask for a WSGI
+  application.
+</Caption>
+
+Inside `requirements.txt` define:
+
+```
+flask==1.0.2
+```
+
+<Caption>
+  An example <InlineCode>requirements.txt</InlineCode> file, listing{' '}
+  <InlineCode>flask</InlineCode> as a dependency.
+</Caption>
+
+#### Asynchronous Server Gateway Interface
+
+The Asynchronous Server Gateway Interface (ASGI) is a calling convention for web servers to forward requests to asynchronous web applications written in Python. You can use ASGI with frameworks such as [Sanic](https://sanic.readthedocs.io).
+
+Instead of defining a `handler`, define an `app` variable in your Python file.
+
+For example, define a `index.py` file inside a folder as follows:
+
+```python
+from sanic import Sanic
+from sanic.response import json
+app = Sanic()
+
+
+@app.route('/')
+@app.route('/<path:path>')
+async def index(request, path=""):
+    return json({'hello': path})
+```
+
+<Caption>
+  An example <InlineCode>index.py</InlineCode> file, using Sanic for a ASGI
+  application.
+</Caption>
+
+Inside `requirements.txt` define:
+
+```
+sanic==19.6.0
+```
+
+<Caption>
+  An example <InlineCode>requirements.txt</InlineCode> file, listing{' '}
+  <InlineCode>sanic</InlineCode> as a dependency.
+</Caption>
+
+### Advanced Ruby Usage
+
+<Note alert>
+  The following configuration step will disable the{' '}
+  <GenericLink href="/docs/v2/serverless-functions/introduction">
+    zero configuration nature
+  </GenericLink>{' '}
+  of ZEIT Now, and you will have to define build steps for all source files that
+  you intend to serve from your deployments.
+</Note>
+
+You can configure your own build step using the Ruby Builder, to compile Ruby source files into Serverless Functions, by providing configuration like the following, inside of a `now.json` file:
+
+```json
+{
+  "builds": [{ "src": "index.rb", "use": "@now/ruby" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that lists a build step
+  using the Ruby Builder.
+</Caption>
+
+**The entry point of this Builder is a glob matching `.rb` or `.ru` (for [Rack](#rack-interface)) source files** with one of the following variables defined:
+
+- `Handler` proc that matches the `do |req, res|` signature.
+- `Handler` class that inherits from the `WEBrick::HTTPServlet::AbstractServlet` class.
+
+For more information on using this Builder, [see the Ruby Builder section](#ruby).
+
+Alternatively, [a `.ru` Rack config file](#rack-interface) will serve the Ruby application it contains.
+
+#### Rack Interface
+
+Many Ruby frameworks interface with [Rack](https://rack.github.io/) for forwarding HTTP requests to web applications written in Ruby. You can use Rack with frameworks such as Sinatra or Rails.
+
+Instead of defining a handler, write the application as usual, like this Sinatra application:
+
+```ruby
+require 'sinatra'
+
+get '/*' do
+    'Hello world'
+end
+```
+
+<Caption>
+  An example <InlineCode>Sinatra</InlineCode> application.
+</Caption>
+
+Inside `Gemfile` define:
+
+```ruby
+source "https://rubygems.org"
+
+gem "sinatra", "~> 2.0"
+gem "rack", "~> 2.0"
+```
+
+<Caption>
+  An example <InlineCode>Gemfile</InlineCode> file.
+</Caption>
+
+Add a Rack config file at `index.ru` to start the application:
+
+```ruby
+require './app'
+
+run Sinatra::Application
+```
+
+<Caption>
+  An example <InlineCode>index.ru</InlineCode> file.
+</Caption>
+
+---
+
+## Developing Your Own Builder
+
+Extending the feature-set of a ZEIT Now deployment is as simple as creating a Builder that takes a list of files and outputs either static files or dynamic [Serverless Functions](/docs/v2/advanced/concepts/lambdas).
+
+[A full API reference is available to help with creating Builders.](https://github.com/zeit/now/blob/canary/DEVELOPING_A_BUILDER.md)
+
+---
+
+## Technical Details
+
+### Caching Data
+
+A builder can retain an archive of up to `100mb` of the filesystem at `build` time. The cache key is generated as a combination of:
+
+- Project name.
+- Team id or user id.
+- Entrypoint path (e.g., `api/users/index.go`).
+- Builder identifier including version (e.g.: `@now/go@0.0.1`).
+
+The cache will be invalidated if any of those items changes. The user can bypass the cache by running `now -f`.
+
+### Limits
+
+- Builders can run for a maximum of 5 minutes before the execution times out.
+- The maximum cache archive size of a Builder is 100mb.
+- The cache TTL is 7 days.
+
+### Including Additional Files
+
+Most Builders use static analysis to determine which source files should be included in the Serverless Function output based on the build `src` input. Any unused code or assets is ignored to ensure your Serverless Function is as small as possible.
+
+In some cases, you may wish to include templates or views that are not able to be statically analyzed. Builders provide a configuration for `includeFiles` that accepts an array of globs that will always be included in the Serverless Functions output.
+
+<Example>
+  <Code lang="json">{`{
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@now/node",
+      "config": {
+        "includeFiles": [
+          "templates/**",
+          "views/**"
+        ]
+      }
+    }
+  ]
+}`}</Code>
+  <Caption>
+    Using the{' '}
+    <GenericLink href="/docs/v2/deployments/official-builders/node-js-now-node/">
+      @now/node Builder
+    </GenericLink>{' '}
+    and configuring the <InlineCode>includeFiles</InlineCode> within a{' '}
+    <GenericLink href="/docs/v2/advanced/configuration#builds">
+      now.json configuration file
+    </GenericLink>
+    .
+  </Caption>
+</Example>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

@@ -18,12 +18,19 @@ const NavigationItem = ({
       </GenericLink>
     )}
     <style jsx>{`
+      .navigation-item,
+      .navigation-item > :global(span) {
+        display: flex;
+        align-items: center;
+      }
+
       .navigation-item :global(a) {
         color: #666;
         display: inline-block;
-        font-size: 14px;
+        font-size: var(--font-size-small);
+        line-height: var(--line-height-small);
         font-weight: normal;
-        padding: 10px;
+        padding: 0 8px;
         text-decoration: none;
         text-transform: capitalize;
         transition: color 0.2s ease;
@@ -36,9 +43,14 @@ const NavigationItem = ({
         text-decoration: none;
       }
 
+      .navigation-item.active :global(a) {
+        font-weight: 500;
+      }
+
       @media screen and (max-width: 950px) {
         .navigation-item :global(a) {
-          font-size: 14px;
+          font-size: var(--font-size-small);
+          line-height: var(--line-height-small);
         }
       }
     `}</style>

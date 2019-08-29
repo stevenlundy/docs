@@ -1,0 +1,122 @@
+import Doc from '~/components/layout/docs'
+import { GenericLink } from '~/components/text/link'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Status Codes',
+  description:
+    'Status codes are given in different circumstances to give you as much insight as possible into your deployments.',
+  editUrl: 'pages/docs/v2/network/status-codes.mdx',
+  lastEdited: '2019-08-21T15:24:05.000Z'
+}
+
+In order to give you the best possible insight into what exactly is wrong with your deployment, we implemented several status codes into the [Network Layer](/docs/v2/network/overview) of ZEIT Now.
+
+## Response Types
+
+By default, browsers (and any other client that sets the [`Accept`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept) header to a value containing `text/html`) will receive status codes as a HTML template.
+
+Depending on your status code, the title ("404"), description ("The page could not be found") and the code ("FILE_NOT_FOUND") will vary.
+
+However, if your client is sending the `Accept` header with a value that contains `application/json`, it will receive the same error, but formatted as [JSON](https://en.wikipedia.org/wiki/JSON):
+
+```json
+{
+  "status": "FILE_NOT_FOUND",
+  "description": "The page could not be found"
+}
+```
+
+Assuming that your client is not sending the `Accept` header at all, we will default to sending the description of the status code in the `text/plain` format (plain text):
+
+```
+The page could not be found
+```
+
+## List of Status Codes
+
+### 303
+
+Type: `DEPLOYMENT_NOT_READY_REDIRECTING`
+
+Deployment not ready, redirecting to inspector.
+
+### 402
+
+Type: `DEPLOYMENT_BLOCKED`
+
+Your subscription was blocked.
+
+### 404
+
+Type: `FILE_NOT_FOUND`
+
+There is no <b>Static File</b> or <b>Lambda</b> in your <b>Build Output</b> that matches this path.
+
+<Note>
+  Looking to set up custom 404 pages for specific paths? Read more about{' '}
+  <GenericLink href="/docs/v2/network/directory-listing#rewrite-to-a-404-page">
+    rewriting to 404 page
+  </GenericLink>
+  .
+</Note>
+
+### 404
+
+Type: `DEPLOYMENT_NOT_FOUND`
+
+The deployment you tried to access does not exist.
+
+### 413
+
+Type: `LAMBDA_PAYLOAD_TOO_LARGE`
+
+The request's body is too large for invoking the <b>Lambda</b>.
+
+### 500
+
+Type: `INTERNAL_LAMBDA_NOT_FOUND`
+
+We were not able to locate the <b>Lambda</b> responsible for the path you tried to access.
+
+### 500
+
+Type: `INTERNAL_INVALID_LAMBDA_REGION`
+
+No <b>Lambda</b> was found in the region identifier attached to the deployment.
+
+### 500
+
+Type: `INTERNAL_INVALID_LAMBDA_ACCOUNTS`
+
+No valid **AWS Accounts** were found for the [Lambda](/docs/v2/advanced/concepts/lambdas/). This is a problem with ZEIT Now itself. Please reach out to us [for support](mailto:support@zeit.co) with a deployment URL so we may help resolve this error.
+
+### 500
+
+Type: `INTERNAL_LAMBDA_INVOCATION_FAILED`
+
+The <b>Network layer</b> was not able to invoke the <b>Lambda</b>.
+
+### 502
+
+Type: `NO_STATUS_CODE_FROM_LAMBDA`
+
+The <b>Lambda</b> responsible for the path you tried to access did not reply with a status code.
+
+### 502
+
+Type: `BODY_NOT_A_STRING_FROM_LAMBDA`
+
+The <b>Lambda</b> responsible for the path you tried to access replied with a non-string body.
+
+### 504
+
+Type: `LAMBDA_INVOCATION_TIMEOUT`
+
+The <b>Lambda</b> responsible for the path you tried to access did not reply in time.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

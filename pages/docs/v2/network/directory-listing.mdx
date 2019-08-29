@@ -1,0 +1,85 @@
+import Doc from '~/components/layout/docs'
+import { InlineCode } from '~/components/text/code'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+
+export const meta = {
+  title: 'Directory Listing',
+  description:
+    'Directory listings are shown for deployments that have no index files.',
+  editUrl: 'pages/docs/v2/network/directory-listing.mdx',
+  lastEdited: '2019-08-06T15:31:27.000Z'
+}
+
+The content of any path that does not contain an **Index File** (within a deployment) is rendered using our **Directory Listing**.
+
+Here is an example of how this could look like:
+
+<Image src={`https://assets.zeit.co/image/upload/v1541617859/front/docs/routing/directory-listing/preview.png`}
+  width={1232/2}
+  height={764/2}
+/>
+<Caption>A preview of how the Directory Listing would look in action.</Caption>
+
+As you can see, the directory listing contains three items:
+
+- `first.php` and `second.php` are **Lambdas**
+- `third.png` is a **Static File**
+
+However, no **Index File** is present. If one would be present, the path of the **Directory Listing** would render that file instead.
+
+## Index Files
+
+**Index Files** are rendered in place of the path of the directory they are located in.
+
+For example, visiting the path `/about` will serve the index file located in the `about` directory if it exists. This is typically `/about/index.html`.
+
+Files that match all of the following criteria will be identified as an index:
+
+- The file name is either `index` or `index.<extension>` (where `<extension>` is any file extension of your choice).
+- The file name **does not** end with a `.` or contain multiple `.` in a row.
+
+If multiple files match this pattern, `index.html` will take precedence followed by shortest to longest file names. That means `index.js` will take precedence over `index.bundle.js`.
+
+## Types of List Items
+
+There are two types of list items (which matches the **Output** of a **Build**):
+
+- **Static Files** (indicated with a blank or picture icon)
+- **Lambdas** (indicated with a λ icon)
+
+## Disabling the Directory Listing
+
+The **Directory Listing** will only occur if there is no **Index File** at the path the client is trying to access.
+
+By placing an **Index File**, set to look like a "Not Found" error page, inside the **Directory Listing** path, it will be indicated to visitors of your site that the location does not exist, rather than showing the **Directory Listing**.
+
+## Rewrite To a 404 Page
+
+To hide **Directory Listings** using a 404 using advanced configuration, you can use the [`routes`](/docs/v2/advanced/configuration#routes) property in a `now.json` file at the root of your project:
+
+```json
+{
+  "routes": [
+    {
+      "src": "/example",
+      "dest": "/404.html",
+      "status": 404
+    }
+  ]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file setting a path to lead to a 404 page.
+</Caption>
+
+In the example above, the `/example` route (which is a directory without an **Index File**, thus would render a **Directory Listing**) is rewritten to render the `/404.html` file instead.
+
+Furthermore, ZEIT Now sets a status code of `404` to accompany the response.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

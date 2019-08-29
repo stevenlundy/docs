@@ -1,5 +1,4 @@
 import Doc from '~/components/layout/docs'
-
 import { TerminalInput } from '~/components/text/terminal'
 import { InternalLink } from '~/components/text/link'
 import { Image } from '~/components/media'
@@ -10,7 +9,7 @@ export const meta = {
   description: 'Handling increased traffic by scaling your Now deployments',
   date: '10 August 2017',
   editUrl: 'pages/docs/v1/getting-started/scaling.mdx',
-  lastEdited: '2019-03-13T13:19:27.000Z'
+  lastEdited: '2019-08-06T15:31:27.000Z'
 }
 
 Deploying an app is just the start. We need to scale our app as our user base grows. It could be a linear growth or random spikes in certain times.
@@ -86,7 +85,7 @@ Here's how to auto scale an app with the URL `hnode.now.sh`
 
 Now the deployment behind `hnode.now.sh` runs with a minimum of 2 instances and it can scale up to 15 instances as the traffic increases.
 
-​<Now color="#000"/> will automatically start and kill instances based on the traffic `hnode.now.sh` receives.
+<Now color="#000"/> will automatically start and kill instances based on the traffic `hnode.now.sh` receives.
 
 <Image
   src={`${process.env.IMAGE_ASSETS_URL}/docs/scaling/auto-scaling.png`}

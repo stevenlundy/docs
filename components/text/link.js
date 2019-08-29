@@ -22,18 +22,23 @@ export const GenericLink = props => {
   return <ExternalLink {...props} />
 }
 
-export const InternalLink = (
-  { href, as, children, onClick, underlineOnHover = true },
-  { darkBg } = {}
-) => (
-  <span onClick={onClick} className={cn({ 'no-underline': !underlineOnHover })}>
-    <LinkWithHoverPrefetch href={href} as={as}>
+export const InternalLink = ({
+  href,
+  as,
+  children,
+  onClick,
+  underlineOnHover = true,
+  display,
+  color,
+  hover
+}) => (
+  <span className={cn({ 'no-underline': !underlineOnHover })}>
+    <LinkWithHoverPrefetch href={href} as={as} onClick={onClick}>
       {children}
     </LinkWithHoverPrefetch>
     <style jsx>{`
       span :global(a) {
         text-decoration: none;
-        color: #0076ff;
         font-size: inherit;
         cursor: pointer;
       }
@@ -48,6 +53,20 @@ export const InternalLink = (
 
       span :global(a.dark) {
         color: #fff;
+      }
+    `}</style>
+    <style jsx>{`
+      span {
+        display: ${display ? display : ''};
+        margin: ${display === 'block' ? '1em 0;' : ''};
+      }
+
+      span :global(a) {
+        color: ${color ? color : '#0076ff'};
+      }
+
+      span :global(a:hover) {
+        color: ${hover ? hover : color || '#0076ff'};
       }
     `}</style>
   </span>
@@ -95,7 +114,7 @@ export const ExternalLink = (
   <a
     className={cn({ dark: darkBg, 'no-underline': !underlineOnHover })}
     href={href}
-    target="_blank"
+    target={href.startsWith('/') ? '_self' : '_blank'}
     rel="noopener noreferrer"
     onClick={onClick}
   >
@@ -154,7 +173,8 @@ export const LabeledExternalLink = ({
         border-radius: 4px;
         background: white;
         border: 1px solid #dddddd;
-        font-size: 14px;
+        font-size: var(--font-size-primary);
+        line-height: var(--line-height-primary);
         line-height: 1.8;
         transition: border 0.2s ease, color 0.2s ease;
         vertical-align: middle;
@@ -428,10 +448,15 @@ IconExternalLink.contextTypes = {
 
 class HoverPrefetchLink extends Component {
   render() {
-    const { children, router, ...rest } = this.props
+    const { children, router, onClick, ...rest } = this.props
     return (
       <NativeLink {...rest}>
-        <a onMouseEnter={() => router.prefetch(this.props.href)}>{children}</a>
+        <a
+          onMouseEnter={() => router.prefetch(this.props.href)}
+          onClick={onClick}
+        >
+          {children}
+        </a>
       </NativeLink>
     )
   }

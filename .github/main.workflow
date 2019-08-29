@@ -5,7 +5,7 @@ workflow "Build and Index Files" {
 
 action "Master" {
   uses = "actions/bin/filter@master"
-  args = "branch master"
+  args = "branch master && not deleted"
 }
 
 action "Install" {

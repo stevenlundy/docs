@@ -40,7 +40,7 @@ function formatHTTP({ url, method = 'GET', headers, body }) {
   ].join('\n')
 }
 
-function RequestContent({ auth, req, context, type }) {
+function RequestContent({ auth, req, type }) {
   const request = auth
     ? {
         ...req,

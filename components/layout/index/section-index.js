@@ -2,6 +2,7 @@ import cns from 'classnames'
 import Link from 'next/link'
 import { Component, Fragment } from 'react'
 import EntryIndex from './entry-index'
+import * as metrics from '~/lib/metrics'
 
 class SectionIndex extends Component {
   componentDidMount() {
@@ -46,6 +47,13 @@ class SectionIndex extends Component {
 
   handleClick = () => {
     const { category, section } = this.props
+
+    metrics.event({
+      action: 'sidebar_section_clicked',
+      category: 'engagement',
+      label: section.title
+    })
+
     this.props.updateActive({
       category: category.slug,
       section: section.slug
@@ -114,7 +122,8 @@ class SectionIndex extends Component {
           .title {
             color: #000;
             display: block;
-            font-size: 14px;
+            font-size: var(--font-size-primary);
+            line-height: var(--line-height-primary);
             padding: 10px 0;
             text-decoration: none;
           }

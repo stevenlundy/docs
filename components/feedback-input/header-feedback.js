@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 // Components
-import { FONT_FAMILY_SANS } from '~/lib/css-config'
 import Button from '~/components/buttons'
 import EmojiIcon from '~/components/icons/emoji'
 import ClickOutside from '~/components/click-outside'
@@ -49,7 +48,8 @@ class HeaderFeedback extends Component {
     focused: false,
     success: false,
     emojiShown: false,
-    errorMessage: null
+    errorMessage: null,
+    value: null
   }
 
   clearSuccessTimer = null
@@ -85,6 +85,7 @@ class HeaderFeedback extends Component {
 
   handleClickOutside = () => {
     this.setState({ focused: false })
+    this.textAreaRef.value = ''
   }
 
   onKeyPress = e => {
@@ -129,6 +130,14 @@ class HeaderFeedback extends Component {
     }
   }
 
+  handleChange = e => {
+    if (this.state.focused) {
+      this.setState({
+        value: e.target.value
+      })
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state.focused) {
       // textarea was hidden if we were showing an error message and
@@ -144,9 +153,33 @@ class HeaderFeedback extends Component {
       if (!prevState.focused) {
         window.addEventListener('keypress', this.onKeyPress)
       }
+
+      // If a value exists, add it back to the textarea when focused
+      this.textAreaRef.value = this.state.value
+
+      if (this.props.hideHeader !== prevProps.hideHeader) {
+        this.textAreaRef.blur()
+
+        if (prevState.errorMessage && this.textAreaRef) {
+          this.setState({ errorMessage: null }) // eslint-disable-line react/no-did-update-set-state
+        }
+
+        // if we had a success message
+        // clear it
+        if (prevState.success) {
+          this.setState({ success: false }) // eslint-disable-line react/no-did-update-set-state
+        }
+
+        this.setState({ focused: false }) // eslint-disable-line react/no-did-update-set-state
+
+        window.removeEventListener('keypress', this.onKeyPress)
+      }
     } else if (prevState.focused && this.textAreaRef) {
       // needed for when we e.g.: unfocus based on pressing escape
       this.textAreaRef.blur()
+
+      // Remove value visibly from textarea while it's unfocused
+      this.textAreaRef.value = ''
 
       // if we unfocused and there was an error before,
       // clear it
@@ -217,74 +250,77 @@ class HeaderFeedback extends Component {
               `}
             {...props}
           >
-            <textarea
-              style={textAreaStyle}
-              ref={this.handleTextAreaRef}
-              placeholder={focused ? '' : 'Feedback...'}
-              onFocus={this.onFocus}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && e.metaKey) {
-                  this.onSubmit()
+            <div className="textarea-wrapper">
+              <textarea
+                style={textAreaStyle}
+                ref={this.handleTextAreaRef}
+                placeholder={focused ? '' : 'Feedback...'}
+                onFocus={this.onFocus}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && e.metaKey) {
+                    this.onSubmit()
+                  }
+                }}
+                onChange={this.handleChange}
+                aria-label="Feedback input"
+                disabled={
+                  this.state.loading === true || this.state.errorMessage != null
                 }
-              }}
-              aria-label="Feedback input"
-              disabled={
-                this.state.loading === true || this.state.errorMessage != null
-              }
-            />
+              />
 
-            {this.state.errorMessage != null && (
-              <div className="error-message">
-                <span>{this.state.errorMessage}</span>
-                <Button
-                  small
-                  onClick={e => {
-                    e.preventDefault()
-                    this.onErrorDismiss()
-                  }}
-                >
-                  GO BACK
-                </Button>
-              </div>
-            )}
-
-            {this.state.success && (
-              <div className="success-message">
-                <p>Your feedback has been received!</p>
-                <p>Thank you for your help.</p>
-              </div>
-            )}
-
-            {this.state.errorMessage == null && !this.state.success && (
-              <div className="controls">
-                <span className="emojis">
-                  {focused ? (
-                    <EmojiSelector
-                      onShow={this.onEmojiShown}
-                      onHide={this.onEmojiHidden}
-                      onSelect={this.onEmojiSelect}
-                      loading={this.state.loading}
-                    />
-                  ) : null}
-                </span>
-                {
-                  <span
-                    className={`buttons ${
-                      this.state.emojiShown ? 'hidden' : ''
-                    }`}
+              {this.state.errorMessage != null && (
+                <div className="error-message">
+                  <span>{this.state.errorMessage}</span>
+                  <Button
+                    small
+                    onClick={e => {
+                      e.preventDefault()
+                      this.onErrorDismiss()
+                    }}
                   >
-                    <Button
-                      small
-                      loading={this.state.loading}
-                      onClick={this.onSubmit}
-                      width={60}
-                    >
-                      Send
-                    </Button>
+                    GO BACK
+                  </Button>
+                </div>
+              )}
+
+              {this.state.success && (
+                <div className="success-message">
+                  <p>Your feedback has been received!</p>
+                  <p>Thank you for your help.</p>
+                </div>
+              )}
+
+              {this.state.errorMessage == null && !this.state.success && (
+                <div className="controls">
+                  <span className="emojis">
+                    {focused ? (
+                      <EmojiSelector
+                        onShow={this.onEmojiShown}
+                        onHide={this.onEmojiHidden}
+                        onSelect={this.onEmojiSelect}
+                        loading={this.state.loading}
+                      />
+                    ) : null}
                   </span>
-                }
-              </div>
-            )}
+                  {
+                    <span
+                      className={`buttons ${
+                        this.state.emojiShown ? 'hidden' : ''
+                      }`}
+                    >
+                      <Button
+                        small
+                        loading={this.state.loading}
+                        onClick={this.onSubmit}
+                        width={60}
+                      >
+                        Send
+                      </Button>
+                    </span>
+                  }
+                </div>
+              )}
+            </div>
 
             <style jsx>
               {`
@@ -296,7 +332,7 @@ class HeaderFeedback extends Component {
                   width: 84px;
                   display: inline-block;
                   transition: all 150ms ease-out;
-                  font-family: ${FONT_FAMILY_SANS};
+                  font-family: var(--font-sans);
                   text-rendering: optimizeLegibility;
                   -webkit-font-smoothing: antialiased;
                 }
@@ -305,17 +341,15 @@ class HeaderFeedback extends Component {
                   appearance: none;
                   border-width: 0;
                   background: #f9f9f9;
-                  border-radius: 4px;
-                  padding: 4px 8px;
+                  padding: 0 8px;
+                  line-height: 26px;
                   font-size: 12px;
-                  font-family: ${FONT_FAMILY_SANS};
+                  border-radius: 4px;
+                  font-family: var(--font-sans);
                   width: 84px;
                   resize: none;
-                  position: absolute;
-                  left: 0px;
-                  top: 0px;
                   vertical-align: top;
-                  height: 18px;
+                  height: 100%;
                   transition: all 150ms ease-out;
                   /* fixes a bug in ff where the animation of the chat
                 * counter appears on top of our input during its transition */
@@ -361,12 +395,27 @@ class HeaderFeedback extends Component {
                   transform: translate3d(-60%, -20%);
                 }
 
-                .geist-feedback-input.focused textarea {
+                .geist-feedback-input .textarea-wrapper {
+                  height: 100%;
+                }
+
+                .geist-feedback-input.focused .textarea-wrapper {
+                  display: block;
                   width: ${WIDTH}px;
                   height: 150px;
                   background: #fff;
                   padding-bottom: 40px;
                   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+                  border-radius: 4px;
+                  overflow: hidden;
+                  position: relative;
+                  transition: all 150ms ease-out;
+                  z-index: 1000;
+                }
+
+                .geist-feedback-input.focused .textarea-wrapper textarea {
+                  width: 256px;
+                  background: #fff;
                   overflow-y: visible;
                 }
 
@@ -383,7 +432,7 @@ class HeaderFeedback extends Component {
                   z-index: 1001;
                   width: ${WIDTH}px;
                   font-size: 12px;
-                  height: 100px;
+                  height: 100%;
                   line-height: 20px;
                   display: flex;
                   align-items: center;
@@ -438,7 +487,6 @@ class HeaderFeedback extends Component {
                   visibility: hidden;
                   top: -2000px;
                   opacity: 0;
-                  height: 38px;
                   width: ${WIDTH}px;
                   background-color: white;
                   display: flex;
@@ -470,9 +518,10 @@ class HeaderFeedback extends Component {
                   animation-fill-mode: forwards;
                   pointer-events: inherit;
                   z-index: 1001;
-                  padding: 6px 8px 6px 5px;
+                  padding: 8px;
                   visibility: visible;
-                  top: 108px;
+                  bottom: 0;
+                  top: auto;
                 }
 
                 .geist-feedback-input.dark .controls {
@@ -635,9 +684,16 @@ class EmojiSelector extends Component {
             }
 
             .geist-emoji-selector > button {
-              padding: 2px 3px;
               cursor: pointer;
               text-align: center;
+            }
+
+            .geist-emoji-selector > button:not(:last-child) {
+              padding-right: 2px;
+            }
+
+            .geist-emoji-selector > button:not(:first-child) {
+              padding-left: 2px;
             }
 
             .geist-emoji-selector.loading > button {
@@ -655,8 +711,8 @@ class EmojiSelector extends Component {
             }
 
             .geist-emoji-selector > button .inner {
-              height: 25px;
-              width: 25px;
+              height: 24px;
+              width: 24px;
               border-radius: 4px;
               border: 1px solid #eaeaea;
               justify-content: center;

@@ -15,7 +15,7 @@ import Request from '~/components/api/request'
 
 export const meta = {
   editUrl: 'pages/docs/api/v1/api-docs-mdx/endpoints/teams.mdx',
-  lastEdited: '2019-01-04T22:52:33.000Z'
+  lastEdited: '2019-08-27T22:49:42.000Z'
 }
 
 ## Teams
@@ -59,6 +59,42 @@ Example response:
 <Code lang="json">{`{
     "id": "team_LLHUOMOoDlqOp8wPE4kFo9pE"
   }`}</Code>
+</Example>
+
+### Delete a Team
+
+<Endpoint method="DELETE" url="/v1/teams/:id" />
+
+Delete a team under your account. You need to send a `DELETE` request with the desired team `id`.
+
+#### Input
+
+<InputTable>
+  <Row>
+    <BoldCell>id</BoldCell>
+    <TypeCell>String</TypeCell>
+    <BooleanCell status={true} />
+    <Cell>The desired id for the team.</Cell>
+  </Row>
+</InputTable>
+
+<Example>
+  <span>Example request:</span>
+
+<Request
+  method="DELETE"
+  url="https://api.zeit.co/v1/teams/team_LLHUOMOoDlqOp8wPE4kFo9pE"
+  headers={{
+    'Content-Type': 'application/json'
+  }}
+  auth
+/>
+
+Example response:
+
+<Code lang="json">{`{
+  "id": "team_LLHUOMOoDlqOp8wPE4kFo9pE"
+}`}</Code>
 </Example>
 
 ### List all your teams

@@ -1,26 +1,24 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import Caption from '~/components/text/caption'
-import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
-import Card from '~/components/card'
 
 export const meta = {
-  title: 'Deploying a Vue.js application with Now',
-  description: 'How to deploy your Vue.js application with Now',
+  title: 'Deploying a Vue.js App with ZEIT Now',
+  description: 'Create your Vue.js app and deploy it with ZEIT Now.',
   published: '2019-01-26T03:00:00.860Z',
   authors: ['unicodeveloper'],
   url: '/guides/deploying-vuejs-to-now',
   image:
     'https://og-image.now.sh/**Deploy%20a%20Vue.js%20App**%20with%20Now.png?theme=light&md=1&fontSize=96px&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnow-black.svg&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Fv1551318573%2Ffront%2Fdocs%2Fogp%2Fvue-logo.svg',
   editUrl: 'pages/guides/deploying-vuejs-to-now.mdx',
-  lastEdited: '2019-05-01T00:10:23.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
-Vue.js is an open source JavaScript framework for building user interfaces. It is popularly known for its gentle learning curve and is adopted by a lot of developers for crafting single-page applications (SPAs) globally.
+Vue.js is an open source JavaScript framework for building user interfaces. It is popularly known for its gentle learning curve and is adopted by a lot of developers for crafting single-page apps (SPAs) globally.
 
-In this guide, we will cover how to deploy a Vue.js application with [ZEIT Now](/docs/v2).
+In this guide, we will cover how to deploy a Vue.js app with [ZEIT Now](/docs/v2).
 
 ## Step 1: Set Up Your Vue.js Project
 
@@ -28,163 +26,45 @@ First, set up a Vue.js project using the [official Vue CLI](https://cli.vuejs.or
 
 If you don't have the Vue CLI installed globally, use the following command to install it globally:
 
-<TerminalInput>yarn global add @vue/cli</TerminalInput>
-<Caption>Installing Vue CLI global to the system user with <GenericLink href="https://yarnpkg.com">Yarn</GenericLink>.</Caption>
+<Snippet dark text="npm i -g @vue/cli" />
+<Caption>Installing Vue CLI global to the system user with <GenericLink href="https://www.npmjs.com">npm</GenericLink>.</Caption>
 
 After a successful installation, create a new project and `cd` into the project folder. Use the following command in your terminal to do so:
 
-<TerminalInput>vue create vue-project && cd vue-project</TerminalInput>
+<Snippet dark text="vue create vue-project && cd vue-project" />
 <Caption>Creating a bootstrapped Vue.js project and moving into the directory within a terminal.</Caption>
 
 An option to choose a preset will be presented to you after running the command above.
 
 After choosing an option, Vue CLI installs all the required dependencies and provisions a new project for you.
 
-To see your new Vue.js project running, you should add a `now-dev` script to your `package.json`, this will allow you to [replicate the Now environment locally](/docs/v2/development/basics/):
+Next, to extend the project with client-side routing; install the [official Vue.js router](https://router.vuejs.org/) by running the following command in your terminal:
 
-```json
-{
-  "scripts": {
-    ...
-    "now-dev": "vue-cli-service serve  --port=$PORT"
-  }
-}
-```
-
-<Caption>
-  Adding a <InlineCode>now dev</InlineCode> script to the{' '}
-  <InlineCode>package.json</InlineCode> file.
-</Caption>
-
-The [`@now/static-build` Builder](/docs/v2/deployments/official-builders/static-build-now-static-build/#local-development) supports a custom `now-dev` script that allows you to define [custom development behavior](/docs/v2/development/basics/#custom-development-environment) while gaining extra features that mimic the Now platform locally.
-
-To run your project locally, all that's required is a **single command**:
-
-<TerminalInput>now dev</TerminalInput>
-
-Next, to extend the project with routing; install the [official Vue.js router](https://router.vuejs.org/) by running the following command in your terminal:
-
-<TerminalInput>vue add router</TerminalInput>
+<Snippet dark text="vue add router" />
 <Caption>Installing the Vue.js router with Vue CLI.</Caption>
 
 Vue CLI adds the router to the project and automatically updates the project files with basic routing functionality.
 
-## Step 2: Deploy Your Vue.js Project to Now
+## Step 2: Deploying with Now
 
-After your project is set up, you are ready to deploy your Vue.js app to Now.
+With your project set up, you are ready to deploy your Vue.js app with [Now](/now).
 
-If you have not yet installed Now, you can do so by installing the [Now Desktop app](/docs/v2/getting-started/installation/#now-desktop) which installs Now CLI automatically, or by [installing Now CLI](/docs/v2/getting-started/installation/#now-cli) directly.
+If you have not yet installed Now, you can do so by [installing Now CLI](/download).
 
-For the deployment to build and act as you would expect, you need to create a [`now.json` configuration file](https://zeit.co/docs/v2/deployments/configuration) file to instruct Now on how to build the project with a `build` step.
+You can deploy your Vue.js app with **just a single command**:
 
-```json
-{
-  "version": 2,
-  "name": "my-vue-project",
-  "builds": [{ "src": "package.json", "use": "@now/static-build" }],
-  "routes": [
-    { "src": "^/js/(.*)", "dest": "/js/$1" },
-    { "src": "^/css/(.*)", "dest": "/css/$1" },
-    { "src": "^/img/(.*)", "dest": "/img/$1" },
-    { "src": ".*", "dest": "/index.html" }
-  ]
-}
-```
+<Snippet dark text="now" />
 
 <Caption>
-  A sample <InlineCode>now.json</InlineCode> configuration file that specifies a
-  Builder.
+  Deploying the app with the <InlineCode>now</InlineCode> command.
 </Caption>
-
-This `now.json` file achieves a few things:
-
-- Defines a `version` property to ensure you are using the latest [Now 2.0 platform](/docs/v2/platform/overview) version.
-- Defines a project `name` that your deployments will be sorted under and known by under Now.
-- Defines a `builds` property as an array with one build step using `@now/static-build` to instruct Now to statically build the project and deploy the `dist` directory. Using the `package.json` file as an entrypoint, more on that below.
-- Defines a `routes` property as an array that contains `route` objects to route all files under the `js`, `css`, and `img` directories to the right place whilst providing a fallback to `index.html` for all other routes so that Vue.js can handle routing internally.
-
-For the build property that you configured, add a `now-build` script in the generated `package.json` file to specify what command Now will run to build the app in the cloud.
-
-```json
-{
-    "scripts": {
-      ...
-      "build": "vue-cli-service build",
-      "now-build": "vue-cli-service build"
-    },
-}
-```
-
-<Caption>
-  A sample <InlineCode>package.json</InlineCode> file with scripts for Vue.
-</Caption>
-
-`yarn build` creates a directory called `dist` which Now identifies as the static folder by default and will deploy it.
-
-<Note>
-  Don't forget to exclude the <InlineCode>node_modules</InlineCode> folder from
-  being uploaded to Now to enable faster deployment. To do that, add a{' '}
-  <GenericLink href="/guides/prevent-uploading-sourcepaths-with-nowignore/">
-    .nowignore
-  </GenericLink>{' '}
-  file to the root of the project directory and add{' '}
-  <InlineCode>node_modules</InlineCode> to it.
-</Note>
-
-You are now ready to deploy the app with Now:
-
-<TerminalInput>now</TerminalInput>
 
 Once the app is deployed, you will receive a deployment URL similar to the following: <https://my-vue-project-ro3oxryae.now.sh/>
 
-You can see that our routes were successful by going to the generated `/about` route directly: <https://my-vue-project-ro3oxryae.now.sh/about>
-
-## Bonus: Cache Your Vue.js Assets
-
-Caching your sites is essential for serving fast and highly performant sites to your users. Thankfully, you can configure Now's routes within your `now.json` configuration file to set up caching headers.
-
-In the `now.json` configuration file, modify the existing `routes` property with [cache-control headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control):
-
-```json
-{
-  ...
-  "routes": [
-    {"src": "^/js/(.*)", "headers": {"cache-control": "max-age=31536000,immutable"}, "dest": "/js/$1"},
-    {"src": "^/css/(.*)", "headers": {"cache-control": "max-age=31536000,immutable"}, "dest": "/css/$1"},
-    {"src": "^/img/(.*)", "headers": {"cache-control": "max-age=31536000,immutable"}, "dest": "/img/$1"},
-    {"src": ".*", "headers": {"cache-control": "max-age=0,must-revalidate"}, "dest": "/index.html"}
-  ]
-}
-```
-
-<Caption>
-  Routes configuration for setting caching headers in a{' '}
-  <InlineCode>now.json</InlineCode> configuration file.
-</Caption>
-
-## Resources
-
-For more information on working with Vue.js, please refer to [their documentation](https://vuejs.org/v2/guide/).
-
-To configure Now further, please see these additional topics and guides:
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
-
-<Card title="More Guides" href="/guides">
-  See more guides that help you move forward with your projects and deployments.
-</Card>
+You can see that routes were successful by going to the generated `/about` route directly: <https://my-vue-project-ro3oxryae.now.sh/about>
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

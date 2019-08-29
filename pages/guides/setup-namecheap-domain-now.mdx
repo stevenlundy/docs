@@ -1,21 +1,19 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
 import { GenericLink } from '~/components/text/link'
-import Note from '~/components/text/note'
-import Card from '~/components/card'
 
 export const meta = {
   title: 'Setup a Namecheap Domain with ZEIT Now',
   description:
-    'How to use your Namecheap registered domain as an alias for your ZEIT Now deployments.',
+    'Use your Namecheap registered domain as an alias for your ZEIT Now deployments.',
   published: '2019-02-15T17:00:00.860Z',
   authors: ['unicodeveloper'],
   url: '/guides/setup-namecheap-domain-now',
   editUrl: 'pages/guides/setup-namecheap-domain-now.mdx',
-  lastEdited: '2019-02-19T13:50:46.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
 In this guide, we will cover how to use your Namecheap registered domain as an alias for your ZEIT Now deployments.
@@ -24,7 +22,7 @@ In this guide, we will cover how to use your Namecheap registered domain as an a
 
 First, you need to add your Namecheap registered domain to your ZEIT account. To get started, use the [Now CLI](/docs/v2/getting-started/installation#now-cli):
 
-<TerminalInput>{`now domains add <domain>`}</TerminalInput>
+<Snippet dark text="now domains add <domain>" />
 
 The command above adds the domain to your ZEIT account. Once it has been added, the [Now CLI](/docs/v2/getting-started/installation#now-cli) outputs some information needed to verify ownership of the domain.
 
@@ -33,7 +31,7 @@ There are two options available for domain verification:
 - Verify with Nameservers.
 - Verify with TXT record.
 
-The [**Verify with TXT record**](#txt-record-verification) ensures a smooth [zero-downtime](https://zeit.co/docs/v2/domains-and-aliases/zero-downtime-domain-migration/) migration.
+The [**Verify with TXT record**](#txt-record-verification) ensures a smooth [zero-downtime](/guides/zero-downtime-domain-migration/) migration.
 
 <Image
   src={`${process.env.ASSETS}/guides/setup-namecheap-domain-now/add-domain-with-nowcli.png`}
@@ -49,7 +47,7 @@ If you want to opt for verifying your domains with Nameservers, you must use the
 
 Use the following command to list the set of nameservers needed for verification:
 
-<TerminalInput>{`now domains inspect <domain>`}</TerminalInput>
+<Snippet dark text="now domains inspect <domain>" />
 
 <Image
   src={`${process.env.ASSETS}/guides/setup-namecheap-domain-now/inspect-domain.png`}
@@ -85,7 +83,7 @@ Add the intended nameservers gotten from running the inspect command to the **Cu
 
 Once Namecheap is done propagating the newly changed DNS for your domain, then your domain is ready to be verified. ZEIT automatically checks the domain for verification. However, if you are keen on manually verifying it, then run the following command:
 
-<TerminalInput>{`now domains verify <domain>`}</TerminalInput>
+<Snippet dark text="now domains verify <domain>" />
 
 ### TXT Record Verification
 
@@ -105,7 +103,7 @@ Select `TXT Record` as the record type, add `_now` as the host, and the value yo
 
 Your domain will be verified after adding the TXT record. Once ZEIT verifies your domain, you'll automatically receive an email. You can also manually use the command below to force a domain verification:
 
-<TerminalInput>{`now domains verify <domain>`}</TerminalInput>
+<Snippet dark text="now domains verify <domain>" />
 
 ## Step 2: Configuring your Domain on Now
 
@@ -123,43 +121,43 @@ now dns add <domain> @ MX ALT3.ASPMX.L.GOOGLE.COM 10
 now dns add <domain> @ MX ALT4.ASPMX.L.GOOGLE.COM 10
 ```
 
-Learn more about using the [`now dns`](https://zeit.co/docs/v2/domains-and-aliases/dns/) command.
+Learn more about using the [`now dns`](https://zeit.co/docs/v2/advanced/domains/dns/) command.
 
 ### Deploying and Aliasing
 
-ZEIT Now is dedicated to making deployment easy. If you have not yet deployed an application, take a look at the [Deployment Basics](/docs/v2/deployments/basics) documentation or at some other [guides](/guides) or [examples](/examples) to get started. The aliasing process will also generate a free SSL certificate for your domain.
+ZEIT Now is dedicated to making deployment easy. If you have not yet deployed an app, take a look at the [Deployment Basics](/docs/v2/deployments/basics) documentation or at some other [guides](/guides) or [examples](/examples) to get started. The aliasing process will also generate a free SSL certificate for your domain.
 
-When you are ready to deploy and alias, using the [`alias`](/docs/v2/deployments/configuration#alias) property containing your domain, within in your [`now.json`](/docs/v2/deployments/configuration), you can deploy and alias to your domain with one command:
+When you are ready to deploy and alias, using the [`alias`](/docs/v2/advanced/configuration#alias) property containing your domain, within your [`now.json`](/docs/v2/advanced/configuration).
 
-<TerminalInput>now --target production</TerminalInput>
+```json
+{
+  "alias": "www.yourdomain.com"
+}
+```
 
-We highly recommend using [the Now for GitHub app](/docs/v2/integrations/now-for-github/) coupled with the same [`alias` configuration option](/docs/v2/deployments/configuration/#alias) which will allow your application to be deployed on push to your GitHub repository and aliased automatically when merged to the default branch.
+<Caption>
+  Adding an{' '}
+  <GenericLink href="/docs/v2/advanced/configuration/#alias">alias</GenericLink>{' '}
+  to your project's <InlineCode>now.json</InlineCode> file.
+</Caption>
+
+You can deploy and set up an alias to your domain with one command:
+
+<Snippet dark text="now --prod" />
+<Caption>Deploying a project to a production alias.</Caption>
+
+We highly recommend using either the [Now for GitHub](/docs/v2/advanced/now-for-github/) or [Now for GitLab](/docs/v2/advanced/now-for-gitlab/) apps coupled with the same [`alias` configuration option](/docs/v2/advanced/configuration/#alias) which will allow your app to be deployed on push to your GitHub repository and aliased automatically when merged to the default branch.
 
 ## Step 3: Pointing to Now
 
-If you already verified your domain with Nameservers, then this step is done.
+If you already verified your domain with nameservers, then this step is done.
 
 The final step of migrating your domain to Now is to point your domain to ZEIT DNS with the intended nameservers set. Using `now domains inspect <domain>`, you can always find the intended nameservers to use with your domain.
 
-Once Namecheap's propagation of the updated nameservers is complete, your domain will automatically point to the [ application you deployed](https://zeit.co/guides/setup-godaddy-domain-now/#aliasing-a-deployment) before.
-
-## Read More
-
-For more information on how you can extend your usage of Now, read the following guides and documentation:
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
+Once Namecheap's propagation of the updated nameservers is complete, your domain will automatically point to the [app you deployed](https://zeit.co/guides/setup-godaddy-domain-now/#aliasing-a-deployment) before.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

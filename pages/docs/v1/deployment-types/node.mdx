@@ -10,7 +10,7 @@ export const meta = {
     'What counts as a Node.js App for Now deployments and more information about them',
   date: '09 March 2017',
   editUrl: 'pages/docs/v1/deployment-types/node.mdx',
-  lastEdited: '2019-01-07T00:27:37.000Z'
+  lastEdited: '2019-08-06T15:31:27.000Z'
 }
 
 If your project contains a `package.json` (and no `Dockerfile`) file, it will always be treated as a [Node.js](https://nodejs.org/en/) deployment.
@@ -63,7 +63,7 @@ In cases where you need to set the `NODE_ENV` variable to "production", but stil
 
 ## Port Selection
 
-​<Now color="#000" /> deployment instances always listen on port `443` (HTTPS) of their given URL. Your server code can expose an HTTP service on **any port** of your choice (not multiple ones). <Now color="#000" /> will then route requests received on port `443` to your HTTP service port, and its response will be returned by the deployment instance.
+<Now color="#000" /> deployment instances always listen on port `443` (HTTPS) of their given URL. Your server code can expose an HTTP service on **any port** of your choice (not multiple ones). <Now color="#000" /> will then route requests received on port `443` to your HTTP service port, and its response will be returned by the deployment instance.
 
 Additionally, visitors will be redirected from `http` to `https` automatically.
 

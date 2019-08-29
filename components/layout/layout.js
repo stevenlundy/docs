@@ -5,27 +5,30 @@ import Header from '~/components/layout/header'
 import { UserContext } from '~/lib/user-context'
 import { ZenContext } from '~/lib/zen-context'
 import UseTeamInfo from '~/lib/use-team-info'
+import { withToasts } from '~/components/toasts'
 import * as bodyLocker from '~/lib/utils/body-locker'
 
-const WrapForAmp = ({ comp, ...props }) => {
+const LayoutHeader = React.memo(props => {
   const isAmp = useAmp()
-  return React.createElement(comp, { ...props, isAmp })
-}
+  return <Header {...props} isAmp={isAmp} />
+})
 
-export default class Layout extends React.Component {
+class Layout extends React.Component {
   static contextType = ZenContext
 
   state = {
     navigationActive: false,
-    zenModeActive: false
+    zenModeActive: false,
+    scrollPosition: (typeof window !== 'undefined' && window.pageYOffset) || 0,
+    scrollDirection: null
   }
 
   altKeyDown = false
 
   exitZenMode = () => {
-    this.setState(state => ({
+    this.setState({
       zenModeActive: false
-    }))
+    })
   }
 
   onKeyDown(event) {
@@ -64,19 +67,36 @@ export default class Layout extends React.Component {
     this.altKeyDown = false
   }
 
+  onScroll() {
+    requestAnimationFrame(() => {
+      this.setState({
+        scrollDirection:
+          this.state.scrollPosition < window.pageYOffset ? 'down' : 'up',
+        scrollPosition: window.pageYOffset
+      })
+    })
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', this.onKeyDown.bind(this), false)
     document.addEventListener('keyUp', this.onKeyUp.bind(this), false)
+    window.addEventListener('scroll', this.onScroll.bind(this))
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll.bind(this))
+    document.removeEventListener('keydown', this.onKeyDown.bind(this), false)
+    document.removeEventListener('keyUp', this.onKeyUp.bind(this), false)
   }
 
   handleToggleNavigation = () => {
-    this.setState(({ navigationActive }) => {
-      if (navigationActive) {
-        bodyLocker.unlock()
-      } else {
-        bodyLocker.lock()
-      }
+    if (this.state.navigationActive === true) {
+      bodyLocker.unlock()
+    } else {
+      bodyLocker.lock()
+    }
 
+    this.setState(({ navigationActive }) => {
       return {
         navigationActive: !navigationActive
       }
@@ -85,15 +105,17 @@ export default class Layout extends React.Component {
 
   handleIndexClick = () => {
     if (this.state.navigationActive) {
-      bodyLocker.unlock()
-      this.setState({
-        navigationActive: false
-      })
+      this.handleToggleNavigation()
     }
   }
 
   render() {
-    const { children } = this.props
+    const { children, dynamicSearch, data } = this.props
+    const { scrollPosition, scrollDirection } = this.state
+
+    const hideHeader =
+      scrollDirection === 'down' && scrollPosition > 0 ? true : false
+    const detached = scrollPosition > 0
 
     return (
       <Page>
@@ -102,8 +124,13 @@ export default class Layout extends React.Component {
             <UseTeamInfo
               user={user}
               render={({ teams }) => (
-                <WrapForAmp
-                  comp={Header}
+                <LayoutHeader
+                  hideHeader={hideHeader}
+                  detached={detached}
+                  inHero={scrollPosition < 334}
+                  isTop={scrollPosition <= 0}
+                  hideHeaderSearch={dynamicSearch && scrollPosition < 334}
+                  dynamicSearch={dynamicSearch}
                   onToggleNavigation={this.handleToggleNavigation}
                   user={user}
                   teams={teams}
@@ -112,6 +139,7 @@ export default class Layout extends React.Component {
                   handleIndexClick={this.handleIndexClick}
                   zenModeActive={this.state.zenModeActive}
                   exitZenMode={this.exitZenMode}
+                  data={data}
                 />
               )}
             />
@@ -124,3 +152,5 @@ export default class Layout extends React.Component {
     )
   }
 }
+
+export default withToasts(Layout)

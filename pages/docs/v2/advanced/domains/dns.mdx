@@ -1,0 +1,87 @@
+import Doc from '~/components/layout/docs'
+import Snippet from '~/components/snippet'
+import { GenericLink } from '~/components/text/link'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Managing DNS',
+  description: 'Managing your DNS records for domains used with ZEIT Now.',
+  editUrl: 'pages/docs/v2/advanced/domains/dns.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+Thanks to the `now dns` CLI command, managing existing DNS records with ZEIT Now is simple.
+
+<Note>
+  This only applies to domains you bought via ZEIT or domains configured with
+  our <GenericLink href="/dns">global DNS service</GenericLink>.
+</Note>
+
+## Using Now CLI
+
+In the examples shown below, the placeholder `zeit.rocks` represents a domain of your choice that was registered with [`now domains`](/docs/v2/custom-domains). Here are the sub-commands you can use:
+
+### now dns ls
+
+Lists all the DNS records available for this domain. The list doesn't include records generated automatically by the nameserver (like a default `SOA` record or `A / AAAA` records created automatically for `ALIAS` records).
+
+### now dns add
+
+Adds a DNS record to a domain of your choice. The following record types are currently supported:
+
+- A
+- AAAA
+- ALIAS
+- CAA
+- CNAME
+- MX
+- SRV
+- TXT
+
+This is the syntax for the `now dns` command.
+
+<Snippet
+  dark
+  text="now dns add <domain> <name> <record type> <value> [mx_priority]"
+/>
+
+- `<domain>` is the domain name
+- `<name>` is the subdomain that will be prefixed to `<domain>` (value `@` refers to a domain without any prefix)
+- `<record type>` contains one of the supported record types shown above
+- `<value>` indicates the value for the record (like an IP address or a hostname)
+- `[mx_priority]` sets the priority of a certain MX record and can therefore only be used in conjunction with this record type
+  <br />
+
+**Examples**
+
+<Snippet dark text="now dns add zeit.rocks ext A 127.0.0.1" />
+
+Creates an A record that makes the subdomain `ext.zeit.rocks` resolve to the server located at the IP address `127.0.0.1.`
+
+<Snippet dark text="now dns add zeit.rocks @ MX mail.awesome-now.us 10" />
+
+Creates an MX record which makes the mail server located at `mail.awesome-now.us` responsible for handling emails sent to an address suffixed with `@zeit.rocks`.
+
+<Snippet dark text={`now dns add zeit.rocks @ CAA '0 issue "comodo.com"'`} />
+
+Creates a [CAA record](https://letsencrypt.org/docs/caa/) that allows issuing certificates using [Comodo](https://ssl.comodo.com/) for `zeit.rocks` and any subdomain under it.
+
+> In this case, you'll be in charge of certificate management for your domain.<br/>
+> Most probably, you'll need to use `CAA` records to:
+>
+> 1. use a custom certificate for your Now deployment with `now certs issue --ca`
+> 2. run an app outside of Now with TLS for a subdomain
+
+### now dns rm &lt;ID>
+
+Removes a record by ID, which is shown in the `now dns ls` listing. Note that it may take a couple of hours before the change is fully propagated across our infrastructure.
+
+### now dns import &lt;your-domain> &lt;zonefile>
+
+Imports the zone file downloaded from your registrar for this domain to ZEIT DNS.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

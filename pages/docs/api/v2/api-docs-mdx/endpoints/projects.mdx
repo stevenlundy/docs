@@ -2,24 +2,56 @@ import Example from '~/components/example'
 import { Code, InlineCode } from '~/components/text/code'
 import { HelpLink } from '~/components/text/link'
 import Note from '~/components/text/note'
-import { P } from '~/components/text/paragraph'
+import { P } from '~/components/text'
 import Endpoint from '~/components/api/endpoint'
 import Request from '~/components/api/request'
 
 export const meta = {
   editUrl: 'pages/docs/api/v2/api-docs-mdx/endpoints/projects.mdx',
-  lastEdited: '2019-05-07T20:02:03.000Z'
+  lastEdited: '2019-08-28T18:26:43.000Z'
 }
 
 ## Projects
 
-### Create or update a project
+### Create a Project
+
+<Endpoint method="POST" url="/v1/projects/" />
+
+Create a new project with the `name` request parameter. If the project already exists, fails with `409` status code.
+
+#### Request Parameters
+
+| Key      | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Required | Description                       |
+| -------- | ---------------------------------------------------------- | -------- | --------------------------------- |
+| **name** | <HelpLink href="#api-basics/types">String</HelpLink>       | Yes      | The desired name for the project. |
+
+<Example>
+  <span>Example request:</span>
+  <Request
+    method="POST"
+    url="https://api.zeit.co/v1/projects/"
+    headers={{
+      'Content-Type': 'application/json'
+    }}
+    auth
+    body={{ name: 'a-project-name' }}
+  />
+  <span>Example response:</span>
+  <Code lang="json">{`{
+  "id":"QmQKrt94KYKF3sDysJq19N87uMmE8Wicbt2GirePy1dH8U",
+  "name":"a-project-name",
+  "alias": [],
+  "accountId":"K4amb7K9dAt5R2vBJWF32bmY",
+  "updatedAt":1555413045188,
+  "createdAt":1555413045188
+}`}</Code>
+</Example>
+
+### Ensure a Project Exists
 
 <Endpoint method="POST" url="/v1/projects/ensure-project" />
 
 Create a project with the `name` request parameter if it does not already exist. Updates the project `updatedAt` if it already exists.
-
-<Note>The project ID is taken from the account.</Note>
 
 #### Request Parameters
 
@@ -47,13 +79,14 @@ Example response:
 <Code lang="json">{`{
   "id":"QmQKrt94KYKF3sDysJq19N87uMmE8Wicbt2GirePy1dH8U",
   "name":"a-project-name",
+  "alias": [],
   "accountId":"K4amb7K9dAt5R2vBJWF32bmY",
   "updatedAt":1555413045188,
   "createdAt":1555413045188
 }`}</Code>
 </Example>
 
-### Get all projects
+### Get All Projects
 
 <Endpoint method="GET" url="/v1/projects/list" />
 
@@ -84,6 +117,7 @@ Example response:
   {	
     "id":"QmQKrt94KYKF3sDysJq19N8gvhmE8Wicbt2GirePy1dH8U",	
     "name":"a-project-name",	
+    "alias": [],
     "accountId":"K4amb7K9dAt5R2vBJWF32bmY",	
     "createdAt":1555413045188,	
     "updatedAt":1555413045188	
@@ -91,6 +125,7 @@ Example response:
   {	
     "id":"QmRhxc9HAmRMcLvWhCAf2ALLctxZ4s4fwsM1D5kNM8PJuL",	
     "name":"another-project-name",	
+    "alias": [],
     "accountId":"K4amb7K9dAt5R2vBJWF32bmY",	
     "createdAt":1555072968396,	
     "updatedAt":1555345633993	
@@ -99,7 +134,7 @@ Example response:
 `}</Code>	
 </Example>
 
-### Get a single project
+### Get a Single Project
 
 <Endpoint>
   GET /v1/projects/:id
@@ -126,13 +161,14 @@ Example response:
 <Code lang="json">{`{
   "id":"QmQKrt94KYKF3sDysJq19N8gvhmE8Wicbt2GirePy1dH8U",
   "name":"a-project-name",
+  "alias": [],
   "accountId":"K4amb7K9dAt5R2vBJWF32bmY",
   "createdAt":1555413045188,
   "updatedAt":1555413045188
 }`}</Code>
 </Example>
 
-### Remove a single project
+### Remove a Single Project
 
 <Endpoint>
   DELETE /v1/projects/:id
@@ -161,11 +197,11 @@ Delete a specific project by passing either the project `id` or `name` in the UR
 </Example>
 
 <Note>
-  If the request is succesful, you will receive a 204 HTTP Status code in the
+  If the request is successful, you will receive a 204 HTTP Status code in the
   response.
 </Note>
 
-### Get project environment variables
+### Get Project Environment Variables
 
 <Endpoint method="GET" url="/v1/projects/:id/env" />
 
@@ -197,7 +233,7 @@ Example response:
 ]`}</Code>
 </Example>
 
-### Create a project environment variable
+### Create a Project Environment Variable
 
 <Endpoint method="POST" url="/v1/projects/:id/env" />
 
@@ -259,7 +295,7 @@ Example response:
   the request.
 </Note>
 
-### Replace a project environment variables
+### Replace a Project Environment Variable
 
 <Endpoint method="PUT" url="/v1/projects/:id/env" />
 
@@ -316,7 +352,7 @@ Example response:
   The response will include all environment variables for the project.
 </Note>
 
-### Delete specific environment variable
+### Delete a Specific Environment Variable
 
 <Endpoint method="DELETE" url="/v1/projects/:id/env/:key" />
 
@@ -344,6 +380,92 @@ Example response:
 </Example>
 
 <Note>
-  The response will include all <P.B>remaining</P.B> environment variables for
+  The response will include all <b>remaining</b> environment variables for the
+  project.
+</Note>
+
+### Add a Production Domain to a Project
+
+<Endpoint method="POST" url="/v1/projects/:id/alias" />
+
+Add a production domain to the project by passing the project `id` in the URL and `domain` as request parameters.
+
+#### URL Parameters
+
+| Key    | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Required | Description                    |
+| ------ | ---------------------------------------------------------- | -------- | ------------------------------ |
+| **id** | <HelpLink href="#api-basics/types">ID</HelpLink>           | Yes      | The unique project identifier. |
+
+#### Request Parameters
+
+| Key        | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Required | Description                        |
+| ---------- | ---------------------------------------------------------- | -------- | ---------------------------------- |
+| **domain** | <HelpLink href="#api-basics/types">String</HelpLink>       | Yes      | The name of the production domain. |
+
+<Example>
+  <span>Example request:</span>
+
+<Request
+  method="POST"
+  url="https://api.zeit.co/v1/projects/QmXtXGhXF6mZQ5ete2AwbeV3zAS17wEj7LYM3LuQ3Y45FF/alias"
+  auth
+  body={{
+    domain: 'foobar.com'
+  }}
+/>
+
+Example response:
+
+<Code lang="json">{`[
+  {
+    "createdAt": 1562119110860,
+    "domain": "foobar.com"
+  }
+]`}</Code>
+</Example>
+
+<Note>
+  The response will include all production domains configured for the project.
+</Note>
+
+<Note>
+  You can also get the production domains from the{' '}
+  <InlineCode>alias</InlineCode> field of a project, returned by any other
+  project API endpoints.
+</Note>
+
+### Delete a Specific Production Domain of a Project
+
+<Endpoint method="DELETE" url="/v1/projects/:id/alias?domain" />
+
+Delete a specific production domain configuration from a project by passing the project `id` and a `domain` query in the URL.
+
+<Note>
+  After deleting the domain, all remaining aliases and deployments will not be
+  affected.
+</Note>
+
+#### URL Parameters
+
+| Key    | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Required | Description                    |
+| ------ | ---------------------------------------------------------- | -------- | ------------------------------ |
+| **id** | <HelpLink href="#api-basics/types">ID</HelpLink>           | Yes      | The unique project identifier. |
+
+<Example>
+  <span>Example request:</span>
+
+<Request
+  method="DELETE"
+  url="https://api.zeit.co/v1/projects/QmXtXGhXF6mZQ5ete2AwbeV3zAS17wEj7LYM3LuQ3Y45FF/alias?domain=foobar.com"
+  auth
+/>
+
+Example response:
+
+<Code lang="json">{`[]`}</Code>
+</Example>
+
+<Note>
+  The response will include all the remaining production domains configured for
   the project.
 </Note>

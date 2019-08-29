@@ -1,0 +1,53 @@
+import Doc from '~/components/layout/docs'
+
+export const meta = {
+  title: 'Glossary',
+  description:
+    'A list of the terms used in context of ZEIT Now and what those terms mean or describe.',
+  editUrl: 'pages/docs/v2/advanced/platform/glossary.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+These are the terms we encourage you to learn in order to deeply understand **Now**. However, every occurrence of one of these terms is also linked back to this very page, so that you can always jump right to the explanation if needed.
+
+## General Terms
+
+### Deployment
+
+A collection of files that were uploaded to **Now**.
+
+### Source Files
+
+These are the files contained within your project before it is uploaded with ZEIT Now.
+
+### Lambda
+
+A serverless code execution handler that can be invoked over the web.
+
+### Static File
+
+A file that is not executed, but instead served as-is to the program sending the request.
+
+### Project
+
+A [structured group of deployments](/docs/v2/platform/projects), categorized by the deployment name.
+
+## Company & Product
+
+### ZEIT
+
+The company behind the product **Now**.
+
+### Now
+
+The platform on which **Deployments** are created, served and managed.
+
+### Now CLI
+
+The command line interface client for **Now**.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

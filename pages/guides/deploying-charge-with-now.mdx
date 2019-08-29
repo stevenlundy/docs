@@ -1,22 +1,21 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
-import Card from '~/components/card'
 
 export const meta = {
-  title: 'Create a Charge Application That Builds and Deploys with Now',
-  description: 'How to deploy your Charge application with Now in 3 easy steps',
+  title: 'Create a Charge App That Builds and Deploys with ZEIT Now',
+  description: 'Deploy your Charge app with ZEIT Now in 3 easy steps.',
   published: '2019-04-09T03:00:00.860Z',
   authors: ['msweeneydev'],
   url: '/guides/deploying-charge-with-now',
   image:
     'https://og-image.now.sh/**Deploy%20a%20Charge%20site**%20with%20Now.png?theme=light&md=1&fontSize=75px&images=https%3A%2F%2Fassets.zeit.co%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnow-black.svg&images=https%3A%2F%2Fd33wubrfki0l68.cloudfront.net%2F25151dcf9878a3c40b686628cc84c9292d95ca0e%2F9e22f%2Fimages%2Flogomark.svg',
   editUrl: 'pages/guides/deploying-charge-with-now.mdx',
-  lastEdited: '2019-05-01T00:18:43.000Z'
+  lastEdited: '2019-08-28T13:42:24.000Z'
 }
 
 [Charge](https://charge.js.org/) is an opinionated, zero-config static site generator written in JavaScript. Charge is fast, simple and behaves the way you expect it to.
@@ -27,8 +26,8 @@ In this guide, we will walk you through creating and [deploying](/docs/v2/deploy
   src={`${
     process.env.ASSETS
   }/guides/deploying-charge-with-now/deploying-charge-with-now.png`}
-  width={650}
-  height={380}
+  width={2048 / 2.75}
+  height={1170 / 2.75}
   oversize
 />
 
@@ -36,21 +35,26 @@ In this guide, we will walk you through creating and [deploying](/docs/v2/deploy
 
 [Charge](https://charge.js.org/) focuses on simplicity and provides no boilerplate as a result. To get started with Charge create your project directory, let's call it `charge-app`, and `cd` into it:
 
-<TerminalInput>mkdir charge-app && cd charge-app</TerminalInput>
+<Snippet dark text="mkdir charge-app && cd charge-app" />
 <Caption>
   Creating and entering into the <InlineCode>/charge-app</InlineCode>{' '}directory.
 </Caption>
 
-Next, [initialize](https://yarnpkg.com/lang/en/docs/cli/init/) the project:
+Next, [initialize](https://docs.npmjs.com/cli/init) the project:
 
-<TerminalInput>yarn init</TerminalInput>
+<Snippet dark text="npm init" />
 <Caption>
   Initializing the project, this creates a <InlineCode>package.json</InlineCode>{' '}file.
 </Caption>
 
-Yarn will present some initial questions to set up your project, complete this and when done, add Charge as a [development dependency](https://yarnpkg.com/en/docs/cli/add#toc-yarn-add-dev-d):
+<Note>
+  During the initializing process, npm will ask questions about your project.
+  Answer these how you wish; there are no prerequisites for this example.
+</Note>
 
-<TerminalInput>yarn add -D @static/charge</TerminalInput>
+When this is complete, add Charge as a [development dependency](https://docs.npmjs.com/specifying-dependencies-and-devdependencies-in-a-package-json-file):
+
+<Snippet dark text="npm i -D @static/charge" />
 <Caption>
   Adding Charge as a development dependency to our project.
 </Caption>
@@ -60,8 +64,8 @@ Now, make an addition to `package.json`, as recommended by the [Charge documenta
 ```json
 {
   "scripts": {
-    "now-dev": "charge serve src",
-    "build": "charge build src dist"
+    "dev": "charge serve src",
+    "build": "charge build src public"
   }
 }
 ```
@@ -71,9 +75,7 @@ Now, make an addition to `package.json`, as recommended by the [Charge documenta
   <InlineCode>package.json</InlineCode> file.
 </Caption>
 
-These scripts enable you to run a [local development server](/docs/v2/development/basics/) with `now dev` and, as you will see later on, [build](/docs/v2/deployments/builds/) your Charge site before [deploying](/docs/v2/deployments/basics/) with `now`.
-
-The [`@now/static-build` Builder](/docs/v2/deployments/official-builders/static-build-now-static-build/#local-development) supports a custom `now-dev` script that allows you to define [custom development behavior](/docs/v2/development/basics/#custom-development-environment) while gaining extra features that mimic the Now platform locally.
+These scripts enable you to run a local development environment and build your Charge site when [deploying](/docs/v2/deployments/basics/) with `now`.
 
 ## Step 2: Add Content To Your Charge Project
 
@@ -81,7 +83,7 @@ The following example content setup demonstrates a few of Charge's key features,
 
 Firstly, create two directories, `/src` and `/src/pages` within your project directory:
 
-<TerminalInput>mkdir src && mkdir src/pages</TerminalInput>
+<Snippet dark text="mkdir src && mkdir src/pages" />
 <Caption>
   Creating a <InlineCode>/src</InlineCode>{' '}directory with a <InlineCode>/pages</InlineCode>{' '} directory inside of it.
 </Caption>
@@ -127,20 +129,20 @@ export default ({ children }) => {
   An example <InlineCode>layout.html.jsx</InlineCode> file in a Charge project.
 </Caption>
 
-If, at any point, you want to see how your changes look, you can [serve them locally](/docs/v2/development/basics/) with the script you added in the first step:
+If, at any point, you want to see how your changes look, you can serve them locally with the script you added in the first step:
 
-<TerminalInput>now dev</TerminalInput>
+<Snippet dark text="npm run dev" />
 <Caption>
-  Starting up a local development server using a script.
+  Starting up a local development server using a <InlineCode>package.json</InlineCode> script.
 </Caption>
 
-Charge will open a new tab for you, if not you can navigate to `localhost:2468` to see the changes you make, live-reloading is enabled through [Browsersync](https://browsersync.io/).
+Charge will open a new tab for you, if not you can navigate to `localhost:2468` to see the changes you make.
 
 Now that you have a layout component, use it to wrap a `.mdx` file. Create a file named `about.html.mdx` inside of your `/pages` directory.
 
 Add some content to your about page and export it inside of the layout component you created above. Your `about.html.mdx` should look similar to this:
 
-```markdown
+```jsx
 import Layout from '../layout.html.jsx'
 
 Everything between the import and export in the source is **just markdown** using [MDX](https://mdxjs.com/)!
@@ -176,122 +178,32 @@ Now that you have a simple Charge site created, you're ready to deploy with [Now
 
 ## Step 3: Deploy Your Charge Project with Now
 
-To deploy with Now, you will need to provide a small amount of instructions on how to build your Charge project using a [`now.json` configuration file](/docs/v2/deployments/configuration) at the root of your project directory.
+The last step is to deploy the app with [ZEIT Now](/docs/v2/getting-started/introduction-to-now).
 
-Create a [`now.json` file](/docs/v2/deployments/configuration) at the project root and add the following code:
+If you have not yet installed Now, you can do so by [installing Now CLI](/download).
 
-```json
-{
-  "version": 2,
-  "name": "my-charge-project",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@now/static-build"
-    }
-  ]
-}
-```
+Now allows you to [deploy your project](/docs/v2/deployments/basics) from the terminal with **just a single command**:
+
+<Snippet dark text="now" />
 
 <Caption>
-  An example <InlineCode>now.json</InlineCode> file in a Charge project.
+  Deploying the app with the <InlineCode>now</InlineCode> command.
 </Caption>
 
-The [`now.json` file](/docs/v2/deployments/configuration) allows you to achieve many things with your [deployment](/docs/v2/deployments/basics/), below is a description of what each property does:
+You will see a short build step in your terminal followed by the news that your Charge project has now been [deployed](https://zeit.co/docs/v2/deployments/basics/), it should look similar to this: <https://charge.now-examples.now.sh/>
 
-- [`version`](/docs/v2/deployments/configuration/#version) ensures you are using the latest [Now 2.0 platform](/docs/v2/platform/overview) version
-- [`name`](/docs/v2/deployments/configuration/#name) defines a project name your deployment will be known by under Now
-- [`builds`](/docs/v2/deployments/configuration/#builds) provides one build step using [`@now/static-build`](/docs/v2/deployments/official-builders/static-build-now-static-build/) to instruct Now to statically build the project and deploy the `dist` directory, using the `package.json` file as an entrypoint
+<Note>
+  By default, Now will cache static assets in every{' '}
+  <GenericLink href="/docs/v2/platform/regions-and-providers">
+    region
+  </GenericLink>
+  , making your site fast to load wherever you are in the world.
+</Note>
 
-  <Note>
-    By default, Now will cache static assets in every{' '}
-    <GenericLink href="/docs/v2/platform/regions-and-providers">
-      region
-    </GenericLink>
-    , making your site fast to load wherever you are in the world.
-  </Note>
-
-Lastly, add a `now-build` script to `package.json` which will be used by the [Builder](/docs/v2/deployments/builders/overview/), [`@now/static-build`](/docs/v2/deployments/official-builders/static-build-now-static-build/), to specify what command Now should run to build the site in the cloud:
-
-```json
-{
-  "scripts": {
-    ...
-    "now-build": "yarn build"
-  }
-}
-```
-
-<Caption>
-  Adding a <InlineCode>now-build</InlineCode> script to the{' '}
-  <InlineCode>package.json</InlineCode> file in a Charge project.
-</Caption>
-
-Additionally, to speed up the deployment process by not uploading un-necessary files, create a [`.nowignore` file](https://zeit.co/docs/v2/deployments/ignoring-source-paths) at the root of the project:
-
-There are three items, in this example, that you should add to the [`.nowignore` file](https://zeit.co/docs/v2/deployments/ignoring-source-paths); `/node_modules`, `/dist`, and`/tmp` - the directory Charge creates when serving content locally:
-
-```
-node_modules
-tmp
-dist
-```
-
-<Caption>
-  An example <InlineCode>.nowignore</InlineCode> file in a Charge project.
-</Caption>
-
-Finally, deploy the application with [Now](/docs/v2/getting-started/introduction-to-now).
-
-If you have not yet installed Now, you can do so by installing the [Now Desktop app](/docs/v2/getting-started/installation/#now-desktop) which installs Now CLI automatically, or by [installing Now CLI](/docs/v2/getting-started/installation/#now-cli) directly.
-
-Now allows you to [deploy your project](/docs/v2/deployments/basics) from the terminal with just one command:
-
-<TerminalInput>now</TerminalInput>
-<Caption>
-  Deploying an application with Now using only one command.
-</Caption>
-
-You will see a short build step in your terminal followed by the news that your Charge project has now been [deployed](https://zeit.co/docs/v2/deployments/basics/), it should look similar to this: <https://charge-example.now.sh/>
-
-## Bonus: Omitting the `.html` Extension
-
-Your Charge site is now deployed, but wouldn't it be great if the URL didn't show the file extension at the end?
-
-Thankfully, Now provides an easy method to achieve this, simply add the following code to your `package.json` file:
-
-```json
-{
-  ...
-  "routes": [{ "src": "/(.*).html", "dest": "/$1" }]
-}
-```
-
-In this example, `routes` is used to rewrite paths, meaning that the `.html` extension will no longer be displayed.
-
-## Resources
-
-For more information on working with Charge, please refer to [their documentation](https://charge.js.org).
-
-To configure Now further, please see these additional topics and guides:
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
-
-<Card title="More Guides" href="/guides">
-  See more guides that help you move forward with your projects and deployments.
-</Card>
+If you want to deploy your Charge project when you push to a Git repository, you can use either [Now for GitHub](/docs/v2/integrations/now-for-github/) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab/) to have your project automatically deployed on every push, and aliased on push to master.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

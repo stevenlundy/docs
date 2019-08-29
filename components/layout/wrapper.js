@@ -1,10 +1,10 @@
-const Wrapper = ({ children, className, width = '1048' }) => (
+const Wrapper = ({ children, className, width = 1000 }) => (
   <div className={className}>
     {children}
     <style jsx>{`
       div {
         margin: 0 auto;
-        max-width: ${width}px;
+        max-width: ${parseInt(width) + 48}px;
         padding: 0 24px;
         position: relative;
       }

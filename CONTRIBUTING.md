@@ -135,7 +135,7 @@ An example of a docs MDX file:
 ```jsx
 import Doc from '~/components/layout/docs'
 
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 
 export const meta = {
   title: 'The Title for the New Doc',
@@ -168,7 +168,7 @@ An example of a guides MDX file:
 ```js
 import Guide from '~/components/layout/guide'
 
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 
 export const meta = {
   title: 'The Title for the New Guide',

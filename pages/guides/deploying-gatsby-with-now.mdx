@@ -1,20 +1,17 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
-import { InlineCode } from '~/components/text/code'
+import Snippet from '~/components/snippet'
 import Caption from '~/components/text/caption'
-import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
-import Card from '~/components/card'
 
 export const meta = {
-  title: 'Create a Gatsby Website and Deploy It with Now',
+  title: 'Create a Gatsby Website and Deploy It with ZEIT Now',
   description:
-    'Learn how to create a simple Gatsby website and deploy it live with ZEIT Now',
+    'Create a simple Gatsby website and deploy it live with ZEIT Now.',
   published: '2019-01-31T12:00:00.860Z',
   authors: ['timothy'],
   url: '/guides/deploying-gatsby-with-now',
   editUrl: 'pages/guides/deploying-gatsby-with-now.mdx',
-  lastEdited: '2019-06-19T22:44:34.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
 [Gatsby](https://www.gatsbyjs.org) is a popular front-end framework that helps you create static apps and websites with React.
@@ -25,139 +22,32 @@ In this guide, we will show how you can set up your Gatsby project and deploy wi
 
 If you have not already [set up a Gatsby project](https://www.gatsbyjs.org/docs/quick-start) you can do so by first installing Gatsby CLI globally from your terminal:
 
-<TerminalInput>yarn global add gatsby-cli</TerminalInput>
-<Caption>Installing <GenericLink href="https://www.gatsbyjs.org/docs/gatsby-cli/">gatsby-cli</GenericLink> globally with <GenericLink href="https://yarnpkg.com">Yarn</GenericLink>.</Caption>
+<Snippet dark text="npm i -g gatsby-cli" />
+<Caption>Installing <GenericLink href="https://www.gatsbyjs.org/docs/gatsby-cli/">gatsby-cli</GenericLink> globally with <GenericLink href="https://www.npmjs.com/">npm</GenericLink>.</Caption>
 
 Then you can run the following command to create a Gatsby project locally:
 
-<TerminalInput>gatsby new my-gatsby-project</TerminalInput>
-<Caption>Creating a Gatsby project by creating the <InlineCode>my-gatsby-project</InlineCode> directory and generating content within it with gatsby-cli.</Caption>
+<Snippet dark text="gatsby new my-gatsby-project" />
+<Caption>Creating a Gatsby project with the Gatsby CLI.</Caption>
 
-At this point you you add a `now-dev` script to your `package.json` file. This will allow you to [replicate the Now environment locally](/docs/v2/development/basics/):
+Next, move into the directory from your terminal with `cd my-gatsby-project`. You can see your new project in a local development environment by using the `npm develop` command, set in the `package.json` by Gatsby CLI.
 
-```json
-{
-  ...
-  "scripts": {
-    ...
-    "now-dev": "gatsby develop -p $PORT",
-  }
-}
-```
+## Step 2: Deploying Your Gatsby Website
 
-<Caption>
-  Adding a <InlineCode>now dev</InlineCode> script to the{' '}
-  <InlineCode>package.json</InlineCode> file.
-</Caption>
+With a Gatsby app set up, it is ready to deploy live with [Now](/docs/v2).
 
-The [`@now/static-build` Builder](/docs/v2/deployments/official-builders/static-build-now-static-build/#local-development) supports a custom `now-dev` script that allows you to define [custom development behavior](/docs/v2/development/basics/#custom-development-environment) while gaining extra features that mimic the Now platform locally.
+If you have not yet installed Now, you can do so by [installing Now CLI](/download).
 
-To run your project locally, all that's required is a **single command**:
+Now allows you to [deploy your project](/docs/v2/deployments/basics) from the terminal with **just a single command**:
 
-<TerminalInput>now dev</TerminalInput>
+<Snippet dark text="now" />
 
-## Step 2: Deploying Your Gatsby Website with Now
+<Caption>Deploying you Gatsby website with Now CLI.</Caption>
 
-With a Gatsby application set up, it is ready to deploy live with [Now](/docs/v2).
-
-First, you need to provide Now with instructions on how to build your Gatsby project using [a `now.json` configuration file](/docs/v2/deployments/configuration):
-
-```json
-{
-  "version": 2,
-  "name": "my-gatsby-project",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@now/static-build",
-      "config": { "distDir": "public" }
-    }
-  ]
-}
-```
-
-<Caption>
-  An example <InlineCode>now.json</InlineCode> file for your Gatsby project.
-</Caption>
-
-This now.json file will allow your deployment to do several things, specifically:
-
-- Use the [latest Now 2.0 version](/docs/v2/platform/overview/#versioning) of the platform.
-- Set [the project name](/docs/v2/deployments/configuration#name) to "my-gatsby-project".
-- Use [the @now/static-build Builder](/docs/v2/deployments/official-builders/static-build-now-static-build) to take the `package.json` file as an entrypoint and use the `public` directory as your content directory.
-
-The @now/static-build Builder you added requires a script to be included in the `package.json` you provided as the entrypoint. This script can be added to the end of the array of scripts that Gatsby CLI created for us as you did earlier with `now-dev`:
-
-```json
-{
-  ...
-  "scripts": {
-    ...
-    "now-build": "npm run build"
-  }
-}
-```
-
-<Caption>
-  Adding a <InlineCode>now build</InlineCode> script to your{' '}
-  <InlineCode>now.json</InlineCode> file.
-</Caption>
-
-And with configuration set up, you can now deploy your Gatsby project.
-
-If you have Now CLI on your system, you can deploy from your terminal with just one command:
-
-<TerminalInput>now</TerminalInput>
-
-If you want to deploy your Gatsby project when you push to a GitHub repository, you can use Now for GitHub to have your project automatically deployed on every push, and aliased on push to master.
-
-When your app has been deployed, you will receive a URL similar to the following: <https://my-gatsby-project-fp9racotj.now.sh/>
-
-## Bonus: Cache Your Gatsby Assets
-
-Caching is a key part of making your websites fast for users, new and returning. With this in mind, Now's routes configuration allows you to set up caching headers easily.
-
-The Gatsby documentation has [recommended cache control values](https://www.gatsbyjs.org/docs/caching/#caching) which we will use for our [routes configuration](/docs/v2/deployments/configuration/#routes). Since Now will cache all static assets for one year without any configuration, we just need to tell the platform to avoid caching of HTML pages.
-
-In the `now.json` configuration file, add the following `routes` property:
-
-```json
-{
-  ...
-  "routes": [
-    {"src": "^/(.*).html", "headers": {"cache-control": "public,max-age=0,must-revalidate"}, "dest": "$1.html" }
-  ]
-}
-```
-
-<Caption>
-  Routes configuration for setting caching headers based on Gatsby
-  recommendations.
-</Caption>
-
-## Resources
-
-For more information on working with Gatsby, please refer to [their documentation](https://www.gatsbyjs.org/docs/).
-
-To configure Now further, please see these additional topics and guides:
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
-
-<Card title="More Guides" href="/guides">
-  See more guides that help you move forward with your projects and deployments.
-</Card>
+If you want to deploy your Gatsby project when you push to a Git repository, you can use either [Now for GitHub](/docs/v2/integrations/now-for-github/) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab/) to have your project automatically deployed on every push, and aliased on push to master.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

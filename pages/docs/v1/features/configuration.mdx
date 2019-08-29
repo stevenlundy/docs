@@ -7,10 +7,10 @@ export const meta = {
     'Configuring Now so that your deployments are exactly as you need them',
   date: '22 Feb 2017',
   editUrl: 'pages/docs/v1/features/configuration.mdx',
-  lastEdited: '2019-01-07T00:27:37.000Z'
+  lastEdited: '2019-08-02T17:34:08.000Z'
 }
 
-This guide explains how to use these methods to configure and customize the default behavior of Now CLI and Now Desktop.
+This guide explains how to use these methods to configure and customize the default behavior of Now CLI.
 
 In addition to the options available in the command line interface (like `--name` for setting the name of the deployment), we also support saving certain parameters into a config file, `now.json`.
 
@@ -201,7 +201,7 @@ local deployment configuration file and adapt its behavior accordingly.
 
 #### `api` (string)
 
-The URL of the Now API which Now CLI and Now Desktop should interact with.
+The URL of the Now API which Now CLI should interact with.
 
 By default, it's pointing to `https://api.zeit.co`, which always points to
 the right location depending on where you're connecting from (Anycast).
@@ -210,8 +210,7 @@ This property takes precedence over `sh.api` in `config.json`.
 
 ## Global Configuration
 
-This describes the set of configuration rules that apply to all projects
-and all clients of Now (Now CLI, Now Desktop, etc).
+This describes the set of configuration rules that apply to Now CLI.
 
 By default, they live in a directory named `.now` in your
 home directory. Within it, you can find two files (which you
@@ -223,7 +222,7 @@ custom path to a directory containing the two files.
 
 This file can be (if needed) modified manually. It doesn't contain any authentication
 information, but rather only cached account data and configuration rules that
-can apply to all Now clients (Now CLI and Now Desktop).
+can apply to Now CLI.
 
 #### `updateChannel` (string)
 
@@ -231,7 +230,7 @@ For our software, we provide two update channels ("stable" and "canary"). This p
 lets you pick either one in order to enjoy a different pace of updates.
 
 Read more [here](/blog/canary) about why these channels exist and what
-they're being used for. As an example, this will make Now Desktop and Now CLI receive
+they're being used for. As an example, this will make Now CLI receive
 canary updates:
 
 ```
@@ -240,33 +239,13 @@ canary updates:
 
 #### `sh.api` (string)
 
-The URL of the Now API which Now CLI and Now Desktop should interact with.
+The URL of the Now API which Now CLI should interact with.
 
 By default, it's pointing to `https://api.zeit.co`, which always points to
 the right location depending on where you're connecting from (Anycast).
 
 **Important**: As indicated by the `sh.` prefix, this configuration
 property needs to be set under the `sh` provider scope inside the global config file.
-
-#### `desktop.updateCLI` (boolean)
-
-This option defines whether or not Now Desktop should automatically update the
-Now CLI instance on your device or not.
-
-By default (if the property is not set or set to `true`), auto-updates
-are enabled. In turn, if it's set it to `false`, you won't receive any updates
-for Now CLI automatically. In that case, you'll have to update manually.
-
-#### `desktop.teamOrder` (array)
-
-At the bottom of Now Desktop's event feed, you can find a list of teams that
-you're a member of.
-
-When re-arranging them by holding `CMD` and dragging
-them into a different location using your cursor, the config property will
-be updated to contain the new order.
-
-If you want, you can modify the order of this list manually.
 
 ### auth.json
 

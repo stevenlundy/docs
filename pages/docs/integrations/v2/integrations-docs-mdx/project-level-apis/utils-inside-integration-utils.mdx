@@ -4,7 +4,7 @@ import { InlineCode } from '~/components/text/code'
 export const meta = {
   editUrl:
     'pages/docs/integrations/v2/integrations-docs-mdx/project-level-apis/utils-inside-integration-utils.mdx',
-  lastEdited: '2019-05-20T23:31:58.000Z'
+  lastEdited: '2019-08-06T15:31:27.000Z'
 }
 
 ## Utilities inside @zeit/integration-utils
@@ -43,13 +43,13 @@ module.exports = withUiHook(async ({ payload, zeitClient }) => {
 
 Based on the example above:
 
-- `zeitClient.ensureSecret` will create a unique ZEIT secret based on the hash value of `mongo_url`, then returns the name of secret
+- `zeitClient.ensureSecret` will create a unique ZEIT secret based on the hash value of `mongo_url`, then returns the name of secret
 - If the secret already exists, it will not be duplicated for the given value
-- The value of `secretName` will be, for example; `mongo_url_s2kj23jh55`
-- The secret is added to the project (using `payload.projectId`) through the `zeitClient.upsertEnv`method
+- The value of `secretName` will be, for example; `mongo_url_s2kj23jh55`
+- The secret is added to the project (using `payload.projectId`) through the `zeitClient.upsertEnv` method
 
-Some considerations when using `zeitClient.upsertEnv`:
+Some considerations when using `zeitClient.upsertEnv`:
 
-- In order to add a project level environment variable, there should be a `projectId`
-- You can get the projectId from the `payload` object if the user is accessing the Integration installation from within a project
-- Otherwise, if the user is inside a team view, you can hide the `Add Env` button or ask the user to switch to accessing the Integration from within a project
+- In order to add a project level environment variable, there should be a `projectId`
+- You can get the projectId from the `payload` object if the user is accessing the Integration installation from within a project
+- Otherwise, if the user is inside a team view, you can hide the `Add Env` button or ask the user to switch to accessing the Integration from within a project

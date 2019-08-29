@@ -1,0 +1,391 @@
+import Doc from '~/components/layout/docs'
+import { InlineCode } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import Card from '~/components/card'
+import Note from '~/components/text/note'
+import { GenericLink } from '~/components/text/link'
+
+export const meta = {
+  title: 'Routes',
+  description:
+    'Create proxies, redirects, cache-control headers, and more with ZEIT Now routes, easily.',
+  editUrl: 'pages/docs/v2/advanced/routes.mdx',
+  lastEdited: '2019-08-23T13:30:21.000Z'
+}
+
+ZEIT Now uses routes to define the behavior of how a request is handled on the routing side. For example, you might use a route to proxy a URL to another, redirect a client, or apply a header with the response to a request.
+
+By default, routing is defined by the filesystem of your deployment. For example, if a user makes a request to `/123.png`, and your [`now.json` file](/docs/v2/advanced/configuration/#routes) does not contain any routes with a valid `src` matching that path, it will fallback to the filesystem and serve `/123.png` if it exists.
+
+A route can be defined within a project's [`now.json` configuration file](/docs/v2/advanced/configuration/#routes) as an object within an array assigned to the `routes` property, like the following which creates a simple proxy from one path to another:
+
+```json
+{
+  "routes": [{ "src": "/about", "dest": "/about.html" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file with a{' '}
+  <InlineCode>routes</InlineCode> property that proxies one path to another upon
+  request.
+</Caption>
+
+## Routes Properties
+
+ZEIT Now Routes have multiple properties for each route object that help define the behavior of a response to each request to a particular path.
+
+### `src`
+
+**Type**: String supporting [PCRE Regex](https://www.pcre.org/original/doc/html/pcrepattern.html) and [Route Parameters](#route-parameters) like `/product/(?<id>[^/]+)`.
+
+For each route, `src` is required to set the path which the behavior will affect.
+
+The following example shows a `now.json` configuration that takes a `src` path and proxies it to a [destination `dest` path](#dest).
+
+```json
+{
+  "routes": [{ "src": "/about", "dest": "/about.html" }]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file with a{' '}
+  <InlineCode>routes</InlineCode> property that proxies one path to another upon
+  request.
+</Caption>
+
+### `dest`
+
+**Type**: String
+
+`dest` is used to proxy the [`src`](#src) path to another path, such as another URL or Now hosted lambda.
+
+[The example for the `src` property](#src) shows how both methods work together to create a proxy.
+
+```json
+{
+  "routes": [
+    { "src": "/about", "dest": "https://about.me" },
+    { "src": "/action", "dest": "my-lambda-action/index" }
+  ]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file with{' '}
+  <InlineCode>routes</InlineCode> properties that proxy paths to another upon
+  request.
+</Caption>
+
+<Note>
+  You can point the <InlineCode>dest</InlineCode> path to any URL, Now hosted
+  lambda, or even non-Now hosted URLs as shown in the code above. If you don't
+  perform any proxying, you can safely remove <InlineCode>dest</InlineCode>.
+</Note>
+
+```json
+{
+  "routes": [{ "src": "/about" }]
+}
+```
+
+<Caption>
+  This will route to <InlineCode>/about</InlineCode> without proxying, but
+  routes like this are usually redundant with{' '}
+  <GenericLink href="#wildcard-routes">handle filesystem</GenericLink>.
+</Caption>
+
+### `headers`
+
+**Type**: Object
+
+The `headers` property is an object supporting [HTTP headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) as the keys, with the intended value as the key's value.
+
+An example of using the `headers` property to add [shared caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#Expiration) headers to all files in an `images` directory:
+
+```json
+{
+  "routes": [
+    {
+      "src": "/images/(.*)",
+      "headers": { "cache-control": "s-maxage=604800" },
+      "dest": "/images/$1"
+    }
+  ]
+}
+```
+
+<Caption>
+  Setting <InlineCode>cache-control</InlineCode> headers for all paths under an{' '}
+  <InlineCode>images</InlineCode> directory with routes.
+</Caption>
+
+<Note>
+  You can also add custom headers to your <InlineCode>routes</InlineCode>, these
+  are defined in the same way.
+</Note>
+
+### `continue`
+
+**Type**: Boolean
+
+The `continue` property allows routing to continue even though the `src` was matched.
+
+For example, you can use this property in combination with [the `headers` property](#headers) to append headers to a broader group of routes instead of applying it to every route.
+
+```json
+{
+  "routes": [
+    {
+      "src": "/blog.*",
+      "headers": { "Cache-Control": "max-age=3600" },
+      "continue": true
+    },
+    {
+      "src": "/blog/([^/]+)",
+      "dest": "/blog?slug=$1"
+    }
+  ]
+}
+```
+
+<Caption>
+  In this case, the <InlineCode>Cache-Control</InlineCode> header will be
+  applied to any route starting with <InlineCode>/blog</InlineCode>.
+</Caption>
+
+### `status`
+
+**Type**: Integer
+
+The `status` property defines the status code that Now should respond with when a path is requested.
+
+For example, you can use this property in combination with [the `headers` property](#headers) to create a redirect with the initial status code of 301 (Moved Permanently).
+
+```json
+{
+  "routes": [
+    {
+      "src": "/about.html",
+      "status": 301,
+      "headers": { "Location": "/about-us.html" }
+    }
+  ]
+}
+```
+
+<Caption>
+  Redirecting one path to another using the <InlineCode>status</InlineCode>{' '}
+  property to provide a{' '}
+  <GenericLink href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status">
+    HTTP status code
+  </GenericLink>
+  .
+</Caption>
+
+<Note>
+  In a redirect case as shown above, the <InlineCode>Location</InlineCode>{' '}
+  property can also point to non-Now hosted URLs.
+</Note>
+
+Read more about redirecting your `www.` subdomain to your root domain:
+
+<Card title="www. Redirect Guide" href="/guides/redirect-from-www">
+  Create a redirect from the www. subdomain to your root domain.
+</Card>
+
+### `methods`
+
+**Type**: Array
+
+The `methods` property can be used to define what [HTTP request methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) a particular path accepts.
+
+The value of this property can be any [HTTP request method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods), with the default being that the path can accept any method.
+
+As an example, you can use this property when you have an API endpoint and only want to allow `GET` or `POST` request methods:
+
+```json
+{
+  "routes": [
+    {
+      "src": "/api/user.js",
+      "methods": ["POST", "GET"],
+      "dest": "/api/user.js"
+    }
+  ],
+  "builds": [{ "src": "*.js", "use": "@now/node" }]
+}
+```
+
+<Caption>
+  Accepting only <InlineCode>POST</InlineCode> and <InlineCode>GET</InlineCode>{' '}
+  HTTP request methods on an API endpoint.
+</Caption>
+
+<Note>
+  The above example uses the{' '}
+  <GenericLink href="/docs/v2/deployments/official-builders/node-js-now-node/">
+    @now/node
+  </GenericLink>{' '}
+  Builder as an example of a <InlineCode>now.json</InlineCode> configuration
+  that tells Now to build JavaScript files with Node.js and outputs them as{' '}
+  <GenericLink href="/docs/v2/advanced/concepts/lambdas/">lambdas</GenericLink>.
+</Note>
+
+## Route Parameters
+
+<Note>
+  <b>This method is for advanced usecases</b> when using route parameters and
+  path segments. For most cases, please see{' '}
+  <GenericLink href="/docs/v2/serverless-functions/introduction/#path-segments">
+    the serverless functions documentation on path segments
+  </GenericLink>{' '}
+  for the recommended method, using the filesystem.
+</Note>
+
+Using [PCRE Named Subpatterns](https://www.pcre.org/original/doc/html/pcrepattern.html#SEC16), or capture groups, you can capture part of a path and use it in either the [`dest`](#dest) or [`headers`](#headers) properties.
+
+Using route parameters enables you to change the format of your URLs easily without needing complicated routing code.
+
+For example, if you are using URL parameters but want to use a custom URL path you can use the following:
+
+```json
+{
+  "routes": [{ "src": "/product/(?<id>[^/]+)", "dest": "/product?id=$id" }]
+}
+```
+
+<Caption>
+  Using a URL parameter in <InlineCode>src</InlineCode> and proxying it as a
+  custom URL path in <InlineCode>dest</InlineCode>.
+</Caption>
+
+This will take a URL, like `/product/532004` and proxies it to `/product?id=532004` with the user seeing your custom URL in their browser.
+
+<Note>
+  Both <InlineCode>^</InlineCode>, asserting the start of the path string, and{' '}
+  <InlineCode>$</InlineCode>, asserting the end of the path string, are implied
+  and are not necessary to write.
+</Note>
+
+As another example, if you want to redirect from all paths under a certain directory but want to keep the path in the new location, you can use the following:
+
+```json
+{
+  "routes": [
+    {
+      "src": "/posts/(.*)",
+      "status": 301,
+      "headers": { "Location": "/blog/$1" }
+    }
+  ]
+}
+```
+
+<Caption>
+  Redirecting from all paths in the <InlineCode>posts</InlineCode> directory but
+  keeping the path in the new location.
+</Caption>
+
+If you are using a Next.js app and want to learn more about using custom routes with ZEIT Now, read our guide:
+
+<Card
+  title="Deploying with Custom Next.js Routes"
+  href="/guides/custom-next-js-server-to-routes"
+>
+  Custom Routes with Next.js and ZEIT Now.
+</Card>
+
+## Wildcard Routes
+
+Sometimes, you will have wildcard routes that overlap with other routes. For example,
+
+```json
+{
+  "routes": [
+    { "src": "/about" },
+    { "src": "/contact" },
+    { "src": "/([^/]+)", "dest": "/blog?slug=$1" }
+  ]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file where filesystem routes are
+  explicitly defined.
+</Caption>
+
+You might find that there are many routes without a `dest`. These routes can be handled without being explicitly defined by using handle filesystem. Handle filesystem works the same as if you hardcoded all the routes in its place.
+
+```json
+{
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/([^/]+)", "dest": "/blog?slug=$1" }
+  ]
+}
+```
+
+<Caption>
+  A <InlineCode>now.json</InlineCode> file, using handle filesystem to route to
+  filesystem routes.
+</Caption>
+
+In this example, handle filesystem expands to route `/about` and `/contact`.
+
+## Testing Routes
+
+You can use this [online visual PCRE tester](https://regex101.com) to quickly test your `src` paths before deploying them with ZEIT Now.
+
+An interactive PCRE Regex cheatsheet is also available at [Regex101](https://regex101.com).
+
+## Cascading Order
+
+Routes are applied in the order they are given in the `routes` array. Take the following configuration, for example:
+
+```json
+{
+  "routes": [
+    { "src": "/(.*)", "dest": "/" },
+    { "src": "/first-page", "dest": "/first-page.html" }
+  ]
+}
+```
+
+<Caption>
+  An incorrect example <InlineCode>now.json</InlineCode> file that will match
+  all
+  <InlineCode>routes</InlineCode> and proxy them to <InlineCode>/</InlineCode>
+</Caption>
+
+In this configuration, since the first route matches all possible paths, the second route will never be applied. The order of these routes would have to switch for the latter route to apply to the `/first-page` path.
+
+The correct configuration for all routes to take affect would be:
+
+```json
+{
+  "routes": [
+    { "src": "/first-page", "dest": "/first-page.html" },
+    { "src": "/(.*)", "dest": "/" }
+  ]
+}
+```
+
+<Caption>
+  A correct example <InlineCode>now.json</InlineCode> file that will match all
+  <InlineCode>routes</InlineCode>, only proxying to <InlineCode>/</InlineCode> if
+  there are no matches.
+</Caption>
+
+This type of configuration can be seen in [single-page applications](https://en.wikipedia.org/wiki/Single-page_application) where custom paths need to route to the `index.html` file.
+
+## Limits
+
+There is a limit of 256 route objects within a `routes` array. If there are more than this limit, the deployment will fail.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

@@ -1,0 +1,171 @@
+import Doc from '~/components/layout/docs'
+import { GenericLink } from '~/components/text/link'
+import Snippet from '~/components/snippet'
+import { InlineCode } from '~/components/text/code'
+import Caption from '~/components/text/caption'
+import Card from '~/components/card'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Serverless Functions',
+  description: 'Learn how to deploy serverless functions with ZEIT Now.',
+  editUrl: 'pages/docs/v2/serverless-functions/introduction.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+ZEIT Now deployments support various backend languages that you can deploy as Serverless functions.
+
+## Deploying Serverless Functions
+
+To deploy serverless functions without any additional configuration, you can put files with extensions matching [supported languages](/docs/v2/serverless-functions/supported-languages) and exported functions in the `api` directory at your project's root.
+
+Then, using [Now CLI](/download), run the following command to deploy from your terminal:
+
+<Snippet dark text="now" />
+<Caption>Deploying a project with Now CLI in one command.</Caption>
+
+### An Example Node.js Serverless Function
+
+To deploy a [serverless Node.js API](/docs/v2/serverless-functions/supported-languages#node.js), provide a main export function like the following, in a `.js` file within the `api` directory:
+
+```js
+module.exports = (req, res) => {
+  res.json({
+    body: req.body,
+    query: req.query,
+    cookies: req.cookies
+  })
+}
+```
+
+<Caption>
+  An example Node.js serverless function using Express.js-like helper methods
+  from the{' '}
+  <GenericLink href="/docs/v2/serverless-functions/supported-languages#node.js-request-and-response-objects">
+    Request and Response objects
+  </GenericLink>
+  .
+</Caption>
+
+The above example echoes the `body`, path `query`, and `cookie`s, passed with the request object, as a JSON object using helper methods provided through the [Request and Response](/docs/v2/serverless-functions/supported-languages/#node.js-request-and-response-objects).
+
+Then, all you need to do, to have a live API, is deploy with [Now CLI](/download) from your terminal:
+
+<Snippet dark text="now" />
+<Caption>One-command deployment with <GenericLink href="/download">Now CLI</GenericLink>.</Caption>
+
+The resulting deployment will contain your Node.js serverless function and will provide you with a URL like the following, with your API ready to go: <https://node-echo-api.now-examples.now.sh/api/?name=zeit>
+
+### More Examples and Supported Languages
+
+For all supported languages, see the [Supported Languages for Severless Functions documentation](/docs/v2/serverless-functions/supported-languages).
+
+More examples of applications you can deploy paired with serverless functions can be found in the [ZEIT Now examples repository on GitHub](https://github.com/zeit/now-examples).
+
+You can use any of the Now examples by using the following command from [Now CLI](/download) in your terminal, then choosing an application to start with:
+
+<Snippet dark text="now init" />
+<Caption>Initializing a project with Now CLI.</Caption>
+
+## Path Segments
+
+Deploying serverless functions with ZEIT Now gives you the ability to use path segments through file names instead of a complex routes file.
+
+Creating a file using any of the [supported languages](/docs/v2/serverless-functions/supported-languages) in the `api` directory and wrapping the filename in square brackets, such as `[name].js` will provide you with a file that takes a path segment and gives it to the function when requested with a value.
+
+For example, creating a `name` directory (within `/api`) with a `[name].js` file will allow you to receive the path segment entered when accessing `/api/name/your-name`.
+
+The following Node.js example code could then use the path segment in its functionality when requested:
+
+```js
+module.exports = (req, res) => {
+  const {
+    query: { name }
+  } = req
+
+  res.send(`Hello ${name}!`)
+}
+```
+
+<Caption>
+  An example of a Node.js serverless function that takes a name path segment and
+  returns a string using it.
+</Caption>
+
+The resulting deployment can be found here: <https://path-segment-with-node.now-examples.now.sh/api/name/world>
+
+<Note>
+  Any{' '}
+  <GenericLink href="/docs/v2/serverless-functions">
+    supported language
+  </GenericLink>{' '}
+  can utilize path segments.
+</Note>
+
+## Local Development
+
+ZEIT Now provides an additional command with [Now CLI](/download) to help you develop serverless functions locally by replicating the production environment on Now with your localhost.
+
+If you have an `api` directory like the [above examples](#deploying-serverless-functions) on this page, you can run the following command to start a local development environment that supports your serverless API and allows you to develop locally:
+
+<Snippet dark text="now dev" />
+<Caption>starting a local development environment using Now CLI, for serverless functions.</Caption>
+
+<Note>
+  The <InlineCode>now dev</InlineCode> command is still in beta. If you have any
+  feedback,{' '}
+  <GenericLink href="https://zeit.co/feedback/dev">
+    please let us know
+  </GenericLink>
+  .
+</Note>
+
+If you have a statically generated frontend that supports its own development environment, such as Next.js, we recommend creating a `dev` script within a `package.json` file at the root of your project that `now dev` can use and extend:
+
+```json
+{
+  ...
+  "scripts": {
+    "dev": "next"
+  }
+}
+```
+
+<Caption>
+  Defining a custom <InlineCode>dev</InlineCode> script for Next.js in a{' '}
+  <InlineCode>package.json</InlineCode> file.
+</Caption>
+
+### Using Environment Variables Locally
+
+During local development with `now dev`, you may wish to provide your application with environment variables. You can find instructions on how to do this in the [environment variables and secrets section](/docs/v2/serverless-functions/env-and-secrets/#during-local-development).
+
+## Advanced Usage
+
+For an advanced configuration and structure, you can create a `now.json` file to define [Builds](/docs/v2/advanced/builders/overview) and other customizations.
+
+We do, however, recommend using the `api` directory to keep things simple for your project.
+
+## Related
+
+For more information on what to do next, we recommend the following articles:
+
+<Card title="Git Integration" href="/docs/v2/git-integration">
+  Learn more about how ZEIT Now integrates with Git to make your workflow
+  easier.
+</Card>
+
+<Card
+  title="Using Custom Domains"
+  href="/docs/v2/custom-domains#deploying-with-your-domain"
+>
+  Once deployed, your projects can be aliased to a custom domain or specified
+  name or your choice to give it a primary place to see the latest version of
+  your application.
+</Card>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

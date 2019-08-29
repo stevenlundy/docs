@@ -1,45 +1,35 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
 import { InlineCode } from '~/components/text/code'
+import Snippet from '~/components/snippet'
 import Caption from '~/components/text/caption'
-import { GenericLink } from '~/components/text/link'
 import Note from '~/components/text/note'
-import Card from '~/components/card'
 
 export const meta = {
   title: 'Deploying with Custom Serverless Next.js Routing',
   description:
-    'Migrate from a Next.js application with a custom server to a serverless Next.js application using Now routes.',
+    'Migrate from a Next.js app with a custom server to a serverless Next.js app using Now routes.',
   published: '2019-01-23T17:00:00.860Z',
   authors: ['timothy', 'timneutkens'],
   url: '/guides/custom-next-js-server-to-routes',
   editUrl: 'pages/guides/custom-next-js-server-to-routes.mdx',
-  lastEdited: '2019-05-17T13:47:55.000Z'
+  lastEdited: '2019-08-22T09:01:17.000Z'
 }
 
 Next.js offers developers [a built-in routing system](https://nextjs.org/docs/#routing) that allows you to link to other pages whilst also giving those pages a custom URL. When a user refreshes the custom URL, however, the browser will not be able to load the link because the page was previously routed client-side. To resolve this, we need to also handle routing server-side.
 
-<Note>
-  {' '}
-  If you have yet to build an application with Next.js, look no further than<GenericLink href="https://nextjs.org/learn">
-    {' '}
-    the Next.js interactive tutorial website{' '}
-  </GenericLink> or <GenericLink href="https://nextjs.org/docs">
-    the documentation
-  </GenericLink>. <GenericLink href="/docs/v2/deployments/official-builders/next-js-now-next">Deploy your Next.js app with the @now/next Builder.</GenericLink>
-</Note>
+<Note warning>This guide requires Next.js 9+ to work correctly.</Note>
 
 ## Preface: Next.js Routing
 
-When you [link to a page](https://nextjs.org/docs/#routing) within the same Next.js application, you can provide two options. The first and required option is `href`. This is a link to the page as it exists in the `pages` directory. The second is `as` which describes the URL Next.js should show when routing to that page.
+When you [link to a page](https://nextjs.org/docs/#routing) within the same Next.js app, you can provide two options. The first and required option is `href`. This is a link to the page as it exists in the `pages` directory. The second is `as` which describes the URL Next.js should show when routing to that page.
 
 For example, if you have a page located at `pages/product.js` in your codebase, you can use the `href` option with the value `/product?name=<product_name>` to route and render that page with a query parameter, however, if you want to show the URL `/product/<product_name>`, you can use the `as` option to format the URL when routing.
 
-This is an amazing feature of Next.js, however, it cannot control how the server routes to the application if the routes are not defined with the server.
+This is an amazing feature of Next.js, however, it cannot control how the server routes to the app if the routes are not defined with the server.
 
 ### The Old Custom Server Method
 
-The solution to this problem was previously using a custom server. For example, you could create an Express application and catch the request to `/product/<product_name>` and route it to the `/product?name=<product_name>` file behind the scenes so that you can keep the custom URL:
+The solution to this problem was previously using a custom server. For example, you could create an Express app and catch the request to `/product/<product_name>` and route it to the `/product?name=<product_name>` file behind the scenes so that you can keep the custom URL:
 
 ```js
 server.get('/products/:name', (req, res) => {
@@ -51,37 +41,13 @@ server.get('/products/:name', (req, res) => {
 
 ### The New Routes Method
 
-With [Now 2.0](https://zeit.co/docs/v2/platform/upgrade-to-2-0/) and the serverless approach, each [Next.js page](https://zeit.co/docs/v2/deployments/official-builders/next-js-now-next/) is a separate entry point, making the sole custom server entry point a thing of the past for the good of performance and stability. Fortunately, Now 2.0 offers a solution, by way of the `routes` configuration.
+With [Now](https://zeit.co/now) and the serverless approach, each [Next.js page](https://nextjs.org/docs#routing) is a separate entry point, making the sole custom server entry point a thing of the past for the good of performance and stability. Fortunately, **Now 2.0 offers a solution**, handling the configuration of routes for you.
 
-The following [`now.json` configuration](/docs/v2/deployments/configuration) enables the deployment to use the [Now platform version 2.0](https://zeit.co/docs/v2/platform/overview/#versioning) and defines [the routes](/docs/v2/deployments/configuration#routes) that the deployment should acknowledge when receiving a request to an entry point.
-
-```json
-{
-  "version": 2,
-  "routes": [
-    { "src": "/product/(?<name>[^/]+)$", "dest": "/product?name=$name" }
-  ]
-}
-```
-
-<Caption>
-  Using Now 2.0 routes configuration to rewrite URLs to the rendered Next.js
-  page with an embedded capture group to route query parameters.
-</Caption>
-
-<Note>
-  The above example <InlineCode>now.json</InlineCode> file does not include a
-  builds option which is necessary for building a Next.js application with Now.
-  Please see{' '}
-  <GenericLink href="/docs/v2/deployments/official-builders/next-js-now-next/#how-to-use-it">
-    the Next.js Builder documentation
-  </GenericLink>{' '}
-  for more information.
-</Note>
+By making use of Next.js path segments with Now, [dynamic routing](https://nextjs.org/docs#routing) is achieved through the file structure. No longer are custom servers or additional configuration required, **simplifying the process of building your app significantly**.
 
 ## By Example
 
-If you are yet to set up routing for [your Next.js app](https://nextjs.org/docs/#setup), this brief example describes how to use Next.js routing with Now `routes` to support custom URLs.
+If you are yet to set up routing for [your Next.js app](https://nextjs.org/docs/#setup), this brief example describes how to use Next.js routing with [Now](https://zeit.co/now) to support custom URLs.
 
 ### Step 1: Defining Pages
 
@@ -97,7 +63,7 @@ export default () => (
     <h1>Welcome to our Next.js website!</h1>
     <p>
       View our{' '}
-      <Link href="/product?name=espresso">
+      <Link href="/product/espresso">
         <a>espresso product</a>
       </Link>
       !
@@ -106,13 +72,17 @@ export default () => (
 )
 ```
 
+<Caption>
+  An example <InlineCode>index.js</InlineCode> file for our project.
+</Caption>
+
 <Note>
-  In a real application, the product name query parameter would most likely be
-  dynamic based on other factors, but for simplicity, we'll use "espresso" as
-  the product name.
+  In a real app, the product name query parameter would most likely be dynamic
+  based on other factors, but for simplicity, we'll use "espresso" as the
+  product name.
 </Note>
 
-Next, for our link to work, we need to create a `product.js` file in our `pages` directory. This page displays the query parameter, which we receive with the [Next.js `getInitialProps` lifecycle method](https://nextjs.org/docs/#fetching-data-and-component-lifecycle), as the title and a simple paragraph:
+Next, for our link to work, we need to create a `/product` directory inside of `/pages`, then a `[name].js` file inside of `/product`. This page displays the query parameter, which we receive with the [Next.js `getInitialProps` lifecycle method](https://nextjs.org/docs/#fetching-data-and-component-lifecycle), as the title and a simple paragraph:
 
 ```jsx
 const Product = ({ name }) => (
@@ -129,104 +99,28 @@ Product.getInitialProps = async ({ query }) => {
 export default Product
 ```
 
-### Step 2: Defining a Custom URL
-
-With the pages set up, we can now define the product page to have a custom URL.
-The first part of this is to extend the `Link` component usage in the index page to contain an `as` attribute that defines our custom URL. Taking the line consisting of a paragraph and a Next.js link in the `index.js` file, we can add the `as` attribute with a custom URL.
-
-```diff
-import Link from 'next/link'
-
-export default () => (
-  <div>
-    <h1>Welcome to our Next.js website!</h1>
--   <p>View our <Link href="/product?name=espresso"><a>espresso product</a></Link>!</p>
-+   <p>View our <Link href="/product?name=espresso" as="/product/espresso"><a>espresso product</a></Link>!</p>
-  </div>
-)
-```
-
 <Caption>
-  A{' '}
-  <GenericLink href="https://en.wikipedia.org/wiki/File_comparison">
-    diff
-  </GenericLink>{' '}
-  of the changes made to the <InlineCode>index.js</InlineCode> page file.
+  An example <InlineCode>[name].js</InlineCode> file for our project.
 </Caption>
 
 Now, clicking the espresso product link will result in the URL path being `/product/espresso` while rendering the `product` page with the name query parameter set to `espresso`.
 
-### Step 3: Defining `routes` configuration
+### Step 2: Deploying
 
-<Note>
-  The prerequisite for this configuration is to host your Next.js application on
-  Now.{' '}
-  <GenericLink href="/docs/v2/deployments/official-builders/next-js-now-next/">
-    Read the @now/next Builder documentation
-  </GenericLink>{' '}
-  to get started.
-</Note>
+With the Next.js app setup complete, we can deploy our app [using ZEIT Now](/docs) with **just a single command**.
 
-When refreshing the URL with the path of `/product/espresso`, or accessing it directly, you will find that the server will return a 404 response. This is because there is no entry point that exists for that path. Next.js handles the routing to that page internally on the client-side. The next step is to provide Now with the context of this path to route to the `/product` page entry point.
-
-For this context, we can use [the `routes` configuration option](/docs/v2/deployments/configuration#routes) inside of a `now.json` file:
-
-```json
-{
-  "version": 2,
-  "routes": [
-    { "src": "/product/(?<name>[^/]+)$", "dest": "/product?name=$name" }
-  ]
-}
-```
+<Snippet dark text="now" />
 
 <Caption>
-  An example <InlineCode>now.json</InlineCode> configuration that rewrites our
-  custom path to the product page with a query parameter.
+  Deploying our app with the <InlineCode>now</InlineCode> command.
 </Caption>
 
-<Note>
-  The above configuration omits the <InlineCode>builds</InlineCode> property
-  which is necessary for Now to build and serve a Next.js application. Please
-  see{' '}
-  <GenericLink href="/docs/v2/deployments/official-builders/next-js-now-next/#how-to-use-it">
-    the Next.js Builder documentation
-  </GenericLink>{' '}
-  for more information.
-</Note>
+If you are using either [Now for GitHub](/docs/v2/integrations/now-for-github/) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab/); pushing your code to your repository is all you need to do for Now to automatically deploy your app.
 
-The routes property, as exampled above, allows us to define a [named capture group](https://www.pcre.org/original/doc/html/pcrepattern.html#SEC16) that gets the query parameter from the URL path and enables the usage of that parameter in the destination path by using the capture ID prefixed by a dollar sign, in our case: `$name`.
-
-### Step 4: Deploying
-
-With the Next.js application setup complete and Now configured to accept the custom routes, we can finally deploy our application [using Now](/docs) and [the Next.js Builder](/docs/v2/deployments/official-builders/next-js-now-next/).
-
-<TerminalInput>now</TerminalInput>
-
-If you are using [Now for GitHub](/docs/v2/integrations/now-for-github/); pushing your code to your repository is all you need to do for Now to automatically deploy your application.
-
-Once you deploy, you will receive a deployment URL, similar to the following which contains this example with a few styling tweaks for ease on the eyes: <https://next-routes-2s2lop08x.now.sh/>
-
-The full source of the deployment is also available here: <https://next-routes-2s2lop08x.now.sh/_src>
-
-## Read More
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  After deploying, alias your Next.js application to your domain.
-</Card>
-
-<Card
-  title="Next.js Builder"
-  href="/docs/v2/deployments/official-builders/next-js-now-next"
->
-  Deploy your Next.js applications with Now and the Next.js Builder.
-</Card>
-
-<Card title="Deployment Examples" href="/examples">
-  View more examples for deploying any application with Now.
-</Card>
+Once you deploy, you will receive a deployment URL which contains this example with a few styling tweaks for ease on the eyes: <https://nextjs-routes.zeit.sh/>
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

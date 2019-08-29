@@ -1,0 +1,49 @@
+import Doc from '~/components/layout/docs'
+
+export const meta = {
+  title: 'Network Overview',
+  description:
+    'The ZEIT Network layer sits in-between the internet and your deployments. It routes the users requests to the correct files of the requested deployment.',
+  editUrl: 'pages/docs/v2/network/overview.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+The ZEIT Network layer sits in-between the internet and your Now deployments. This type of network topology is sometimes called a [Content Delivery Network](https://en.wikipedia.org/wiki/Content_delivery_network) or CDN.
+
+The ZEIT Network has many responsibilities, but most importantly, it is responsible for routing requests to the correct **Lambda** or **Static File** output of your **Builds**. Since the ZEIT network is a CDN with the ability to execute functions at the edge, the ZEIT Network is a [Smart CDN](/smart-cdn).
+
+## Regions
+
+In order to route requests as fast as possible, the Network layer is running in dozens of locations across the world. In all of these locations (called **Regions**), you can create **Deployments** that create [Builds](/docs/v2/advanced/builders/) outputting **[Lambdas](/docs/v2/advanced/concepts/lambdas/)** and/or **Static Files.** The full list of regions can be found [here](/docs/v2/platform/regions-and-providers/).
+
+In turn, the Network layer will automatically forward incoming requests to the closest location in which your **Lambda** is running (**Static Files** are always distributed across the whole network, thus not location-specific).
+
+In the event that the **Lambda** of your deployment is not created in the requested region, the request is forwarded to the closest region that contains your deployed **Lambda**.
+
+## Caching
+
+The ZEIT Network has multiple layers of caches to ensure that your Now deployments are fast around the world. At a high level, the layers of the cache are as follows:
+
+- L1 - a small per-[process](<https://en.wikipedia.org/wiki/Process_(computing)>) cache
+- L2 - shared cache for processes on a single node
+- L3 - a regional cache that is shared with all nodes in a region
+- Origin - A **Lambda** invoked or **Static File** fetched on cache miss
+
+## Additional Responsibilities
+
+Aside from routing your requests to the correct destination, the Network layer also takes care of a few other important aspects of a working **Deployment**:
+
+- Terminating SSL
+- [Compressing your responses](/docs/v2/network/compression/)
+
+All of these actions are performed automatically with careful attention to performance (ensured by our choices of technology). In turn, we highly recommend not implementing SSL termination or compression in your own code, as it would be unnecessary.
+
+## Supported Protocols
+
+We currently support [HTTPS](https://en.wikipedia.org/wiki/HTTPS) and [WSS](https://en.wikipedia.org/wiki/WebSocket) (this list will be updated in the event that support for an additional protocol is added to the Network layer).
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

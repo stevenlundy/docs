@@ -1,22 +1,23 @@
 import { Component, Fragment } from 'react'
 import { parse } from 'querystring'
 import cn from 'classnames'
-import Link from 'next/link'
 import { useAmp } from 'next/amp'
 import Router, { withRouter, useRouter } from 'next/router'
+import getAlgoliaClient from '~/lib/get-algolia'
 import logout from '~/lib/logout'
 import getDashboardHref from '~/lib/utils/get-dashboard-href'
-import algoliasearch from 'algoliasearch/lite'
 import { InstantSearch, Configure } from 'react-instantsearch-dom'
-import { Menu, MenuItem, MenuDivider } from '~/components/menu'
+import AvatarPopOverLink from './avatar-popover-link'
 import { Navigation, NavigationItem } from '~/components/navigation'
 import AutoComplete from '~/components/search'
 import Avatar from '~/components/avatar'
 import LayoutHeader from './header-wrapper'
 import Logo from '~/components/icons/logo'
-import Plus from '~/components/icons/plus'
+import MenuToggle from './menu-toggle'
 import { HeaderFeedback } from '~/components/feedback-input'
 import { API_DOCS_FEEDBACK } from '~/lib/constants'
+import MenuPopOver from '~/components/layout/header/menu-popover'
+import DocsNavbarDesktop from '~/components/layout/navbar/desktop'
 
 function AmpUserFeedback() {
   const isAmp = useAmp()
@@ -28,42 +29,16 @@ function AmpUserFeedback() {
         <HeaderFeedback textAreaStyle={{ height: 24, top: 0 }} />
       </a>
       <NavigationItem customLink>
-        <a href="https://zeit.co/support">Support</a>
+        <a href="/blog">Blog</a>
       </NavigationItem>
       <NavigationItem customLink>
-        <a href="https://zeit.co/login">Login</a>
+        <a href="/support">Support</a>
+      </NavigationItem>
+      <NavigationItem customLink>
+        <a href="/login">Login</a>
       </NavigationItem>
     </>
   )
-}
-
-function getAlgoliaClient() {
-  const algoliaClient = algoliasearch(
-    'NNTAHQI9C5',
-    'ac5d89f9877f9fb09dbdc9a010cca761'
-  )
-
-  return {
-    async search(requests) {
-      if (requests.every(({ params: { query } }) => Boolean(query) === false)) {
-        return {
-          results: requests.map(() => {
-            return {
-              processingTimeMS: 0,
-              nbHits: 0,
-              hits: [],
-              facets: {}
-            }
-          })
-        }
-      }
-
-      return algoliaClient.search(requests)
-    },
-    async searchForFacetValues(requests) {
-      return algoliaClient.searchForFacetValues(requests)
-    }
-  }
 }
 
 const searchClient = getAlgoliaClient()
@@ -81,14 +56,20 @@ class Header extends Component {
     const {
       searchState: { query }
     } = this.state
-    if (query) {
+    if (query && document.referrer.includes('amp')) {
       // focus algolia to show results
       const sel = selector => document.querySelector(selector)
-      sel(
-        getComputedStyle(sel('.mobile_search')).display === 'none'
-          ? '.desktop_search input'
-          : '.mobile_search input'
-      ).focus()
+      sel('.search-wrapper input').focus()
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.hideHeader &&
+      this.props.hideHeader !== prevProps.hideHeader
+    ) {
+      const sel = selector => document.querySelector(selector)
+      sel('.search-wrapper input').blur()
     }
   }
 
@@ -99,9 +80,9 @@ class Header extends Component {
 
   getSearchQ() {
     const { router } = this.props
-    let query = router.query.q
+    let query = router.query.query
     if (typeof window === 'undefined') return query
-    if (!query) query = parse(location.search.substr(1)).q
+    if (!query) query = parse(location.search.substr(1)).query
     return query
   }
 
@@ -164,114 +145,9 @@ class Header extends Component {
     )
   }
 
-  renderTeam = ({
-    displayName = null,
-    avatar,
-    teamId,
-    teamSlug,
-    username,
-    uid
-  }) => {
-    const currentTeam = this.props.team
-
-    const slug = teamSlug || username
-    const active = !currentTeam && !teamSlug ? true : currentTeam === teamSlug
-    const linkProps = teamSlug
-      ? {
-          as: `/teams/${teamSlug}/settings/identity`,
-          href: {
-            pathname: `/teams/settings/identity`,
-            query: { teamSlug }
-          }
-        }
-      : { as: '/account', href: '/account/identity' }
-
-    return (
-      <MenuItem key={slug} active={active}>
-        <Link {...linkProps}>
-          <a className={active ? 'active team' : 'team'}>
-            <span className="user">
-              <span className="avatar">
-                <Avatar
-                  teamId={teamId}
-                  username={username}
-                  uid={uid}
-                  size={24}
-                  hash={avatar}
-                />
-              </span>
-              <span className="username">{displayName || slug}</span>
-            </span>
-          </a>
-        </Link>
-        <style jsx>{`
-          a {
-            transition: 0.2s ease;
-          }
-
-          a:hover {
-            background: #fafafa;
-          }
-
-          .team {
-            padding: 8px 20px;
-            margin: -8px -20px;
-          }
-
-          .user {
-            display: inline-flex;
-            height: 20px;
-            vertical-align: middle;
-            align-items: center;
-          }
-
-          .username {
-            display: inline-block;
-            max-width: 118px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-
-          .avatar {
-            float: left;
-            height: 24px;
-            margin-right: 10px;
-            line-height: 24px;
-            width: 24px;
-          }
-        `}</style>
-      </MenuItem>
-    )
-  }
-
   renderSearch() {
-    const {
-      isAmp,
-      router: { pathname }
-    } = this.props
     return (
-      <>
-        {isAmp && (
-          <form
-            method="GET"
-            action={pathname.replace(/\.amp$/, '')}
-            target="_top"
-            style={{
-              position: 'absolute',
-              zIndex: 5
-            }}
-          >
-            <input
-              required
-              name="q"
-              type="text"
-              className="amp-search"
-              placeholder="Search..."
-            />
-            <div className="search-border" />
-          </form>
-        )}
+      <div className="search-bar">
         <InstantSearch
           indexName="prod_docs"
           searchClient={searchClient}
@@ -291,7 +167,47 @@ class Header extends Component {
             onSuggestionCleared={this.onSuggestionCleared}
           />
         </InstantSearch>
-      </>
+
+        <style jsx>{`
+          .search-bar :global(.react-autosuggest__input),
+          .search-bar input {
+            height: 32px;
+            max-width: 60vw;
+            width: 278px;
+            padding: 0 12px;
+            border-radius: 5px;
+          }
+
+          .search-bar
+            :global(.search__container.focused .react-autosuggest__input),
+          .search-bar :global(.react-autosuggest__input:focus),
+          .search-bar input:focus {
+            border-color: var(--accents-5);
+            box-shadow: none;
+            background: var(--geist-background);
+          }
+
+          .search-bar
+            :global(.search__container.has-value.focused
+              .react-autosuggest__input),
+          .search-bar
+            :global(.search__container.has-value
+              .react-autosuggest__input:focus),
+          .search-bar
+            :global(.search__container.has-value.focused .no-results) {
+            border-radius: 4px;
+          }
+
+          .search-bar :global(.react-autosuggest__suggestions-container--open),
+          .search-bar :global(.no-results) {
+            top: 40px;
+            width: 480px;
+            max-width: calc(100vw - 32px);
+            left: 50%;
+            transform: translateX(-50%);
+          }
+        `}</style>
+      </div>
     )
   }
 
@@ -303,12 +219,17 @@ class Header extends Component {
       handleIndexClick,
       router,
       user,
-      teams = [],
       userLoaded,
       zenModeActive,
-      isAmp
+      isAmp,
+      hideHeader,
+      detached,
+      hideHeaderSearch,
+      dynamicSearch,
+      isTop,
+      inHero,
+      data
     } = this.props
-    const { menuActive } = this.state
     const dashboard = getDashboardHref(user, currentTeamSlug)
     const buildAmpNavClass = classes => {
       return isAmp
@@ -317,47 +238,167 @@ class Header extends Component {
     }
 
     return (
-      <LayoutHeader className="header">
-        {isAmp && (
-          <amp-state id="header">
-            <script
-              type="application/json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({ active: navigationActive })
-              }}
-            />
-          </amp-state>
-        )}
-
-        <a
-          className="logo"
-          href={dashboard}
-          aria-label="ZEIT Home"
-          onContextMenu={this.onLogoRightClick}
+      <div className="header-wrapper">
+        <LayoutHeader
+          hideHeader={hideHeader}
+          detached={detached}
+          hideHeaderSearch={hideHeaderSearch}
+          dynamicSearch={dynamicSearch}
+          isTop={isTop}
+          inHero={inHero}
+          className="header"
+          isAmp={isAmp}
         >
-          <Logo height="25px" width="28px" />
-        </a>
+          <div className="left-nav">
+            <a
+              className="logo"
+              href={dashboard}
+              aria-label="ZEIT Home"
+              onContextMenu={this.onLogoRightClick}
+            >
+              <Logo height="25px" width="28px" />
+            </a>
 
-        {/* might have to move search to page of it's own and use iframe to display it to make AMP happy */}
-        <span className="mobile_search">{this.renderSearch()}</span>
-
-        <Navigation
-          data-amp-bind-class={buildAmpNavClass('main-navigation')}
-          className={cn('main-navigation', { active: navigationActive })}
-        >
-          {!zenModeActive && (
-            <span>
-              <NavigationItem
-                href="/docs"
-                active={
-                  router.pathname.startsWith('/docs') &&
-                  !router.pathname.startsWith('/docs/api') &&
-                  !router.pathname.startsWith('/docs/addons')
-                }
-                onClick={handleIndexClick}
+            {!isAmp && (
+              <Navigation
+                data-amp-bind-class={buildAmpNavClass('main-navigation')}
+                className={cn('main-navigation', { active: false })}
               >
-                Docs
-              </NavigationItem>
+                {!zenModeActive && (
+                  <div className="navigation-items">
+                    <NavigationItem
+                      href="/docs"
+                      active={
+                        router.pathname.startsWith('/docs') &&
+                        !router.pathname.startsWith('/docs/api') &&
+                        !router.pathname.startsWith('/docs/integrations')
+                      }
+                      onClick={handleIndexClick}
+                    >
+                      Docs
+                    </NavigationItem>
+                    <NavigationItem
+                      href="/guides"
+                      active={router.pathname.startsWith('/guides')}
+                      onClick={handleIndexClick}
+                    >
+                      Guides
+                    </NavigationItem>
+
+                    <div
+                      className={cn('developer-dropdown desktop-only', {
+                        active:
+                          router.pathname.startsWith('/docs/api') ||
+                          router.pathname.startsWith('/docs/integrations')
+                      })}
+                    >
+                      <MenuPopOver
+                        title="API"
+                        offsetArrowLeft={60}
+                        primaryList={[
+                          { title: 'Platform API', url: '/docs/api' },
+                          {
+                            title: 'Integrations API',
+                            url: '/docs/integrations'
+                          }
+                        ]}
+                      />
+                    </div>
+                  </div>
+                )}
+              </Navigation>
+            )}
+          </div>
+
+          {!isAmp && (
+            <>
+              <div className="search">
+                <span
+                  className={`search-wrapper ${
+                    hideHeaderSearch ? 'hidden' : ''
+                  }`}
+                >
+                  {' '}
+                  {this.renderSearch()}
+                </span>
+              </div>
+
+              <div className="right-nav">
+                <Navigation className="user-navigation">
+                  <AmpUserFeedback />
+                  {!zenModeActive && userLoaded && (
+                    <Fragment>
+                      {!user ? (
+                        <Fragment>
+                          <HeaderFeedback
+                            onFeedback={this.handleFeedbackSubmit}
+                            hideHeader={hideHeader}
+                          />
+                          <NavigationItem href="/blog">Blog</NavigationItem>
+                          <NavigationItem className="chat" href="/support">
+                            Support
+                          </NavigationItem>
+                          <NavigationItem href="/login">Login</NavigationItem>
+                        </Fragment>
+                      ) : (
+                        <Fragment>
+                          <HeaderFeedback
+                            onFeedback={this.handleFeedbackSubmit}
+                          />
+                          <NavigationItem href="/blog">Blog</NavigationItem>
+                          <NavigationItem className="chat" href="/support">
+                            Support
+                          </NavigationItem>
+                          <span className="avatar-wrapper">
+                            <AvatarPopOverLink
+                              top={43}
+                              avatarSize={32}
+                              user={user}
+                              team={currentTeamSlug || null}
+                              pathname={router.pathname}
+                              onLogout={this.handleLogout}
+                            />
+                          </span>
+                        </Fragment>
+                      )}
+                    </Fragment>
+                  )}
+                </Navigation>
+                <div className="menu-arrow" onClick={onToggleNavigation}>
+                  <MenuToggle expanded={navigationActive} />
+                </div>
+              </div>
+            </>
+          )}
+        </LayoutHeader>
+
+        {navigationActive && (
+          <nav className="mobile-only mobile-navigation">
+            <div className="section">
+              <div className="group has-nav">
+                <NavigationItem
+                  href="/docs"
+                  active={
+                    router.pathname.startsWith('/docs') &&
+                    !router.pathname.startsWith('/docs/api') &&
+                    !router.pathname.startsWith('/docs/integrations')
+                  }
+                  onClick={handleIndexClick}
+                >
+                  Docs
+                </NavigationItem>
+                {router.pathname.startsWith('/docs') &&
+                  !router.pathname.startsWith('/docs/api') &&
+                  !router.pathname.startsWith('/docs/integrations') && (
+                    <div className="navigation">
+                      <DocsNavbarDesktop
+                        data={data}
+                        url={router}
+                        handleIndexClick={handleIndexClick}
+                      />
+                    </div>
+                  )}
+              </div>
               <NavigationItem
                 href="/guides"
                 active={router.pathname.startsWith('/guides')}
@@ -365,155 +406,147 @@ class Header extends Component {
               >
                 Guides
               </NavigationItem>
-              <NavigationItem
-                href="/docs/api"
-                active={router.pathname.startsWith('/docs/api')}
-                onClick={handleIndexClick}
-              >
-                API Reference
-              </NavigationItem>
-              <NavigationItem
-                href="/examples"
-                active={router.pathname.startsWith('/examples')}
-                onClick={handleIndexClick}
-              >
-                Examples
-              </NavigationItem>
-              <NavigationItem
-                href="/docs/integrations"
-                active={router.pathname.startsWith('/docs/integrations')}
-                onClick={handleIndexClick}
-              >
-                Integrations
-              </NavigationItem>
-              <span className="desktop_search">{this.renderSearch()}</span>
-            </span>
-          )}
-        </Navigation>
+            </div>
 
-        <Navigation className="user-navigation">
-          <AmpUserFeedback />
-          {!zenModeActive && userLoaded && (
-            <Fragment>
-              {!user ? (
-                <Fragment>
-                  <HeaderFeedback onFeedback={this.handleFeedbackSubmit} />
-                  <NavigationItem
-                    className="chat"
-                    href="https://zeit.co/support"
-                  >
-                    Support
-                  </NavigationItem>
-                  <NavigationItem href="/login">Login</NavigationItem>
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <HeaderFeedback onFeedback={this.handleFeedbackSubmit} />
-                  <NavigationItem
-                    className="chat"
-                    href="https://zeit.co/support"
-                  >
-                    Support
-                  </NavigationItem>
-                  <Menu
-                    tip
-                    active={menuActive}
-                    onClickOutside={this.handleClickOutsideMenu}
-                    render={this.renderMenuTrigger}
-                    style={{ minWidth: 200 }}
-                  >
-                    <MenuItem>
-                      {user.username ? (
-                        <Link href={`/${user.username}`}>
-                          <a className="avatar-link">
-                            <Avatar
-                              uid={user.uid}
-                              size={50}
-                              hash={user.avatar}
-                            />
-                          </a>
-                        </Link>
-                      ) : (
-                        <Avatar user={user} size={50} />
-                      )}
-                      <div className="avatar-user-info">
-                        {user.username && (
-                          <Link href={`/${user.username}`}>
-                            <a className="username">
-                              <span>{user.username}</span>
-                            </a>
-                          </Link>
-                        )}
-                      </div>
-                    </MenuItem>
-                    <MenuDivider />
-                    <MenuItem>
-                      <Link prefetch href="/dashboard">
-                        <a>Dashboard</a>
-                      </Link>
-                    </MenuItem>
-                    <MenuDivider />
-                    <MenuItem>
-                      {teams.length === 0 ? (
-                        <Link href="/account">
-                          <a>Settings</a>
-                        </Link>
-                      ) : (
-                        <span className="settings">SETTINGS</span>
-                      )}
-                    </MenuItem>
-                    {teams.map(team => this.renderTeam(team))}
-                    <MenuDivider />
-                    <MenuItem>
-                      <Link
-                        href="/teams/settings/url?isCreating=1"
-                        as="/teams/create"
-                      >
-                        <a>
-                          Create a Team <Plus />
-                        </a>
-                      </Link>
-                    </MenuItem>
-                    <MenuDivider />
-                    <MenuItem>
-                      <a onClick={this.handleLogout}>Logout</a>
-                    </MenuItem>
-                  </Menu>
-                </Fragment>
-              )}
-            </Fragment>
-          )}
-        </Navigation>
-        <button
-          onClick={onToggleNavigation}
-          className={cn('arrow-toggle', { active: navigationActive })}
-          data-amp-bind-class={buildAmpNavClass('arrow-toggle')}
-          on={
-            isAmp
-              ? 'tap:AMP.setState({ header: { active: !header.active } })'
-              : undefined
-          }
-          role="toggle"
-          tabIndex="1"
-        >
-          <div className="line top" />
-          <div className="line bottom" />
-        </button>
+            <div className="section">
+              <span className="section__heading">API</span>
+              <div className="group">
+                <NavigationItem
+                  href="/docs/api"
+                  active={router.pathname.startsWith('/docs/api')}
+                  onClick={handleIndexClick}
+                >
+                  Platform API
+                </NavigationItem>
+              </div>
+              <div className="group">
+                <NavigationItem
+                  href="/docs/integrations"
+                  active={router.pathname.startsWith('/docs/integrations')}
+                  onClick={handleIndexClick}
+                >
+                  Integrations API
+                </NavigationItem>
+              </div>
+            </div>
+
+            <div className="section">
+              <span className="section__heading">More</span>
+              <NavigationItem href="/blog">Blog</NavigationItem>
+              <NavigationItem href="/support">Support</NavigationItem>
+              <NavigationItem href="/feedback">Feedback</NavigationItem>
+            </div>
+          </nav>
+        )}
         <style jsx>{`
+          .mobile-navigation {
+            display: flex;
+            height: 0;
+            width: 100%;
+            transition: all 0.1s ease;
+            position: fixed;
+            overflow-y: auto;
+            top: 80px;
+            z-index: 1000;
+            max-height: calc(100vh - 80px);
+            background: var(--geist-background);
+          }
+
+          .mobile-navigation .section {
+            margin-bottom: 48px;
+          }
+
+          .mobile-navigation .section__heading {
+            margin: 0 24px;
+            border-bottom: 1px solid #EAEAEA;
+            font-size: 12px;
+            color: #666;
+            padding-bottom: 24px;
+            display: block;
+            text-transform: uppercase;
+          }
+
+          .mobile-navigation :global(.navigation-item) {
+            margin: 0 24px;
+            display: flex;
+            height: 48px;
+            align-items: center;
+            font-size: 1rem;
+            color: #444;
+          }
+
+          .mobile-navigation .section :global(.navigation-item) {
+            border-bottom: 1px solid #EAEAEA;
+          }
+
+          .mobile-navigation .section .group.has-nav :global(.navigation-item.active) {
+            border-color: transparent;
+          }
+
+          .mobile-navigation :global(.navigation-item a) {
+            font-size: 1rem;
+            padding: 0;
+            color: currentColor;
+          }
+
+          .mobile-navigation .group.active, .mobile-navigation :global(.navigation-item.active a) {
+            color: #000
+          }
+
+          .mobile-navigation .navigation {
+            background: #F9F9F9;
+            padding: 16px 24px;
+            border-top: 1px solid #EAEAEA;
+            border-bottom 1px solid #EAEAEA;
+          }
+
+          .mobile-navigation .navigation :global(a) {
+            font-size: 1rem;
+          }
+
           :global(.header .feedback-link) {
             display: inherit;
           }
 
+          :global(.header .left-nav),
+          :global(.header .right-nav) {
+            flex: 1 1 100%;
+            display: flex;
+          }
+
+          :global(.header .right-nav) {
+            justify-content: flex-end;
+          }
+
           :global(.header .main-navigation) {
-            margin-right: auto;
+            width: 100%;
+            display: flex;
+          }
+
+          :global(.header .main-navigation .navigation-items) {
+            flex: 1 0 auto;
+            display: flex;
+          }
+
+          :global(.header .main-navigation .developer-dropdown) {
+            display: flex;
+          }
+
+          :global(.header .main-navigation .developer-dropdown.active > span) {
+            color: var(--geist-foreground);
+            font-weight: 500;
+          }
+
+          :global(.header .main-navigation .developer-dropdown a) {
+            padding: 0;
+          }
+
+          :global(.header-wrapper .mobile-only) {
+            display: none;
           }
 
           :global(.header .user-navigation) {
             padding-right: 0;
-          }
-
-          :global(.chat:hover .chat-count) {
-            background-color: #000;
           }
 
           @keyframes load {
@@ -530,113 +563,34 @@ class Header extends Component {
             animation-duration: 1s;
           }
 
-          :global(.arrow-toggle) {
-            cursor: pointer;
+          .avatar-wrapper {
+            margin-left: 8px;
+          }
+
+          :global(.header .menu-arrow) {
             display: none;
-            margin-left: auto;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-          }
-
-          :global(.line) {
-            height: 1px;
-            width: 22px;
-            background-color: #000;
-            transition: transform 0.15s ease;
-          }
-
-          :global(.line:last-child) {
-            transform: translateY(4px) rotate(0deg);
-          }
-
-          :global(.line:first-child) {
-            transform: translateY(-4px) rotate(0deg);
-          }
-
-          :global(.active .line:first-child) {
-            transform: translateY(1px) rotate(45deg);
-          }
-
-          :global(.active .line:last-child) {
-            transform: translateY(0px) rotate(-45deg);
+            height: 40px;
+            width: 40px;
+            margin: 0 -10px;
           }
 
           .logo {
             display: flex;
           }
 
-          .avatar-link {
-            flex: 0;
-            margin: -8px -15px;
-            padding: 8px 15px;
-          }
-          a.avatar-link:hover,
-          a.avatar-user-info:hover {
-            background: none;
-          }
-          .avatar-user-info {
-            margin-left: 15px;
+          .search-wrapper {
+            opacity: 1;
+            visibility: visible;
+            transition: visibility 0s linear 0s, opacity 300ms;
+            width: 100%;
             display: inline-flex;
-            flex-direction: column;
             justify-content: center;
-            height: 50px;
-          }
-          .avatar-user-info .username {
-            color: #000;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 3px;
-            text-decoration: none;
-          }
-          .avatar-link:hover,
-          .username:hover {
-            background-color: white;
-            opacity: 0.7;
-          }
-          .avatar-link,
-          .username {
-            transition: opacity 0.2s ease;
-          }
-          span.settings {
-            font-size: 12px;
           }
 
-          .mobile_search {
-            display: none;
-          }
-          .desktop_search {
-            display: inline-block;
-          }
-
-          :global(.amp-search) {
-            width: 200px;
-            height: 34px;
-            margin-left: 40px;
-            outline: 0;
-            border: none;
-            font-size: 14px;
-            background: white;
-            padding: 16px 24px 16px 0;
-          }
-
-          :global(.amp-search ~ .search-border) {
-            height: 34px;
-            width: 240px;
-            border-radius: 4px;
-            position: absolute;
-            top: 0px;
-            left: 12px;
-            z-index: 6;
-            pointer-events: none;
-            background: transparent;
-          }
-
-          :global(.amp-search:focus ~ .search-border) {
-            border: 1px solid #eaeaea;
+          .search-wrapper.hidden {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s linear 300ms, opacity 300ms;
           }
 
           :global(.geist-feedback-input:not(.focused) > textarea) {
@@ -645,20 +599,23 @@ class Header extends Component {
           }
 
           @media screen and (max-width: 950px) {
+            .mobile-navigation {
+              height: auto;
+            }
+
             :global(.header .main-navigation),
             :global(nav.user-navigation) {
               display: none;
             }
 
-            :global(.arrow-toggle) {
-              display: flex;
+            :global(.header .menu-arrow) {
+              display: block;
             }
 
             :global(.header .main-navigation.active) {
               display: flex;
               flex-direction: column;
               align-items: flex-start;
-              position: fixed;
               left: 0;
               right: 0;
               top: 85px;
@@ -673,21 +630,39 @@ class Header extends Component {
               border-top: 1px solid #eaeaea;
             }
 
-            .mobile_search {
-              display: block;
-            }
-            .desktop_search {
+            :global(.header .main-navigation .desktop-only) {
               display: none;
             }
-          }
-          @media screen and (max-width: 360px) {
-            .mobile_search {
-              max-width: 242px;
-              width: 70%;
+
+            :global(.header-wrapper .mobile-only) {
+              display: block;
+            }
+
+            :global(.header .main-navigation .navigation-items) {
+              flex-wrap: nowrap;
+              padding: 8px 16px;
+              border-top: 1px solid #eaeaea;
+              overflow-x: auto;
+              display: flex;
+              width: 100%;
+              white-space: nowrap;
+            }
+
+            :global(.header .main-navigation .navigation-item a) {
+              padding: 8px;
+            }
+
+            :global(.header .navigation-sidebar) {
+              margin-top: 14px;
+              margin-left: 32px;
             }
           }
+
+          :global(.header-hidden) {
+            top: -80px;
+          }
         `}</style>
-      </LayoutHeader>
+      </div>
     )
   }
 }

@@ -31,20 +31,20 @@ Creates a new webhook subscription.
 
 #### Request Parameters
 
-| Key        | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Required | Description                                                                                   |
-| ---------- | ---------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
-| **name**   | <HelpLink href="#api-basics/types">String</HelpLink>       | Yes      | The name of the webhook.                                                                      |
-| **url**    | <HelpLink href="#api-basics/types">String</HelpLink>       | Yes      | The url where you will receive events.                                                        |
+| Key        | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Required | Description                                                                                     |
+| ---------- | ---------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| **name**   | <HelpLink href="#api-basics/types">String</HelpLink>       | Yes      | The name of the webhook.                                                                        |
+| **url**    | <HelpLink href="#api-basics/types">String</HelpLink>       | Yes      | The url where you will receive events.                                                          |
 | **events** | <HelpLink href="#api-basics/types">String</HelpLink>       | No       | A comma separated list of events to subscribe to. Otherwise it will be subscribe to all events. |
 
 #### Response Parameters
 
-| Key           | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Description                                                           |
-| ------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
-| **id**        | <HelpLink href="#api-basics/types">ID</HelpLink>           | The unique identifier of the webhook. Always prefixed with `hook_`.  |
-| **url**       | <HelpLink href="#api-basics/types">String</HelpLink>       | The URL to call when an event for the webhook is triggered.   |
-| **name**      | <HelpLink href="#api-basics/types">String</HelpLink>       | The name of the webhook.                                 |
-| **events**    | <HelpLink href="#api-basics/types">List</HelpLink>         | The list of events the webhook is subcribed to.                       |
+| Key           | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Description                                                               |
+| ------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **id**        | <HelpLink href="#api-basics/types">ID</HelpLink>           | The unique identifier of the webhook. Always prefixed with `hook_`.       |
+| **url**       | <HelpLink href="#api-basics/types">String</HelpLink>       | The URL to call when an event for the webhook is triggered.               |
+| **name**      | <HelpLink href="#api-basics/types">String</HelpLink>       | The name of the webhook.                                                  |
+| **events**    | <HelpLink href="#api-basics/types">List</HelpLink>         | The list of events the webhook is subcribed to.                           |
 | **ownerId**   | <HelpLink href="#api-basics/types">ID</HelpLink>           | The identifier of the team or user whose events will trigger the webhook. |
 | **createdAt** | <HelpLink href="#api-basics/types">Date</HelpLink>         | A timestamp that tells you when the webhook was created.                  |
 
@@ -100,11 +100,11 @@ Here's a list of supported event types and their payload.
 
 #### deployment
 
-| Key                 | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Description                                         |
-| ------------------- | ---------------------------------------------------------- | --------------------------------------------------- |
-| **deploymentId**    | <HelpLink href="#api-basics/types">ID</HelpLink>           | The ID of the deployment.                                |
-| **project**         | <HelpLink href="#api-basics/types">String</HelpLink>       | The project name of the deployment.                      |
-| **url**             | <HelpLink href="#api-basics/types">String</HelpLink>       | The URL of the deployment.                               |
-| **plan**            | <HelpLink href="#api-basics/types">String</HelpLink>       | The plan type of the deployment. (unlimited, free)          |
-| **regions**         | <HelpLink href="#api-basics/types">List</HelpLink>         | An array of the supported regions for the deployment.                      |
-| **deployment.meta** | <HelpLink href="#api-basics/types">Map</HelpLink>          | A Map of deployment metadata.                        |
+| Key                 | <HelpLink href="#api-basics/types" hasIcon>Type</HelpLink> | Description                                           |
+| ------------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
+| **deploymentId**    | <HelpLink href="#api-basics/types">ID</HelpLink>           | The ID of the deployment.                             |
+| **project**         | <HelpLink href="#api-basics/types">String</HelpLink>       | The project name of the deployment.                   |
+| **url**             | <HelpLink href="#api-basics/types">String</HelpLink>       | The URL of the deployment.                            |
+| **plan**            | <HelpLink href="#api-basics/types">String</HelpLink>       | The plan type of the deployment. (unlimited, free)    |
+| **regions**         | <HelpLink href="#api-basics/types">List</HelpLink>         | An array of the supported regions for the deployment. |
+| **deployment.meta** | <HelpLink href="#api-basics/types">Map</HelpLink>          | A Map of deployment metadata.                         |

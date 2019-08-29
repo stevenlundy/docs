@@ -1,219 +1,52 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput, TerminalOutput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import Caption from '~/components/text/caption'
-import Note from '~/components/text/note'
-import { GenericLink } from '~/components/text/link'
-import Card from '~/components/card'
-import Image from '~/components/media/image'
 
 export const meta = {
-  title: 'Deploy a React application with Now and Create React App',
-  description: 'How to deploy your Create React App project with Now',
+  title: 'Deploy a React App with ZEIT Now and Create React App',
+  description:
+    'Create your Create React App project and deploy it with ZEIT Now.',
   published: '2019-02-06T12:00:00.860Z',
   authors: ['timothy', 'grovesjoseph'],
   url: '/guides/deploying-react-with-now-cra',
   editUrl: 'pages/guides/deploying-react-with-now-cra.mdx',
-  lastEdited: '2019-05-01T00:10:23.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
-[React](https://reactjs.org/) is a popular open-source JavaScript framework, maintained by Facebook, for easily creating interactive [single-page applications](https://en.wikipedia.org/wiki/Single-page_application) (SPAs).
+[React](https://reactjs.org/) is a popular open-source JavaScript framework, maintained by Facebook, for easily creating interactive [single-page apps](https://en.wikipedia.org/wiki/Single-page_application) (SPAs).
 
-In this guide, we will cover how to set up a React application with [Create React App](https://facebook.github.io/create-react-app/docs/getting-started) (CRA) and how to deploy it with [ZEIT Now](/docs/v2).
+In this guide, we will cover how to set up a React app with [Create React App](https://facebook.github.io/create-react-app/docs/getting-started) (CRA) and how to deploy it with [ZEIT Now](/docs/v2).
 
 ## Step 1: Set Up Your React Project
 
-If you want to set up a React project with configuration done and ready for you to skip straight to [developing your app](#step-3:-local-development), you can use [Now CLI](/download) to initialize a [Now-ready Create React App project](https://github.com/zeit/now-examples/tree/master/create-react-app) using the following command from your terminal:
+Get started by setting up a React app using the [Create React App (CRA)](https://facebook.github.io/create-react-app/) CLI tool. With this, you can generate a project to get up and running with React.
 
-<TerminalInput>now init create-react-app</TerminalInput>
-<Caption>Initializing a Now-ready Create React Project with Now CLI.</Caption>
+Using [npm](https://www.npmjs.com), you can setup a React app with CRA with the following command in your terminal:
 
-Alternatively, set up a React application using the [Create React App (CRA)](https://facebook.github.io/create-react-app/) CLI tool. With this, you can generate a project to get up and running with React.
-
-Using [Yarn](https://yarnpkg.com), you can setup a React app with CRA with the following command in your terminal:
-
-<TerminalInput>yarn create react-app my-react-app && cd my-react-app</TerminalInput>
-<Caption>Bootstrapping a React application with Create React App through Yarn.</Caption>
+<Snippet dark text="npm create react-app my-react-app && cd my-react-app" />
+<Caption>Bootstrapping a React app with Create React App through npm.</Caption>
 
 If you would prefer to use another method, see the [Quick Start documentation for CRA](https://facebook.github.io/create-react-app/docs/getting-started#quick-start).
 
-## Step 2: Preparing for Development and Deployment
+## Step 2: Deploying
 
-<Note>
-  If you used <InlineCode>now init create-react-app</InlineCode> to initialize
-  your application, you can skip to{' '}
-  <GenericLink href="#step-3:-local-development">the next step</GenericLink>!
-</Note>
+The final step is to deploy your app with **just a single command**.
 
-For your project to build and act as you would expect, with Now, you will need to create a [`now.json` configuration file](https://zeit.co/docs/v2/deployments/configuration) to instruct Now on how to handle your application in the build phase and when being served.
-
-Create a `now.json` file at the root of your project and place the following inside:
-
-```json
-{
-  "version": 2,
-  "name": "my-react-app",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@now/static-build",
-      "config": { "distDir": "build" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "headers": { "cache-control": "s-maxage=31536000,immutable" },
-      "dest": "/static/$1"
-    },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/asset-manifest.json", "dest": "/asset-manifest.json" },
-    { "src": "/manifest.json", "dest": "/manifest.json" },
-    { "src": "/precache-manifest.(.*)", "dest": "/precache-manifest.$1" },
-    {
-      "src": "/service-worker.js",
-      "headers": { "cache-control": "s-maxage=0" },
-      "dest": "/service-worker.js"
-    },
-    {
-      "src": "/(.*)",
-      "headers": { "cache-control": "s-maxage=0" },
-      "dest": "/index.html"
-    }
-  ]
-}
-```
-
-<Caption>
-  A <InlineCode>now.json</InlineCode> configuration file that specifies a
-  static-build Builder and routes for a React application.
-</Caption>
-
-The above `now.json` file achieves the following:
-
-- Defines a `version` property to ensure you are using the latest [Now 2.0 platform](/docs/v2/platform/overview) version.
-- Defines a project `name` that your deployments will be sorted under.
-- Defines a `builds` property as an array with one build step using `@now/static-build` to instruct Now to statically build the project and deploy the `build` directory. Using the `package.json` file as an entrypoint, [more on that below](#build-instruction).
-- Defines a `routes` property as an array that contains `route` objects to route all files to the right place whilst providing a fallback to `index.html` for all other routes so that React can handle routing and pages internally.
-
-### Caching React with Now Routes
-
-The [`routes` option](/docs/v2/deployments/routes) above also contains headers for [caching](https://zeit.co/docs/v2/routing/caching/). All files in the `static` directory are cached forever in a shared cache because they have a hash assigned to them on generation. Both `service-worker.js` and `index.html` are never cached since they must always serve fresh content.
-
-## Step 3: Local Development
-
-When you set up a React project with Create React App's CLI tool, you would have been presented with information telling you that you can now start your local development server. To replicate the [Now environment locally](/docs/v2/development/basics/), you should add the following script to your `package.json` file:
-
-```json
-{
-  "scripts": {
-    ...
-    "now-dev": "react-scripts start"
-  }
-}
-```
-
-The [`@now/static-build` Builder](/docs/v2/deployments/official-builders/static-build-now-static-build/#local-development) supports a custom `now-dev` script that allows you to define [custom development behavior](/docs/v2/development/basics/#custom-development-environment) while gaining extra features that mimic the Now platform locally.
-
-Now, with **just a single command**, you can simulate the Now environment locally:
-
-<TerminalInput>now dev</TerminalInput>
-<Caption>Running the Now environment locally with a single command.</Caption>
-
-You can now start developing your React application while testing it on your local server.
-
-With your React project set up, you are ready to deploy your app with [Now](/now).
-
-If you have not yet installed Now, you can do so by installing the [Now Desktop app](/docs/v2/getting-started/installation/#now-desktop) which installs Now CLI automatically, or by [installing Now CLI](/docs/v2/getting-started/installation/#now-cli) directly.
-
-## Step 4: Deploying
-
-The next and final step is to deploy your application with a single command.
-
-With Now, you can deploy your application to [different environments](/docs/v2/domains-and-aliases/aliasing-a-deployment/), depending on what stage your application is at; either staging or production.
+With Now, you can deploy your app to [different environments](/docs/v2/custom-domains#deploying-with-your-domain), depending on what stage your app is at; either staging or production.
 
 To deploy to a unique alias, use the following [Now CLI](/download) command from your terminal:
 
-<TerminalInput>now</TerminalInput>
-<Caption>Deploying with Now CLI in one command.</Caption>
-
-<Note hint>
-  See more ways to deploy and alias from the{' '}
-  <GenericLink href="/docs/v2/domains-and-aliases/aliasing-a-deployment/">
-    Aliasing Documentation.
-  </GenericLink>
-</Note>
-
-For [production deployments](/docs/v2/domains-and-aliases/aliasing-a-deployment/#production), you can deploy to an alias of your choice. To do so, add an `alias` to your `now.json` file:
-
-```json
-{
-  ...
-  "alias": "my-react-project"
-  ...
-}
-```
+<Snippet dark text="now" />
 
 <Caption>
-  Extending a <InlineCode>now.json</InlineCode> file with an{' '}
-  <InlineCode>alias</InlineCode> property. Replace the value with your own.
+  Deploying the app with the <InlineCode>now</InlineCode> command.
 </Caption>
 
-Now, deploy your project to a production environment using the following command:
-
-<TerminalInput>now --target production</TerminalInput>
-<Caption>Deploying to production with Now.</Caption>
-
-<Note>
-  For optimal performance,{' '}
-  <GenericLink href="/docs/v2/deployments/configuration/#regions">
-    deploy your app to the closest regions
-  </GenericLink>{' '}
-  to where your data source or audience are located in. You can see the regions
-  Now supports in the{' '}
-  <GenericLink href="/docs/v2/platform/regions-and-providers">
-    Regions and Providers documentation
-  </GenericLink>
-  .
-</Note>
-
-When complete, Now CLI will provide you with the URL your project has been deployed and aliased to. In the case above, the alias was set to `my-react-project.now.sh`.
-
-You can view the aliased deployment from this guide here: https://my-react-project.now.sh/
-
-<Note hint>
-  Don't forget to exclude the <InlineCode>node_modules</InlineCode> folder from
-  being uploaded to Now to enable faster deployment. To do that, add a{' '}
-  <GenericLink href="/guides/prevent-uploading-sourcepaths-with-nowignore/">
-    .nowignore
-  </GenericLink>{' '}
-  file to the root of the project directory and add{' '}
-  <InlineCode>node_modules</InlineCode> to it.
-</Note>
-
-## Resources
-
-For more information on working with React and Create React App, please refer to [the React documentation](https://reactjs.org/docs/getting-started.html) and the [Create React App documentation](https://facebook.github.io/create-react-app/).
-
-To configure Now further, please see these additional topics and guides:
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
-
-<Card title="More Guides" href="/guides">
-  See more guides that help you move forward with your projects and deployments.
-</Card>
+If you want to deploy your React project when you push to a Git repository, you can use either [Now for GitHub](/docs/v2/integrations/now-for-github/) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab/) to have your project automatically deployed on every push, and aliased on push to master.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

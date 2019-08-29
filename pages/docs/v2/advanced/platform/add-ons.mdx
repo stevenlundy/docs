@@ -1,0 +1,83 @@
+import Doc from '~/components/layout/docs'
+import { GenericLink } from '~/components/text/link'
+import { Image } from '~/components/media'
+import Caption from '~/components/text/caption'
+
+export const meta = {
+  title: 'Add-Ons',
+  description: 'Using ZEIT Now with additional features for more usecases.',
+  editUrl: 'pages/docs/v2/advanced/platform/add-ons.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+In the case that the default features of ZEIT Now are not enough to meet your needs, you can enable so-called "Add-Ons" on the dashboard.
+
+## What Add-Ons Are for
+
+Add-Ons are meant to extend the core feature set of Now with other useful tools like Priority Support (which ensures your support questions are always answered within a certain time threshold), Live Support (which lets you chat with the team directly) or Custom Deployment Suffix (which allows you to replace the `.now.sh` suffix in your deployment URLs with a different domain of your choice).
+
+All of these items (and more) can be found under the "Add-Ons" section on the "Plan" page within the settings area of your user account or team:
+
+<Image src={`https://assets.zeit.co/image/upload/v1541369048/front/docs/add-ons/add-ons.png`}
+  width={1920/2}
+  height={1192/2}
+/>
+<Caption>The list of addons from the ZEIT Now <GenericLink href="/pricing">pricing page</GenericLink></Caption>
+
+## Pricing
+
+All of the Add-Ons offered on the dashboard are to be paid for in a monthly manner, once you have decided to enable one of them. The amount is deducted from your payment method in the same way your resource usage is paid for.
+
+In addition, all of the Add-Ons you enabled will appear on your past and upcoming invoices on the "Usage" section of the dashboard:
+
+<Image src={`https://assets.zeit.co/image/upload/v1541369150/front/docs/add-ons/pricing.png`}
+  width={2024/2}
+  height={680/2}
+/>
+<Caption>The list of addons from the ZEIT Now <GenericLink href="/pricing">pricing page</GenericLink></Caption>
+
+## List of Add-Ons and Their Features
+
+Below, you can find more details about what makes each Add-On unique and how those features can improve your experience of ZEIT Now.
+
+For all the details about every Add-On, please visit [our pricing page](/pricing) and click "READ MORE" on the Add-On that interests you.
+
+### Priority Support
+
+If you are in a situation in which you need even faster replies from our support team due to limitations in your time schedule, this Add-On is the best way to get started with that.
+
+Alongside a dedicated support email address (like `u3jf23@zeit.support`), the [Priority Support Add-On](/pricing/add-ons/priority-support) will guarantee you a response time of 24 hours at maximum.
+
+### Advanced Priority Support
+
+Just like [Priority Support](/pricing/add-ons/priority-support) (as described above), the [Advanced Priority Support Add-On](/pricing/add-ons/advanced-priority-support) also provides you with a dedicated support email address.
+
+In addition, the guaranteed response time is decreased to 12 hours at maximum.
+
+### Live Support
+
+There might be cases in which you need immediate support.
+
+For example, your team might cause an outage and require external help with more knowledge of the platform to fix it or you simply require the convenience of being able to receive an answer to questions immediately while working with a product.
+
+All of these potential cases are covered by the [Live Support Add-On](/pricing/add-ons/live-support).
+
+Once enabled, you are granted access to a chat room with core members of the ZEIT team inside it. Whenever you then have a question, you will receive an answer **immediately**.
+
+### Custom Deployment Suffix
+
+By default, every deployment you create comes with a unique URL. This URL, by default, ends with `.now.sh` – a suffix that is shared among all deployments that are created on ZEIT Now.
+
+If you do not want anybody to access your deployment, not passing the `--public` flag in [Now CLI](/download) is already a huge leap forward, as the code is private by default. In turn, nobody can access the source code of any deployment you create on ZEIT Now.
+
+However, if you want additional privacy, you can also replace the `.now.sh` suffix with any custom domain of your choice, making the URL 100% unguessable, so that not even the very existence of the deployment can be verified by third parties.
+
+With the custom deployment suffix active, both the `scope` (by default, the account name), and the standard `.now.sh` suffix will be replaced by the custom deployment suffix in all deployments URL's.
+
+When [enabling the Add-On](/pricing/add-ons/custom-deployment-suffix), you are also granted a free `.sh` domain right out of the box.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

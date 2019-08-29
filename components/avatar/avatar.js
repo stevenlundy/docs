@@ -1,4 +1,5 @@
 import React from 'react'
+import { useAmp } from 'next/amp'
 import PropTypes from 'prop-types'
 
 export const GenericAvatar = ({ title, src, size }, { darkBg }) => (
@@ -6,7 +7,11 @@ export const GenericAvatar = ({ title, src, size }, { darkBg }) => (
     className={`avatar ${darkBg ? 'dark' : ''}`}
     style={{ width: size, height: size }}
   >
-    <img alt={title} title={title} src={src} />
+    {useAmp() ? (
+      <amp-img alt={title} title={title} src={src} height={size} width={size} />
+    ) : (
+      <img alt={title} title={title} src={src} />
+    )}
     <style jsx>
       {`
         span {

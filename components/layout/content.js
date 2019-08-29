@@ -3,16 +3,20 @@ import ZenContext from '~/lib/zen-context'
 
 const getContent = (zenModeActive, children) => {
   return (
-    <div className={cn(zenModeActive ? 'content-zen-mode' : '')}>
+    <div className={cn('content', zenModeActive ? 'content-zen-mode' : '')}>
       {children}
       <style jsx>{`
-        div {
+        .content {
           display: flex;
           flex-direction: column;
-          flex: 1;
-          max-width: 100%;
-          padding-left: calc(280px + 40px);
-          padding-bottom: 128px;
+          flex: 0 0 100%;
+          padding-bottom: 64px;
+        }
+
+        :global(.sidebar) + .content {
+          margin-left: auto;
+          max-width: calc(100% - 280px);
+          padding-left: 24px;
         }
 
         .content-zen-mode {
@@ -20,8 +24,11 @@ const getContent = (zenModeActive, children) => {
         }
 
         @media screen and (max-width: 950px) {
-          div {
+          :global(.sidebar) + .content,
+          .content {
             padding-left: 0;
+            margin-left: 0;
+            max-width: 100%;
           }
         }
       `}</style>

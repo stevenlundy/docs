@@ -1,8 +1,6 @@
 import Doc from '~/components/layout/docs'
-import Now from '~/components/text/now'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
-import { TerminalInput } from '~/components/text/terminal'
 import { InlineCode } from '~/components/text/code'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
@@ -14,7 +12,7 @@ export const meta = {
   date: '25 June 2018',
   editUrl: 'pages/docs/v1/integrations/now-for-github.mdx',
   image: process.env.IMAGE_ASSETS_URL + '/docs/now-for-github/tw-card.png?v2',
-  lastEdited: '2019-03-05T01:21:32.000Z'
+  lastEdited: '2019-08-06T15:31:27.000Z'
 }
 
 Now for GitHub is an app for GitHub users or organizations that automatically deploys and aliases changes to repositories with Now.
@@ -79,15 +77,6 @@ For organizations that you have limited permissions for, GitHub will ask you to 
 <Caption>The account or organization selection step on GitHub.</Caption>
 
 With an account or organization selected, GitHub will now ask for which repositories Now for GitHub should work with. In this step you are able to allow all repositories to be deployed or an optional set of repositories.
-
-<Note>
-  Now will not attempt to deploy a repository without being{' '}
-  <GenericLink href="#usage">
-    configured to with a <InlineCode>now.json</InlineCode> file
-  </GenericLink>
-  . It is safe to enable "All repositories" to use Now for GitHub without unintended
-  side-effects.
-</Note>
 
 With the GitHub profile and repositories chosen for Now for GitHub to work with, the application will be ready to start using. The next step is to prepare the repository for Now to deploy.
 

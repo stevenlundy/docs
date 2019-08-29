@@ -6,7 +6,7 @@ const Main = ({ children }) => (
     <style jsx>{`
       .main {
         min-height: 100vh;
-        padding-top: 84px;
+        padding-top: 40px;
       }
 
       .main :global(> div) {

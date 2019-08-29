@@ -1,6 +1,7 @@
 import React from 'react'
 import { MDXProvider } from '@mdx-js/tag'
 import formatDate from 'date-fns/format'
+import { useAmp } from 'next/amp'
 
 import Head from '~/components/layout/head'
 import Layout from '~/components/layout/layout'
@@ -8,12 +9,7 @@ import Wrapper from '~/components/layout/wrapper'
 import ContentFooter from '~/components/layout/content-footer'
 import Heading from '~/components/text/linked-heading'
 import components from '~/lib/mdx-components'
-import H1 from '~/components/text/h1'
-import H2 from '~/components/text/h2'
-import H3 from '~/components/text/h3'
-import H4 from '~/components/text/h4'
-import H5 from '~/components/text/h5'
-import { P } from '~/components/text/paragraph'
+import { H1, H2, H3, H4, H5, P } from '~/components/text'
 import { Avatar } from '~/components/avatar'
 import HR from '~/components/text/hr'
 import { FooterFeedback } from '~/components/feedback-input'
@@ -57,6 +53,8 @@ const DocH4 = ({ children }) => (
   </>
 )
 
+const NonAmpOnly = ({ children }) => (useAmp() ? null : children)
+
 class Guide extends React.PureComponent {
   render() {
     const {
@@ -93,11 +91,15 @@ class Guide extends React.PureComponent {
               </Wrapper>
             </header>
 
-            <Wrapper width="650">
+            <Wrapper width="768">
               <section className="guide content">
                 {this.props.children}
-                <HR />
-                <FooterFeedback />
+                <NonAmpOnly>
+                  <>
+                    <HR />
+                    <FooterFeedback />
+                  </>
+                </NonAmpOnly>
                 <HR />
                 <div className="guide-author" id="authors">
                   <H5>Written By</H5>
@@ -136,7 +138,7 @@ class Guide extends React.PureComponent {
 
             .guide-heading {
               border-bottom: 1px solid #eaeaea;
-              padding-top: 144px;
+              padding-top: 24px;
               padding-bottom: 44px;
               text-align: center;
             }
@@ -159,13 +161,16 @@ class Guide extends React.PureComponent {
 
             .authors-list {
               display: flex;
+              flex-flow: row wrap;
             }
 
             .author-info {
               display: flex;
               align-items: center;
               margin-right: 24px;
-              font-size: 14px;
+              font-size: var(--font-size-primary);
+              line-height: var(--line-height-primary);
+              margin-bottom: 8px;
             }
 
             .author-info :global(.avatar) {
@@ -174,7 +179,8 @@ class Guide extends React.PureComponent {
 
             .published {
               color: #666;
-              font-size: 14px;
+              font-size: var(--font-size-primary);
+              line-height: var(--line-height-primary);
               margin-top: 24px;
               display: block;
             }

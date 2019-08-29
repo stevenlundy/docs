@@ -4,8 +4,8 @@ import { LinkWithHoverPrefetch } from '~/components/text/link'
 import qs from 'querystring'
 import { parse } from 'url'
 import _scrollIntoViewIfNeeded from 'scroll-into-view-if-needed'
-import ArrowDown from '~/components/icons/arrow-down'
-import Link from 'next/link'
+import ArrowRight from '~/components/icons/arrow-right'
+import * as metrics from '~/lib/metrics'
 
 function scrollIntoViewIfNeeded(elem, centerIfNeeded, options, config) {
   const finalElement = findClosestScrollableElement(elem)
@@ -32,7 +32,7 @@ function findClosestScrollableElement(_elem) {
   }
 }
 
-function Category({ info, level = 1, ...props }) {
+function Category({ info, level = 1, onClick, ...props }) {
   const levelClass = `level-${level}`
   const [toggle, setToggle] = useState(false)
 
@@ -51,22 +51,29 @@ function Category({ info, level = 1, ...props }) {
     }
   }, [categorySelected])
 
-  const onClick = () => {
+  const onToggleCategory = () => {
+    metrics.event({
+      action: 'sidebar_category_toggled',
+      category: 'engagement',
+      label: info.name
+    })
     setToggle(!toggle)
   }
 
   return (
     <div
-      className={`category ${levelClass} ${toggle ? 'open' : ''} ${
-        categorySelected ? 'selected' : ''
-      }`}
+      className={cn('category', levelClass, {
+        open: toggle,
+        selected: categorySelected,
+        separated: info.sidebarSeparator
+      })}
       key={info.name || ''}
     >
-      <a className="label" onClick={onClick}>
-        <ArrowDown width={9} fill="#000" />
+      <a className="label" onClick={onToggleCategory}>
+        <ArrowRight fill="#999" />
         {info.name}
       </a>
-      {!info.href || isCategorySelected(info) ? (
+      {!info.href ? (
         <div className="posts">
           {info.posts.map(postInfo => (
             <Post
@@ -74,6 +81,7 @@ function Category({ info, level = 1, ...props }) {
               level={level + 1}
               categorySelected={categorySelected}
               key={postInfo.name}
+              onClick={onClick}
               {...props}
             />
           ))}
@@ -81,17 +89,17 @@ function Category({ info, level = 1, ...props }) {
       ) : null}
       <style jsx>{`
         .label {
-          font-size: 14px;
+          font-size: var(--font-size-primary);
+          line-height: var(--line-height-primary);
           font-weight: 400;
           cursor: pointer;
           display: flex;
           align-items: center;
-          color: #666;
+          color: var(--accents-6);
         }
 
         .label :global(svg) {
-          margin-right: 12px;
-          transform: rotate(-90deg);
+          margin-right: 14px;
           transition: all 0.15s ease;
         }
 
@@ -105,11 +113,14 @@ function Category({ info, level = 1, ...props }) {
         }
 
         .open > .label :global(svg) {
-          transform: rotate(0deg);
+          margin-left: 1px;
+          margin-right: 13px;
+          transform: rotate(90deg);
         }
 
         .level-2 .label {
-          font-size: 14px;
+          font-size: var(--font-size-primary);
+          line-height: var(--line-height-primary);
           text-transform: none;
           letter-spacing: 0;
           cursor: default;
@@ -127,13 +138,17 @@ function Category({ info, level = 1, ...props }) {
           margin-bottom: 0;
         }
 
+        .separated {
+          margin-bottom: 32px;
+        }
+
         .posts {
           border-left: 1px solid #eaeaea;
-          margin-left: 3.5px;
           margin-top: 0;
           height: 0;
           overflow: hidden;
-          padding-left: 21px;
+          padding-left: 19px;
+          margin-left: 4px;
         }
 
         .open > .posts {
@@ -142,21 +157,8 @@ function Category({ info, level = 1, ...props }) {
         }
 
         @media screen and (max-width: 950px) {
-          .label {
-            margin: 0;
-          }
-
-          .label:not(.link) {
-            padding-left: 0;
-          }
-
-          .level-2 .label {
-            margin: 0;
-            border-bottom: 1px solid #eee;
-          }
-
-          .level-2 .label:not(.link) {
-            padding: 20px 0;
+          .category {
+            margin: 24px 0;
           }
         }
       `}</style>
@@ -164,13 +166,18 @@ function Category({ info, level = 1, ...props }) {
   )
 }
 
-function Post({ info, level = 1, ...props }) {
+function Post({ info, level = 1, onClick, ...props }) {
+  const levelClass = `level-${level}`
+
   if (info.posts) {
     return <Category info={info} level={level} {...props} />
   }
 
   return (
-    <div className="link" key={info.href}>
+    <div
+      key={info.href}
+      className={cn('link', levelClass, { separated: info.sidebarSeparator })}
+    >
       <NavLink
         info={info}
         url={props.url}
@@ -178,10 +185,25 @@ function Post({ info, level = 1, ...props }) {
         scrollSelectedIntoView={props.scrollSelectedIntoView}
         categorySelected={props.categorySelected}
         level={level}
+        onClick={onClick}
       />
       <style jsx>{`
         .link {
           margin: 18px 0;
+          display: flex;
+          align-items: center;
+        }
+
+        .link::before {
+          content: '';
+          flex-basis: 4px;
+          flex-shrink: 0;
+          display: block;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: var(--accents-5);
+          margin-right: 16px;
         }
 
         .link:first-child {
@@ -192,10 +214,13 @@ function Post({ info, level = 1, ...props }) {
           margin-bottom: 0;
         }
 
+        .separated {
+          margin-bottom: 32px;
+        }
+
         @media screen and (max-width: 950px) {
           .link {
-            margin: 0;
-            border-bottom: 1px solid #eee;
+            margin: 24px 0;
           }
         }
       `}</style>
@@ -272,7 +297,7 @@ export class NavLink extends React.Component {
   }
 
   render() {
-    const { info, level } = this.props
+    const { info, onClick } = this.props
     const { selected } = this.state
 
     return (
@@ -286,7 +311,11 @@ export class NavLink extends React.Component {
             {info.name}
           </a>
         ) : (
-          <LinkWithHoverPrefetch href={info.href} as={info.as || info.href}>
+          <LinkWithHoverPrefetch
+            href={info.href}
+            as={info.as || info.href}
+            onClick={onClick}
+          >
             {info.name}
           </LinkWithHoverPrefetch>
         )}
@@ -295,16 +324,21 @@ export class NavLink extends React.Component {
             box-sizing: border-box;
           }
 
+          .nav-link {
+            display: flex;
+          }
+
           .nav-link :global(a) {
             text-decoration: none;
-            font-size: 14px;
-            color: #666;
+            font-size: var(--font-size-primary);
+            line-height: var(--line-height-primary);
+            color: var(--accents-6);
             box-sizing: border-box;
           }
 
           .selected :global(a) {
             font-weight: 600;
-            color: #0076ff;
+            color: #000;
           }
 
           .nav-link:hover :global(a) {
@@ -328,8 +362,8 @@ export class NavLink extends React.Component {
             }
 
             .nav-link :global(a) {
-              display: block;
-              padding: 20px 0;
+              display: flex;
+              align-items: center;
             }
           }
         `}</style>
@@ -338,12 +372,31 @@ export class NavLink extends React.Component {
   }
 }
 
-export default function DocsNavbarDesktop({ categoryInfo, ...props }) {
+export default function DocsNavbarDesktop({
+  data = [],
+  handleIndexClick,
+  ...props
+}) {
   return (
     <>
-      {props.data.map(categoryInfo => (
-        <Category info={categoryInfo} {...props} key={categoryInfo.name} />
-      ))}
+      {data.map(categoryInfo =>
+        categoryInfo.posts ? (
+          <Category
+            info={categoryInfo}
+            {...props}
+            key={categoryInfo.name}
+            onClick={handleIndexClick}
+          />
+        ) : (
+          <Post
+            info={categoryInfo}
+            level={1}
+            key={categoryInfo.name}
+            onClick={handleIndexClick}
+            {...props}
+          />
+        )
+      )}
     </>
   )
 }

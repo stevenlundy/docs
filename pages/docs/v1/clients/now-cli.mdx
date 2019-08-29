@@ -1,8 +1,7 @@
 import Doc from '~/components/layout/docs'
-
 import Now from '~/components/text/now'
 import { InlineCode } from '~/components/text/code'
-import { InternalLink, GenericLink } from '~/components/text/link'
+import { InternalLink } from '~/components/text/link'
 import { TerminalInput } from '~/components/text/terminal'
 
 export const meta = {
@@ -11,15 +10,12 @@ export const meta = {
     'Using Now CLI to create new deployments or control existing ones',
   date: '09 Mar 2017',
   editUrl: 'pages/docs/v1/clients/now-cli.mdx',
-  lastEdited: '2019-01-21T01:10:06.000Z'
+  lastEdited: '2019-08-06T15:31:27.000Z'
 }
 
 The `now` CLI is the main interface to the Now platform.
 
-It's available on macOS, Windows, and Linux either via `npm` or as pre-built
-binaries. The recommended installation
-mechanism, however, is <InternalLink href="/download">Now Desktop</InternalLink> (which
-includes Now CLI and also ensures it's always up-to-date).
+It's available on macOS, Windows, and Linux via `npm`.
 
 While the default behavior of `now` is to deploy, it also has a variety of sub
 commands grouped by different concerns.
@@ -73,7 +69,7 @@ To show the list of subcommands and options in your terminal, run this command:
 
 ## Selecting Files and Directories to Be Uploaded
 
-​<Now color="#000" /> uses the metafiles inside your project to determine which files and directories should be uploaded to our platform and which ones should be ignored:
+<Now color="#000" /> uses the metafiles inside your project to determine which files and directories should be uploaded to our platform and which ones should be ignored:
 
 - If `.gitignore` exists, we don't upload the contents that are defined in it
 - If `.npmignore` exists, we don't upload the contents that are defined in it and ignore the existence of .gitignore

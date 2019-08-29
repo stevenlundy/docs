@@ -1,16 +1,16 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import Caption from '~/components/text/caption'
-import Card from '~/components/card'
+import { InlineCode } from '~/components/text/code'
 
 export const meta = {
-  title: 'Deploying Apollo Server to Now',
-  description: 'How to Deploy Your Apollo GraphQL Server to Now',
+  title: 'Deploying Apollo Server to ZEIT Now',
+  description: 'Deploy Your Apollo GraphQL Server to ZEIT Now.',
   published: '2019-01-24T03:00:00.860Z',
-  authors: ['unicodeveloper'],
+  authors: ['unicodeveloper, msweeneydev'],
   url: '/guides/deploying-apolloserver-to-now',
   editUrl: 'pages/guides/deploying-apolloserver-to-now.mdx',
-  lastEdited: '2019-02-13T01:31:12.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
 In this guide, we will be deploying an Apollo GraphQL server with ZEIT Now.
@@ -19,13 +19,19 @@ In this guide, we will be deploying an Apollo GraphQL server with ZEIT Now.
 
 The first step is to create a directory for the project and `cd` into it via your terminal. It can be done with the following command:
 
-<TerminalInput>mkdir apolloserver && cd apolloserver</TerminalInput>
+<Snippet dark text="mkdir -p apolloserver/api && cd apolloserver" />
+<Caption>
+  Creating and entering into the <InlineCode>/apolloserver</InlineCode> directory which also contains an <InlineCode>/api</InlineCode> directory.
+</Caption>
 
 Next, install the `apollo-server-micro` and `graphql` packages via your terminal.
 
-<TerminalInput>yarn add apollo-server-micro graphql</TerminalInput>
+<Snippet dark text="npm i apollo-server-micro graphql" />
+<Caption>
+  Adding <InlineCode>apollo-server-micro</InlineCode> and <InlineCode>graphql</InlineCode> as dependencies to the project.
+</Caption>
 
-Once the dependencies are installed, go ahead and create an `index.js` file at the root of the project directory with the following code as its contents:
+Once the dependencies are installed, go ahead and create an `index.js` file inside of the `/api` directory with the following code as its contents:
 
 ```js
 const { ApolloServer, gql } = require('apollo-server-micro')
@@ -39,7 +45,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     hello: (root, args, context) => {
-      return "Hello world! It's your boy, how far now unicodeveloper"
+      return 'Hello world!'
     }
   }
 }
@@ -51,7 +57,7 @@ const server = new ApolloServer({
   playground: true
 })
 
-module.exports = server.createHandler();
+module.exports = server.createHandler({ path: '/api' })
 ```
 
 <Caption>
@@ -61,49 +67,22 @@ module.exports = server.createHandler();
 
 ## Deploy with Now
 
-Create a [`now.json` configuration file](https://zeit.co/docs/v2/deployments/configuration) in the project directory and add the following content.
+With your project setup you are ready to deploy it with [Now](/now).
 
-```json
-{
-  "version": 2,
-  "builds": [{ "src": "index.js", "use": "@now/node" }],
-  "routes": [{ "src": "/.*", "dest": "index.js" }]
-}
-```
+Deploying your project could not be easier and can be done with **just a single command**:
 
-- The `version` property specifies [`Now 2.0`](https://zeit.co/now).
-- The [`routes` property](/docs/v2/deployments/configuration#routes) allows Now to route your deployment either by using a source and destination, or by way of a source, status, and headers.
-- The [`builds` property](https://zeit.co/docs/v2/deployments/builds) allows Now to use a [builder](https://zeit.co/docs/v2/deployments/builders/overview/) with a specific source target.
+<Snippet dark text="now" />
 
-We used the `@now/node` [builder](https://zeit.co/docs/v2/deployments/builders/overview) to enable a Node.js deployment.
+<Caption>
+  Deploying the app with the <InlineCode>now</InlineCode> command.
+</Caption>
 
-Next, deploy the app with the Now CLI.
+Your project has now been deployed, you can access the Apollo Server endpoint, using the deployment URL generated, at `/api`.
 
-<TerminalInput>now</TerminalInput>
-
-Another option available is to deploy from GitHub with [Now for GitHub](https://zeit.co/docs/v2/integrations/now-for-github/). `Now for GitHub` allows you to deploy apps as you push code to repositories that have it [installed and configured](https://zeit.co/docs/v2/integrations/now-for-github/#configuration).
-
-`Now for GitHub` provides the ability to deploy every push in branches and pull requests to preview changes live!
-
-## Resources
-
-For more information on Apollo Server, please refer to [the Apollo Server documentation](https://www.apollographql.com/docs/apollo-server/).
-
-To configure Now further, please see these additional topics and guides:
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="More Guides" href="/guides">
-  See more guides that help you move forward with your projects and deployments.
-</Card>
+If you want to deploy your ApolloServer project when you push to a Git repository, you can use either [Now for GitHub](/docs/v2/integrations/now-for-github/) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab/) to have your project automatically deployed on every push, and aliased on push to master.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

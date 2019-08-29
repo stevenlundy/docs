@@ -1,6 +1,7 @@
 import { Component } from 'react'
 import { MDXProvider } from '@mdx-js/tag'
 import { withRouter } from 'next/router'
+import { useAmp } from 'next/amp'
 import Link from 'next/link'
 import { HEADER_HEIGHT } from '~/lib/constants'
 
@@ -21,11 +22,14 @@ import Select from '~/components/select'
 import Sidebar from '~/components/layout/sidebar'
 import Note from '~/components/text/note'
 import { GenericLink } from '~/components/text/link'
-import { P } from '~/components/text/paragraph'
 import ToggleGroup, { ToggleItem } from '~/components/toggle-group'
 import withPermalink from '~/lib/api/with-permalink'
+import HR from '~/components/text/hr'
+import { FooterFeedback } from '~/components/feedback-input'
 
 import ApiDocs from './api-docs-mdx/index.mdx'
+
+const NonAmpOnly = ({ children }) => (useAmp() ? null : children)
 
 class APIPage extends Component {
   state = {
@@ -140,6 +144,7 @@ class APIPage extends Component {
                 <Sidebar
                   active={navigationActive}
                   innerRef={this.handleSidebarRef}
+                  fixed
                 >
                   <div className="toggle-group-wrapper">
                     <ToggleGroup>
@@ -178,8 +183,8 @@ class APIPage extends Component {
                       defaultValue={version}
                       onChange={this.handleVersionChange}
                     >
-                      <option value="v1">v1</option>
-                      <option value="v2">v2 (Latest)</option>
+                      <option value="v1">1.0</option>
+                      <option value="v2">2.0 (Latest)</option>
                     </Select>
                   </div>
                   <DocsIndex
@@ -196,87 +201,95 @@ class APIPage extends Component {
                 <Content>
                   <div className="note">
                     <Note warning>
-                      This API documentation is for <P.B>version 1</P.B> of the
-                      Now platform. For the latest features, please see{' '}
+                      This API documentation is for <b>version 1</b> of the Now
+                      platform. For the latest features, please see{' '}
                       <GenericLink href="/docs/api/v2">
                         the version 2 API reference
                       </GenericLink>
                       . If you have yet to upgrade, see the{' '}
-                      <GenericLink href="/docs/v2/platform/upgrade-to-2-0">
+                      <GenericLink href="/guides/upgrade-to-2-0">
                         upgrade guide
                       </GenericLink>
                       .
                     </Note>
                   </div>
-                  {structure.map(category => {
-                    const categorySlugs = { category: category.slug }
-                    return (
-                      <div
-                        className="category-wrapper"
-                        key={getFragment(categorySlugs)}
-                      >
-                        <span id={getFragment(categorySlugs)} />
-                        <Context.Provider
-                          value={{
-                            slugs: categorySlugs,
-                            updateActive: this.updateActive
-                          }}
+                  <div>
+                    {structure.map(category => {
+                      const categorySlugs = { category: category.slug }
+                      return (
+                        <div
+                          className="category-wrapper"
+                          key={getFragment(categorySlugs)}
                         >
-                          {category.content}
-                        </Context.Provider>
+                          <span id={getFragment(categorySlugs)} />
+                          <Context.Provider
+                            value={{
+                              slugs: categorySlugs,
+                              updateActive: this.updateActive
+                            }}
+                          >
+                            {category.content}
+                          </Context.Provider>
 
-                        {category.sections.map(section => {
-                          const sectionSlugs = {
-                            category: category.slug,
-                            section: section.slug
-                          }
+                          {category.sections.map(section => {
+                            const sectionSlugs = {
+                              category: category.slug,
+                              section: section.slug
+                            }
 
-                          return (
-                            <div
-                              className="section-wrapper"
-                              key={getFragment(sectionSlugs)}
-                            >
-                              <span id={getFragment(sectionSlugs)} />
-                              <Context.Provider
-                                value={{
-                                  slugs: sectionSlugs,
-                                  updateActive: this.updateActive
-                                }}
+                            return (
+                              <div
+                                className="section-wrapper"
+                                key={getFragment(sectionSlugs)}
                               >
-                                {section.content}
-                              </Context.Provider>
-                              <div>
-                                {section.entries.map(entry => {
-                                  const entrySlugs = {
-                                    category: category.slug,
-                                    section: section.slug,
-                                    entry: entry.slug
-                                  }
+                                <span id={getFragment(sectionSlugs)} />
+                                <Context.Provider
+                                  value={{
+                                    slugs: sectionSlugs,
+                                    updateActive: this.updateActive
+                                  }}
+                                >
+                                  {section.content}
+                                </Context.Provider>
+                                <div>
+                                  {section.entries.map(entry => {
+                                    const entrySlugs = {
+                                      category: category.slug,
+                                      section: section.slug,
+                                      entry: entry.slug
+                                    }
 
-                                  return (
-                                    <div
-                                      className="entry-wrapper"
-                                      key={getFragment(entrySlugs)}
-                                    >
-                                      <span id={getFragment(entrySlugs)} />
-                                      <Context.Provider
-                                        value={{
-                                          slugs: entrySlugs,
-                                          updateActive: this.updateActive
-                                        }}
+                                    return (
+                                      <div
+                                        className="entry-wrapper"
+                                        key={getFragment(entrySlugs)}
                                       >
-                                        {entry.content}
-                                      </Context.Provider>
-                                    </div>
-                                  )
-                                })}
+                                        <span id={getFragment(entrySlugs)} />
+                                        <Context.Provider
+                                          value={{
+                                            slugs: entrySlugs,
+                                            updateActive: this.updateActive
+                                          }}
+                                        >
+                                          {entry.content}
+                                        </Context.Provider>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
                               </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )
-                  })}
+                            )
+                          })}
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <NonAmpOnly>
+                    <>
+                      <HR />
+                      <FooterFeedback />
+                    </>
+                  </NonAmpOnly>
                 </Content>
               </Main>
             )}
@@ -293,12 +306,20 @@ class APIPage extends Component {
               padding-top: 16px;
             }
 
-            .category-wrapper {
+            .category-wrapper:not(:first-child) {
               padding: 40px 0;
+            }
+
+            .category-wrapper:first-child :global(h1) {
+              margin-top: 0;
             }
 
             .category-wrapper:not(:last-child) {
               border-bottom: 1px solid #eaeaea;
+            }
+
+            .category-wrapper:last-child {
+              padding-bottom: 0;
             }
 
             .category-wrapper,
@@ -307,13 +328,18 @@ class APIPage extends Component {
               position: relative;
             }
 
+            .entry-wrapper > :global(*:last-child) {
+              margin-bottom: 0;
+            }
+
             span {
               position: absolute;
               top: -${HEADER_HEIGHT + 24}px;
             }
 
             .platform-select-title {
-              font-size: 14px;
+              font-size: var(--font-size-primary);
+              line-height: var(--line-height-primary);
               font-weight: bold;
               margin-bottom: 16px;
               margin-top: 0;

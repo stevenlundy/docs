@@ -1,93 +1,42 @@
 import Guide from '~/components/layout/guide'
-
-import { Image } from '~/components/media'
-import { TerminalInput } from '~/components/text/terminal'
-import Note from '~/components/text/note'
-import { GenericLink } from '~/components/text/link'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import Caption from '~/components/text/caption'
-import Card from '~/components/card'
 
 export const meta = {
   title: 'How to Update Now CLI',
-  description:
-    'A guide to updating Now CLI using Now Desktop or a package manager.',
+  description: 'Update Now CLI using a package manager.',
   published: '2019-03-20T03:00:00.860Z',
   authors: ['msweeneydev', 'timothy'],
   url: '/guides/updating-now-cli',
   editUrl: 'pages/guides/updating-now-cli.mdx',
-  lastEdited: '2019-03-23T05:13:26.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
 When there is a new release of the [Now CLI](https://zeit.co/download#now-cli) available, you will see a message appear in your terminal output when running Now, letting you know that there is a newer version.
 
-This guide will take you through your options for updating Now CLI and how to stay up-to-date.
+This guide will take you through your options for updating Now CLI using your preferred package manager.
 
-## Option 1: Now Desktop
+## Option 1: Updating via npm
 
-Now Desktop updates Now CLI automatically when there is an update to install, so you never have to think about it again.
+If you have installed our command-line interface via [npm](http://npmjs.org/), the easiest way to update it is by running the installation command yet again:
 
-Now Desktop also lets you:
+<Snippet dark text="npm i -g now" />
+<Caption>Updating Now CLI using the <InlineCode>npm</InlineCode> command.</Caption>
 
-- Create deployments with drag-and-drop
-- View your team’s event feed
+In the case that permission errors are preventing you from installing, please read npm's [official guide](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) about this problem.
 
-To have automatic updates to Now CLI using Now Desktop, ensure that automatic updates are enabled from Now Desktop's settings menu:
+## Option 2: Updating via Yarn
 
-<Image
-  src={`${
-    process.env.IMAGE_ASSETS_URL
-  }/blog/improved-cli-updates/update-option.png`}
-  width={385}
-  height={228}
-/>
+If you have installed our command-line interface via [Yarn](https://yarnpkg.com), the easiest way to update it is by running the installation command yet again:
 
-As long as the update option is enabled, you will automatically receive the latest update for the [Now CLI](https://zeit.co/download#now-cli), as they are released.
+<Snippet dark text="yarn global add now" />
+<Caption>Updating Now CLI using the <InlineCode>yarn</InlineCode> command.</Caption>
 
-If you don't have Now Desktop installed yet and would prefer to have automatic updates for Now CLI, you can [install it here](https://zeit.co/download#now-desktop).
-
-## Option 2: Updating Now CLI Manually
-
-As of version 15.4.0 of Now CLI, you can **update Now CLI with a single command**:
-
-<TerminalInput>now update</TerminalInput>
-<Caption>Updating Now CLI with the <InlineCode>update</InlineCode> command.</Caption>
-
-To update to the latest version of Now CLI yourself, you can use a package manager, such as [Yarn](#updating-with-yarn) or [npm](#updating-with-npm).
-
-We do, however, recommend that you install [Now Desktop](#option-1:-now-desktop) for automatic updates to Now CLI.
-
-<Note>
-  If you do not have Now CLI installed yet, see our{' '}
-  <GenericLink href="/download">download page</GenericLink>.
-</Note>
-
-If you have not yet updated to a version that supports the above command, you can also use any of the following methods:
-
-- Using [Yarn](https://yarnpkg.com/), for the latest Now CLI update, run the following command from your terminal:
-
-  <TerminalInput>yarn global add now</TerminalInput>
-
-- Using [npm](https://npmjs.com), for the latest Now CLI update, run the following command from your terminal:
-  <TerminalInput>npm install -g now</TerminalInput>
-
-## Read Next
-
-With a fully up-to-date Now CLI, read the following resources for how you can deploy your applications and control them, all from the terminal.
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="Guides" href="/guides">
-  See guides that help you move forward with your projects and deployments.
-</Card>
+In the case that permission errors are preventing you from installing, please read npm's [official guide](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally) about this problem (Yarn depends on the same configuration).
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

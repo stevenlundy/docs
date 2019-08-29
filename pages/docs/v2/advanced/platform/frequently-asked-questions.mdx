@@ -1,0 +1,75 @@
+import Doc from '~/components/layout/docs'
+
+export const meta = {
+  title: 'Frequently Asked Questions',
+  description: 'A list of frequently asked questions relating to deployments.',
+  editUrl: 'pages/docs/v2/advanced/platform/frequently-asked-questions.mdx',
+  lastEdited: '2019-08-26T10:30:16.000Z'
+}
+
+## Missing Public Directory
+
+If your project contains a `package.json` file with a `build` [script](https://docs.npmjs.com/misc/scripts), and no `now.json` configuration, it is expected to output its static files into a directory named `public`, at the root of the project, when the `build` [script](https://docs.npmjs.com/misc/scripts) is executed.
+
+You are seeing this error because your setup did not satisfy the above constraint.
+
+To resolve this error, configure your project to place its static output files into a `public` directory, at the root of your project, when the `build` [script](https://docs.npmjs.com/misc/scripts) from your `package.json` file is invoked.
+
+For example, this is how your `package.json` file might look:
+
+```json
+{
+  "scripts": {
+    "build": "my-framework build"
+  }
+}
+```
+
+If you are seeing this error with a similar `build` script already, you may need to adjust the command to direct its static output files into the `public` directory instead.
+
+Depending on your framework, the option for this might be called `--output`, `--out`, `--output-dir` or similar:
+
+```json
+{
+  "scripts": {
+    "build": "my-framework build --output public"
+  }
+}
+```
+
+Once you have done this, the error will disappear since the output will be the expected directory, `public`.
+
+## Missing Build Script
+
+If your project contains a `package.json` file, no `api` directory, and no `now.json` configuration, it is expected to provide a `build` [script](https://docs.npmjs.com/misc/scripts) that performs a static build of your frontend and outputs it to a `public` directory at the root of your project.
+
+When properly configured, your `package.json` file would look similar to this:
+
+```json
+{
+  "scripts": {
+    "build": "my-framework build --output public"
+  }
+}
+```
+
+Once you have defined the `build` [script](https://docs.npmjs.com/misc/scripts), this error will disappear. Furthermore, it will not be displayed if you are using `package.json` purely to provide dependencies for your serverless functions located inside the `api` directory.
+
+## Platform Version Detection
+
+[Now CLI](/download) will automatically upgrade your deployment to the latest platform version if you create a new project or if your project meets certain criterias. In order for this to work, you must:
+
+- Remove any Dockerfile.
+- Remove the `type` property from your `now.json` file.
+- Remove the `start` script from your `package.json` file.
+- Remove the `server.js` file from the root of your project.
+
+It is possible to opt out of this behavior by creating a `now.json` file with a `version` property.
+
+If you are yet to upgrade to the latest platform version, please read our [upgrade guide](https://zeit.co/guides/migrate-to-zeit-now/).
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import { MDXProvider } from '@mdx-js/tag'
 import { withRouter } from 'next/router'
-import Link from 'next/link'
+import { useAmp } from 'next/amp'
 import debounce from 'lodash.debounce'
 import { HEADER_HEIGHT } from '~/lib/constants'
 
@@ -20,10 +20,13 @@ import Head from '~/components/layout/head'
 import scrollToElement from '~/lib/utils/scroll-to-element'
 import Select from '~/components/select'
 import Sidebar from '~/components/layout/sidebar'
-import ToggleGroup, { ToggleItem } from '~/components/toggle-group'
 import withPermalink from '~/lib/api/with-permalink'
+import HR from '~/components/text/hr'
+import { FooterFeedback } from '~/components/feedback-input'
 
 import IntegrationsDocs from './integrations-docs-mdx/index.mdx'
+
+const NonAmpOnly = ({ children }) => (useAmp() ? null : children)
 
 const debouncedChangeHash = debounce(changeHash, 200)
 
@@ -127,7 +130,6 @@ class IntegrationsPage extends Component {
   }
 
   render() {
-    const { router } = this.props
     const { navigationActive, version } = this.state
     const active = {
       category: this.state.activeCategory,
@@ -159,6 +161,7 @@ class IntegrationsPage extends Component {
                 <Sidebar
                   active={navigationActive}
                   innerRef={this.handleSidebarRef}
+                  fixed
                 >
                   {/* <div className="toggle-group-wrapper">
                     <ToggleGroup>
@@ -198,8 +201,8 @@ class IntegrationsPage extends Component {
                       onChange={this.handleVersionChange}
                       disabled
                     >
-                      <option value="v1">v1</option>
-                      <option value="v2">v2 (Latest)</option>
+                      <option value="v1">1.0</option>
+                      <option value="v2">2.0 (Latest)</option>
                     </Select>
                   </div>
                   <DocsIndex
@@ -290,6 +293,12 @@ class IntegrationsPage extends Component {
                       })}
                     </div>
                   </div>
+                  <NonAmpOnly>
+                    <>
+                      <HR />
+                      <FooterFeedback />
+                    </>
+                  </NonAmpOnly>
                 </Content>
               </Main>
             )}
@@ -302,12 +311,20 @@ class IntegrationsPage extends Component {
               padding: 0;
             }
 
-            .category-wrapper {
+            .category-wrapper:not(:first-child) {
               padding: 40px 0;
+            }
+
+            .category-wrapper:first-child :global(h1) {
+              margin-top: 0;
             }
 
             .category-wrapper:not(:last-child) {
               border-bottom: 1px solid #eaeaea;
+            }
+
+            .category-wrapper:last-child {
+              padding-bottom: 0;
             }
 
             .category-wrapper,
@@ -316,13 +333,18 @@ class IntegrationsPage extends Component {
               position: relative;
             }
 
+            .entry-wrapper > :global(*:last-child) {
+              margin-bottom: 0;
+            }
+
             span {
               position: absolute;
               top: -${HEADER_HEIGHT + 24}px;
             }
 
             .platform-select-title {
-              font-size: 14px;
+              font-size: var(--font-size-primary);
+              line-height: var(--line-height-primary);
               font-weight: bold;
               margin-bottom: 16px;
               margin-top: 0;

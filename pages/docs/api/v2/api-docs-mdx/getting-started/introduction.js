@@ -11,12 +11,12 @@ import Context from '~/lib/api/slugs-context'
 const example = {
   name: 'simple-api-deployment',
   files: {
-    'index.html':
-      '<!doctype html>\n<html>\n  <head>\n    <title>A simple deployment with the Now API!</title>\n    <link rel="stylesheet" href="style.css"> \n </head>\n  <body>\n    <h1>Welcome to a simple static file</h1>\n    <p>Deployed with <a href="https://zeit.co/docs/api">ZEIT&apos;s Now API</a>!</p>\n    <p>This deployment includes three files. A static index.html file as the homepage, a static style.css file for styling, and a date.js serverless function that returns the date on invocation. Try <a href="/date.js">getting the date here.</a></p> \n   </body>\n</html>',
-    'style.css':
-      'h1 {\n margin-top: 70px; \n text-align: center; \n font-size: 45px; \n} \n h1, p {\n font-family: Helvetica; \n} \n a {\n color: #0076FF; \n text-decoration: none; \n} \n p {\n text-align: center; \n font-size: 30px; \n} \n p:nth-child(3) { \n font-size: 25px; \n margin-left: 15%; \n margin-right: 15%; \n}',
-    'date.js':
-      'module.exports = (req, res) => {\n  res.end(`The time is ${new Date()}`)\n}'
+    'pages/index.js':
+      'export default () => (\n  <section>\n    <h1>Welcome to Now!</h1>\n    <p>To test the API, <a href="/api/date">check todays date</a>.</p>\n  </section> \n);',
+    'api/date.js':
+      'module.exports = (req, res) => {\n  res.send(new Date());\n};',
+    'package.json':
+      '{\n  "scripts": {\n    "build": "next build"\n  },\n  "dependencies": {\n    "next": "^9.0.1",\n    "react": "^16.8.6",\n    "react-dom": "^16.8.6"\n  }\n}'
   }
 }
 
@@ -120,7 +120,7 @@ class Introduction extends React.PureComponent {
 
         {this.state.activeTab === 'command' && (
           <Context.Consumer>
-            {ctx => (
+            {() => (
               <Preview
                 content={this.state.content}
                 deploy={this.deploy}
@@ -181,7 +181,8 @@ class Introduction extends React.PureComponent {
           }
 
           p {
-            font-size: 14px;
+            font-size: var(--font-size-primary);
+            line-height: var(--line-height-primary);
             text-align: center;
             margin: 24px 0;
           }
@@ -222,13 +223,6 @@ function filesToAPIBody(name, files) {
       .join('\n') +
     '\n  ' +
     json.substring(filesIndex + 1, json.lastIndexOf('}') - 1) +
-    ',' +
-    '\n  ' +
-    `"builds": [
-    { "src": "*.js", "use": "@now/node" },
-    { "src": "*.html", "use": "@now/static" },
-    { "src": "*.css", "use": "@now/static" }
-  ]` +
     json.substring(filesIndex + 2)
 
   return json

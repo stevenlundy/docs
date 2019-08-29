@@ -5,7 +5,7 @@ const Navigation = ({ children, ...props }) => (
       nav {
         align-items: center;
         display: flex;
-        margin-left: 10px;
+        margin-left: 16px;
       }
 
       @media screen and (max-width: 950px) {

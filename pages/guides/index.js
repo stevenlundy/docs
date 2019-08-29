@@ -3,9 +3,7 @@ import formatDate from 'date-fns/format'
 import Layout from '~/components/layout/layout'
 import Head from '~/components/layout/head'
 import Wrapper from '~/components/layout/wrapper'
-import H1 from '~/components/text/h1'
-import H4 from '~/components/text/h4'
-import { P } from '~/components/text/paragraph'
+import { H1, H4, P } from '~/components/text'
 import { AvatarGroup } from '~/components/avatar'
 import { GenericLink } from '~/components/text/link'
 import Button from '~/components/buttons'
@@ -29,11 +27,11 @@ const Guides = () => (
           <div className="actions">
             <span className="caption">Sorted by Newest</span>
             <GenericLink
-              href="https://github.com/zeit/docs/blob/master/CONTRIBUTING.md#guides"
+              href="https://github.com/zeit/docs/issues/new?labels=Section%3A+Guides&template=guide-report-or-request.md"
               underlineOnHover={false}
             >
               <Button secondary small>
-                Submit a Guide
+                Request a Guide
               </Button>
             </GenericLink>
           </div>
@@ -84,14 +82,17 @@ const Guides = () => (
     </div>
 
     <style jsx>{`
+      :global(span a) {
+        width: 100%;
+      }
       .guides {
-        padding-top: 84px;
         min-height: 100vh;
+        padding-bottom: 64px;
       }
 
       .guide-heading {
         border-bottom: 1px solid #eaeaea;
-        padding-top: 54px;
+        padding-top: 48px;
         padding-bottom: 16px;
       }
 
@@ -209,7 +210,8 @@ const Guides = () => (
 
       .date {
         color: #666;
-        font-size: 14px;
+        font-size: var(--font-size-primary);
+        line-height: var(--line-height-primary);
       }
 
       @media (max-width: 768px) {
@@ -235,3 +237,7 @@ const Guides = () => (
 )
 
 export default Guides
+
+export const config = {
+  amp: 'hybrid'
+}

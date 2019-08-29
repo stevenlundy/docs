@@ -1,0 +1,124 @@
+import Doc from '~/components/layout/docs'
+import { Image } from '~/components/media'
+import Snippet from '~/components/snippet'
+import Caption from '~/components/text/caption'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Transfer a Domain',
+  description: 'Transferring your domain either to or from ZEIT.',
+  editUrl: 'pages/docs/v2/advanced/domains/transferring-a-domain.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+If you want to transfer your domain in from an external registrar to ZEIT, you can do that painlessly without worrying about domain and DNS configuration. This document will walk you through how to transfer your domain in with ZEIT in a few steps.
+
+### Step 1: Unlock your Domain
+
+To transfer your domain, the first step is to unlock your domain from your registrar's domain management area. Most domains are usually locked by default to prevent unauthorized changes.
+
+<Image
+  src={`https://assets.zeit.co/image/upload/front/blog/announcing-transfer-in-for-domains/godaddy.png`}
+  width={2206/2}
+  height={1518/2}
+/>
+<Caption>Unlocking a domain on Godaddy.</Caption>
+
+The domain lock feature appears in different forms across registrars. Sign into the host where your domain is registered and look for a `Domain Lock` or similar option to unlock your domain.
+
+After unlocking, **request for an authorization code**. The code will be sent to the email address associated with your domain by your registrar. In some cases, your authorization code simply pops up on your dashboard.
+
+<Note>
+  {' '}
+  A domain can't be transferred to another registrar within 60 days of the date
+  they were registered or transferred to a new registrar.{' '}
+</Note>
+
+### Step 2: Transfer In your Domain
+
+When transferring a domain, you will have two options to choose from. Either using the [Now CLI](/download) or doing an inward transfer via our [dashboard](https://zeit.co/dashboard/domains).
+
+#### Option 1: Using Now CLI
+
+With [Now CLI](/download), you can run the following command from your terminal.
+
+<Snippet dark text="now domains transfer-in <your-domain>" />
+
+You will be requested to provide an authorization code from your registrar after running this command. Once you get the authorization code from your registrar, paste it into the prompt and the transfer will begin.
+
+#### Option 2: Using ZEIT Dashboard
+
+Using the [ZEIT dashboard](https://zeit.co/dashboard/domains), you can perform a domain transfer by entering the domain you want to transfer in, and the respective authorization code from the domain registrar via the UI like so:
+
+<Image
+  src={`https://assets.zeit.co/image/upload/front/blog/announcing-transfer-in-for-domains/dashboard.png`}
+  width={2206/2}
+  height={1518/2}
+/>
+<Caption>Transfer in Domain via ZEIT dashboard</Caption>
+
+<Note>
+  In a case where your domain can't be transferred, check if it's not up to 60
+  days since the domain has been registered, or if the domain had previously
+  been transferred within the past 60 days. If none of that checks out, contact
+  your registrar.
+</Note>
+
+#### DNS Transfer
+
+After activating a domain `transfer-in`, you will be informed that the DNS settings for your domain will not be transferred along with the domain. Instead, you will need to download a zone file from your registrar and upload it to ZEIT.
+
+You can import the zone file to ZEIT DNS by running the following command:
+
+<Snippet dark text="now dns import <your-domain> <zonefile>" />
+
+<Note>
+  {' '}
+  Your domain will automatically be transferred in and use ZEIT's DNS out of the
+  box if you don't upload the zone file from your previous registrar.
+  Furthermore, In a case where the dns import fails, check that you have a valid
+  zone file. If it's valid and import still fails, contact support.
+</Note>
+
+#### Deploying and Aliasing
+
+You can deploy your app with [ZEIT Now](/docs/v2/introduction) once the domain has been successfully added to your account.
+
+By setting a production alias from your projects' **Domains** dashboard, you will be able to use the following command with [Now CLI](/download):
+
+<Snippet dark text="now --prod" />
+<Caption>Deploying and aliasing a deployment with Now CLI.</Caption>
+
+This command will deploy your project and alias it to the production domain that you have setup.
+
+For more information on aliasing your deployments, you can read the [aliasing documentation](/docs/v2/custom-domains#deploying-with-your-domain).
+
+## Transferring Out
+
+If you want to transfer your domain from ZEIT to an external registrar, you can do so by following the steps below.
+
+### Step 1: Checking That Your Domain Can Be Transferred
+
+#### Has the domain been registered with ZEIT for 60 days?
+
+[ICANN](https://www.icann.org/) rules state that a domain must have been held by the same registrar for 60 days before it can be transferred. This includes both cases where the domain was registered with ZEIT originally and where it has been transferred into ZEIT.
+
+If you would like to view further information on [ICANN](https://www.icann.org/) rules and commonly asked questions surrounding them, you can do so [in the ICANN knowledge base](https://www.icann.org/resources/pages/name-holder-faqs-2017-10-10-en).
+
+### Step 2: Contact Support
+
+Once you have verified your domain is eligible for transfer, you should contact the support team at [support@zeit.co](mailto:support@zeit.co). Once you have reached out, a member of the support team will first verify your identity and ownership of the domain before providing you with an [authorization code](https://www.icann.org/resources/pages/auth-2013-05-03-en).
+
+Your authorization token is used by your new domain registrar to confirm your identity and process a domain transfer to them from ZEIT.
+
+### Step 3: Transfer the Domain
+
+After receiving the authorization code, you may provide it to your new domain registrar who will then be able to process the transfer in for you. Your new domain registrar should provide you with the steps for completing your transfer in, this is commonly done in a user control panel.
+
+Domain name transfers are usually completed very quickly, often within minutes, however, in some situations this can take longer for which you should speak with your new domain registrar about.
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

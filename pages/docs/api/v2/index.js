@@ -1,9 +1,10 @@
 import { Component } from 'react'
 import { MDXProvider } from '@mdx-js/tag'
 import { withRouter } from 'next/router'
+import { useAmp } from 'next/amp'
 import Link from 'next/link'
 import debounce from 'lodash.debounce'
-import { API_USER_TOKEN_TESTING, HEADER_HEIGHT } from '~/lib/constants'
+import { HEADER_HEIGHT } from '~/lib/constants'
 
 import * as bodyLocker from '~/lib/utils/body-locker'
 import Layout from '~/components/layout/layout'
@@ -22,10 +23,12 @@ import Select from '~/components/select'
 import Sidebar from '~/components/layout/sidebar'
 import ToggleGroup, { ToggleItem } from '~/components/toggle-group'
 import withPermalink from '~/lib/api/with-permalink'
-import fetchAPI from '~/lib/fetch-api'
-import { getToken } from '~/lib/authenticate'
+import HR from '~/components/text/hr'
+import { FooterFeedback } from '~/components/feedback-input'
 
 import ApiDocs from './api-docs-mdx/index.mdx'
+
+const NonAmpOnly = ({ children }) => (useAmp() ? null : children)
 
 const debouncedChangeHash = debounce(changeHash, 200)
 
@@ -161,6 +164,7 @@ class APIPage extends Component {
                 <Sidebar
                   active={navigationActive}
                   innerRef={this.handleSidebarRef}
+                  fixed
                 >
                   <div className="toggle-group-wrapper">
                     <ToggleGroup>
@@ -199,8 +203,8 @@ class APIPage extends Component {
                       defaultValue={version}
                       onChange={this.handleVersionChange}
                     >
-                      <option value="v1">v1</option>
-                      <option value="v2">v2 (Latest)</option>
+                      <option value="v1">1.0</option>
+                      <option value="v2">2.0 (Latest)</option>
                     </Select>
                   </div>
                   <DocsIndex
@@ -291,6 +295,12 @@ class APIPage extends Component {
                       })}
                     </div>
                   </div>
+                  <NonAmpOnly>
+                    <>
+                      <HR />
+                      <FooterFeedback />
+                    </>
+                  </NonAmpOnly>
                 </Content>
               </Main>
             )}
@@ -303,12 +313,20 @@ class APIPage extends Component {
               padding: 0;
             }
 
-            .category-wrapper {
+            .category-wrapper:not(:first-child) {
               padding: 40px 0;
+            }
+
+            .category-wrapper:first-child :global(h1) {
+              margin-top: 0;
             }
 
             .category-wrapper:not(:last-child) {
               border-bottom: 1px solid #eaeaea;
+            }
+
+            .category-wrapper:last-child {
+              padding-bottom: 0;
             }
 
             .category-wrapper,
@@ -317,13 +335,18 @@ class APIPage extends Component {
               position: relative;
             }
 
+            .entry-wrapper > :global(*:last-child) {
+              margin-bottom: 0;
+            }
+
             span {
               position: absolute;
               top: -${HEADER_HEIGHT + 24}px;
             }
 
             .platform-select-title {
-              font-size: 14px;
+              font-size: var(--font-size-primary);
+              line-height: var(--line-height-primary);
               font-weight: bold;
               margin-bottom: 16px;
               margin-top: 0;

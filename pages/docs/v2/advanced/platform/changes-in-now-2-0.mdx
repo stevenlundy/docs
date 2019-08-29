@@ -1,0 +1,309 @@
+import Doc from '~/components/layout/docs'
+import { GenericLink } from '~/components/text/link'
+import { Image } from '~/components/media'
+import Snippet from '~/components/snippet'
+import Caption from '~/components/text/caption'
+import { InlineCode } from '~/components/text/code'
+import Card from '~/components/card'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Changes in ZEIT Now 2.0',
+  description:
+    "See what's changed in the latest iteration of the ZEIT Now Platform.",
+  editUrl: 'pages/docs/v2/advanced/platform/changes-in-now-2-0.mdx',
+  lastEdited: '2019-08-22T10:47:21.000Z'
+}
+
+The ZEIT Now Platform 2.0 simplifies and streamlines the deployment of static and serverless workloads. In this guide we will walk you through the key differences between Now 1.0 and 2.0, and the improvements this brings.
+
+## Compared to 1.0:
+
+- There are **no** **deployment types**. A single deployment can have multiple static and [dynamic entrypoints](/docs/v2/advanced/concepts/lambdas), even written in multiple different [languages](#migration-examples)
+- Your app's source code can be structured as a **monorepo**. No need to think in terms of microservices, multiple repositories, composition via YAML files, services meshes, etc.
+- Multiple **parallel builds** can be specified to compile source into [static files or serverless Lambdas](/docs/v2/advanced/builders)
+
+Migrating your projects to 2.0 will result in:
+
+- Massively improved reliability and scalability
+- Much lower prices
+- Faster build times due to **build parallelization** and **build deduplication analysis**
+- Faster cold boot times due to **increased granularity**
+
+<Note>
+  Now 1.0 is fully maintained and supported. We will only announce a deprecation
+  date once we have ensured all our customers workloads are migrated and the
+  tooling is in place for a smooth transition.
+</Note>
+
+## Changes Overview
+
+### Platform Versioning
+
+We have introduced a strict notion of [platform version](/docs/v2/advanced/platform/overview#versioning). All existing users are locked to `1` to ensure there is no negative disruption to existing workflows.
+
+Go to your [user and team settings](/account) to upgrade your account or team to **Latest**. After you do so, all new deployments will always use the most recent version (`2`). This is also the default for all new teams and accounts.
+
+If you want to retain certain projects on 1.0, or pin your platform version, we recommend updating your `now.json` accordingly before you make the switch:
+
+```json
+{
+  "version": 1
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that instructs Now to use
+  version 1.
+</Caption>
+
+For a smooth deployment experience in the future, we recommend all upgraded projects to explicitly set the `version` field (e.g.: to `2`). Our clients and GitHub bots will remind you as well.
+
+### Free Tier
+
+The free tier was previously named `OSS`. It's now known as `Free` and it doesn't imply a public visibility of source code nor logs. That feature needs to be manually triggered by adding the following code to your `now.json` file:
+
+```json
+{
+  "public": true
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that instructs Now to make
+  the deployment source code and logs public.
+</Caption>
+
+### Free seats
+
+- The owner of a team no longer pays for a seat
+- Teams with up to 5 members don't pay for a seat
+- Team seat price has been adjusted
+
+### Reduced prices
+
+The following prices were drastically reduced:
+
+- Cost of compute
+- Cost of DNS and CDN zones
+- Cost of logging (no more storage costs, charged [per-line](/docs/v2/advanced/concepts/lambdas#capabilities-and-limits) and [strictly](/docs/v2/advanced/concepts/lambdas#capabilities-and-limits) ephemeral)
+
+### Fully on-demand
+
+Plans are no longer available for selection. Users on the legacy plans will continue to be on those plans until they are phased out.
+
+The only two subscription types available now are `Free` and `Unlimited`. If you upgrade to the Unlimited plan and are still running 1.0 deployments, they will be billed according to the [prior on-demand plan](/pricing/v1).
+
+### No Types
+
+There is no notion of _types_ of deployments anymore. Previously, deployments could be of types:
+
+- `STATIC`
+- `NPM`
+- `DOCKER`
+
+From now on, the deployment `type` is no longer used and not exposed via the relevant [GET API endpoint](/docs/api/v2#endpoints/deployments/get-a-single-deployment).
+
+This in turn enables:
+
+- Monorepo support
+- Multiple programming languages and frameworks to co-exist
+- Faster cold boot-up times due to refined [entrypoint granularity](/docs/v2/advanced/concepts/lambdas#per-entrypoint-granularity)
+- Faster build times by greater **parallelization** and **deduplication**
+
+## No Daemons
+
+Running a process persistently as a _daemon_ requires a lot of operational overhead, such as setting up readiness checks, health checks and close monitoring.
+
+While 2.0 will not support this as a primitive, we still plan to address the following use-cases directly that our customers typically use processes for:
+
+- Control and sync loops. A series of tasks that execute sequentially to verify or synchronize some remote state.
+- Scheduled jobs. E.g.: a task that needs to run every 50 minutes.
+- Jobs consumed from a queue.
+
+We believe that these use-cases can be modeled and executed on much more effectively by taking full advantage of the serverless paradigm.
+
+To help our customers in the transition, we won't announce a deprecation date for 1.0 until these additional features are generally available.
+
+### No Instances
+
+With Now 2.0 we're removing the notion of a **deployment instance**. There's no need to keep track of them and they just add overhead to the UI and database.
+
+While it's still very useful to think about what happens when an [instance of a container](/docs/v2/advanced/concepts/lambdas/#versus-processes-and-containers) is running or not as it pertains to hot vs cold invocation of [Lambdas](/docs/v2/advanced/concepts/lambdas), attempts to count or enumerate instances in a UI are impractical and not very beneficial to the developer experience.
+
+### No Config Mutability
+
+All static assets and caches are served from our [Global CDN](/docs/v2/advanced/concepts/cdn-and-global-distribution) **by default**. When it comes to code invocation with [Lambdas](/docs/v2/advanced/concepts/lambdas), it makes sense to think about whether the code is executed in a single region or multiple.
+
+We support the [`regions`](/docs/v2/advanced/configuration#regions) parameter in `now.json` to this end. When you make a deployment and Lambdas are produced in the [build steps](/docs/v2/build-step), we deploy them to the specified regions.
+
+<Note hint>
+  For the best Lambda performance, we recommend using the region{' '}
+  <b>closest to your date source</b>.
+</Note>
+
+Due to our **deduplication system** which prevents re-building and re-uploading unnecessarily at any given step, re-deploying code to different regions is now fast and practical.
+
+Mutation is therefore going away, in favor of just changing `now.json` (locally or with a [Pull Request](/docs/v2/advanced/now-for-github)) and creating a new deployment instantly.
+
+### No Singleton Builds
+
+Previously, one could define a global build step or set of steps that run serially upon deployment. This could be done for example with a `build` step in `package.json`.
+
+While effective, this meant constraining a project to serial execution. Serverless, however, allows for massive parallelization.
+
+With Now 2.0, your build steps are specified as a list of `builds` inside `now.json`.
+
+For example, say you want to build 2 sub-projects statically and 2 APIs wrapped as Lambdas:
+
+```json
+{
+  "builds": [
+    { "src": "gatsby-site/package.json", "use": "@now/static-build" },
+    { "src": "react-static/package.json", "use": "@now/static-build" },
+    { "src": "*.go", "use": "@now/go" },
+    { "src": "*.js", "use": "@now/node" }
+  ]
+}
+```
+
+<Caption>
+  An example <InlineCode>now.json</InlineCode> file that instructs Now on how to
+  build the different parts of your app.
+</Caption>
+
+The build process will happen in parallel and the deployment shows all the resulting output files and Lambdas.
+
+### Index behavior changes
+
+Previously, if **a single file** was deployed (with any name, like `file.jpg`), our indexer would make it accessible as both `/` and `/file.jpg`.
+
+While this is desirable for the purpose of quickly sharing a static file, e.g.:
+
+<Snippet dark text="now file.jpg" />
+
+<Caption>
+  Deploying a single file with the <InlineCode>now</InlineCode> command.
+</Caption>
+
+We have decided to make this logic happen on the client side, instead of the server side. [Now CLI](/download) will define an item in `routes` that also maps `/` as a special case.
+
+Furthermore, we have redesigned the directory listing style and added a new icon to represent [Lambdas](/docs/v2/advanced/concepts/lambdas):
+
+<Image src={`https://assets.zeit.co/image/upload/v1541620549/front/docs/v2-upgrade/lambda-icon.png`}
+width={1456/2}
+height={962/2}
+/>
+<Caption>The new Lambda icon shows in the source view of deployments to show which files are Lambdas.</Caption>
+
+### Universal Now, in the Cloud
+
+The client-side features for multi-cloud access on [Now CLI](/download) are effectively deprecated, in order to move them to the server side.
+
+During early testing of that feature, we found serious user experience and security challenges.
+
+Instead, we will address this user need by:
+
+- Allowing for fine-grained access into the resources we provision with the [cloud infrastructure providers](/docs/v2/advanced/platform/regions-and-providers)
+- Important features for interoperability such as VPC support
+- Transparent and clear documentation about [regions and providers](/docs/v2/advanced/platform/regions-and-providers)
+
+### `.nowignore`
+
+Previously, the CLI had to implement complicated logic to determine whether to use `.npmignore`, `.dockerignore` or fall back to `.gitignore` if present, according to deployment type when uploading your [source files](/docs/v2/deployments/builds#sources-and-outputs).
+
+Because deployment types are gone, we have simplified the logic to narrow down to: if there's a `.nowignore` file, it will be used to determine what files to include or exclude.
+
+The `.nowignore` spec is the exact same as `.gitignore`.
+
+```
+README.md
+```
+
+<Caption>
+  An example <InlineCode>.nowignore</InlineCode> file that instructs Now not to
+  upload the <InlineCode>README.md</InlineCode> file.
+</Caption>
+
+The `files` property in `now.json` is similarly deprecated, as to retain a singular source of truth for what files to include or exclude.
+
+### Configuration (`now.json`)
+
+**Additions:**
+
+- [`version`](/docs/v2/advanced/platform/overview#versioning) to specify the platform version the deployment is known to work with
+- [`routes`](/docs/v2/advanced/configuration#routes) to define routes and rewrites
+- [`builds`](/docs/v2/advanced/builders) to define parallel build tasks
+
+**Removals:**
+
+- ~~`sessionAffinity`~~ is no longer applicable due to the focus on statelessness. The current behavior is also aligned with the previous default affinity mode
+- ~~`type`~~ is no longer necessary since there are no types or modes going forward
+- ~~`engines`~~ is no longer applicable (belonged to the `NPM` deployment type)
+- ~~`registryAuthToken`~~ is no longer applicable (belonged to the `NPM` deployment type)
+- ~~`files`~~ is removed in favor of the `.nowignore` file
+- ~~`dotenv`~~ is removed in favor of [defining them directly inside the deployment configuration](/docs/v2/deployments/environment-variables-and-secrets/#from-now.json)
+
+Additionally, some environment variables keys are now reserved. You can see a full list of these variables in the [Environment Variables](/docs/v2/serverless-functions/env-and-secrets) document.
+
+### Environment Variables
+
+**Removals**
+
+- ~~`NOW`~~ is no longer assigned. Please use [NOW_REGION](/docs/v2/serverless-functions/env-and-secrets) variable as a confirmation method instead
+- ~~`NOW_URL`~~ is no longer assigned. Please use the `x-now-deployment-url` HTTP Request Header instead
+
+### CLI
+
+**Removals:**
+
+- ~~`--links`~~ is no longer supported when deploying. The feature had very niche use-cases and was limited in effectiveness
+- ~~`now scale`~~ is no longer necessary for 2.0 and deprecated. If you wish to change the regions your Lambdas get deployed to, use the [`regions`](/docs/v2/advanced/configuration#regions) config and re-deploy
+- Custom providers are removed, as we shift the strategy to executing the cross-provider logic from our backend instead
+
+## Migration Examples
+
+<Card
+  title="Take a look at examples from Now version 2.0"
+  href="https://github.com/zeit/now-examples"
+>
+  Get started with moving your applications to Serverless.
+</Card>
+
+## Upgrade Tips
+
+<Note label="Tip">
+  if you are unsure about how to migrate you can ask on our{' '}
+  <GenericLink href="/chat">community support forums</GenericLink>.
+</Note>
+
+### Ask for help
+
+Our [support team and community](/chat) are ready to answer and welcome all your questions. Feel free to inquire about anything from general architecture to design, implementation, billing and future plans.
+
+## Read More
+
+<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
+  Deploy any of your applications with ZEIT Now.
+</Card>
+
+<Card
+  title="Aliasing"
+  href="/docs/v2/custom-domains#deploying-with-your-domain"
+>
+  Learn more about aliasing to your deployments.
+</Card>
+
+<Card title="www. Redirect" href="/guides/redirect-from-www">
+  Create a redirect from the www. subdomain to your naked domain.
+</Card>
+
+<Card title="More Guides" href="/guides">
+  See more guides that help you move forward with your projects and deployments.
+</Card>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

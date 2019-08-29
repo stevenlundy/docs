@@ -1,30 +1,26 @@
-import { FONT_FAMILY_SANS } from '~/lib/css-config'
-import PropTypes from 'prop-types'
 import React from 'react'
+import cn from 'classnames'
 
-export const Menu = (
-  {
-    children,
-    width = null,
-    minWidth = null,
-    tipOffset = null,
-    tip = true,
-    scrollable
-  },
-  { darkBg = false }
-) => {
-  const classes = ['popover']
-
-  if (darkBg) {
-    classes.push('dark')
-  }
+export const Menu = ({
+  children,
+  width = null,
+  marginTop = null,
+  minWidth = null,
+  noPadding = false,
+  tipDirection = 'up',
+  tipOffset = null,
+  tip = true,
+  scrollable,
+  innerRef
+}) => {
+  const classes = ['popover', tipDirection]
 
   if (scrollable) {
     classes.push('scrollable')
   }
 
   return (
-    <div className={classes.join(' ')}>
+    <div className={classes.join(' ')} ref={innerRef}>
       {tip && (
         <div
           className="triangle"
@@ -34,12 +30,10 @@ export const Menu = (
               : null
           }
         >
-          <Triangle />
+          <Triangle direction={tipDirection} />
         </div>
       )}
-      <div style={{ width, minWidth }} className="menu">
-        {children}
-      </div>
+      <div className="menu">{children}</div>
       <style jsx>
         {`
           .popover {
@@ -55,28 +49,33 @@ export const Menu = (
             position: absolute;
           }
 
-          .menu {
-            margin-top: 11px;
-            color: #000;
-            display: inline-block;
-            width: 200px;
-            text-align: left;
-            background: #fff;
-            box-shadow: 0 18px 30px 0 rgba(0, 0, 0, 0.12);
-            border: 1px solid #eee;
-            border-radius: 3px;
-            padding: 8px 0;
+          .down .triangle {
+            bottom: -11px;
           }
 
-          .dark .menu {
-            border-color: #333333;
-            box-shadow: none;
-            background: #000;
+          .menu {
+            margin-top: ${marginTop ? marginTop + 'px' : '11px'};
+            color: var(--geist-foreground);
+            display: inline-block;
+            text-align: left;
+            background: var(--geist-background);
+            width: ${width ? width + 'px' : 'auto'};
+            min-width: ${minWidth ? minWidth + 'px' : 'auto'};
+            max-width: 100%;
+            box-shadow: var(--shadow-medium);
+            border-radius: 5px;
+            padding: ${noPadding ? '0' : '8px 0'};
           }
 
           .scrollable .menu {
             overflow-y: auto;
             max-height: calc(100vh - 140px);
+          }
+
+          @media (max-width: 768px) {
+            .menu {
+              width: auto;
+            }
           }
         `}
       </style>
@@ -84,20 +83,21 @@ export const Menu = (
   )
 }
 
-Menu.contextTypes = {
-  darkBg: PropTypes.bool
-}
-
-export const Item = (
-  { icon, active = false, children },
-  { darkBg = false }
-) => (
+export const Item = ({
+  icon,
+  disabled = false,
+  active = false,
+  children,
+  fullWidth = false,
+  noPadding = false,
+  separated = false
+}) => (
   <div
-    className={`
-    item
-    ${darkBg ? 'dark' : ''}
-    ${active ? 'active' : ''}
-  `}
+    className={cn('item', {
+      active,
+      disabled,
+      separated: separated
+    })}
   >
     {children}
     {icon ? <div className="icon">{icon}</div> : null}
@@ -115,110 +115,134 @@ export const Item = (
 
         .item {
           position: relative;
-          font-size: 14px;
-          color: #999;
-          font-family: ${FONT_FAMILY_SANS};
-          line-height: 17px;
-          padding: 8px 20px;
+          font-size: var(--font-size-small);
+          line-height: var(--line-height-small);
+          color: var(--accents-3);
+          font-family: var(--font-sans);
+          line-height: 20px;
+          max-width: ${fullWidth ? '100%' : '200px'};
+          padding: ${noPadding ? '0' : '8px 20px'};
         }
 
-        .item :global(g) {
-          transition: all 0.2s ease;
-          stroke: #999;
+        .item.disabled {
+          cursor: not-allowed;
+          background: var(--accents-1);
+          user-select: none;
+        }
+
+        .item.separated {
+          position: relative;
+          padding-top: 10px;
+          margin-top: 10px;
+          padding-bottom: 10px;
+          margin-bottom: 10px;
+        }
+
+        .item.separated:before,
+        .item.separated:after {
+          content: '';
+          width: 150%;
+          height: 1px;
+          background-color: var(--accents-2);
+          position: absolute;
+        }
+        .item.separated:before {
+          left: -19px; /* size of the padding */
+          top: 0;
+        }
+        .item.separated:after {
+          left: -19px; /* size of the padding */
+          bottom: 0;
+        }
+
+        .item:first-child :global(a) {
+          padding-top: 0;
+        }
+
+        .item:last-child :global(a) {
+          padding-bottom: 0;
+        }
+
+        .item:not(.disabled) :global(g),
+        .item:not(.disabled) :global(path),
+        .item:not(.disabled) :global(circle) {
+          transition: stroke 0.2s ease, fill 0.2s ease;
+          stroke: var(--accents-3);
           opacity: 1;
         }
 
-        .item:hover :global(g) {
-          stroke: #000;
+        .item :global(svg.label) {
+          margin-left: 8px;
         }
 
-        /* change color on svg icons */
-        .dark.item:hover :global(g) {
-          stroke: #fff;
+        .item :global(svg.label path) {
+          stroke: none !important;
         }
 
-        .item > :global(a) {
-          color: #999;
+        .item :global(path:not(.no-fill):not(.label)) {
+          fill: var(--accents-5);
+        }
+        .item:hover :global(path:not(.no-fill):not(.label)) {
+          fill: var(--geist-foreground);
+        }
+
+        .item:not(.disabled):hover :global(g),
+        .item:not(.disabled):hover :global(path),
+        .item:not(.disabled):hover :global(circle) {
+          stroke: var(--geist-foreground);
+        }
+
+        .item > :global(a),
+        .item > :global(span > a) {
+          display: flex;
+          align-items: center;
+          color: #666;
           text-decoration: none;
-          display: block;
-          transition: all 0.2s ease;
-          margin: -8px -20px;
-          padding: 8px 20px;
+          transition: color 0.2s ease;
+          margin: ${noPadding ? '0' : '-8px -20px'};
+          padding: ${noPadding ? '8px 0' : '8px 20px'};
         }
 
-        .item.active {
-          color: #000;
-        }
-
-        .dark.item.active {
-          color: #fff;
+        .item.active > :global(a) {
+          color: var(--geist-foreground);
         }
 
         .item > :global(a:hover),
         .item.active > :global(a) {
-          color: #000;
+          color: var(--geist-foreground);
         }
         .item > :global(.icon + a:hover),
         .item.active > :global(.icon + a) {
-          color: #000;
-        }
-        .dark.item > :global(a:hover),
-        .dark.item.active > :global(a) {
-          color: #fff;
-        }
-        .dark.item > :global(.icon + a:hover),
-        .dark.item.active > :global(.icon + a) {
-          color: #fff;
+          color: var(--geist-foreground);
         }
       `}
     </style>
   </div>
 )
 
-Item.contextTypes = {
-  darkBg: PropTypes.bool
-}
-
-export const Divider = (props, { darkBg = false }) => (
-  <div className={`line ${darkBg ? 'dark' : ''}`}>
+export const Divider = () => (
+  <div className="line">
     <style jsx>
       {`
         .line {
-          border-top: 1px solid #eaeaea;
+          border-top: 1px solid var(--accents-2);
           margin: 8px 0;
-        }
-
-        .dark.line {
-          border-top-color: #333;
         }
       `}
     </style>
   </div>
 )
 
-Divider.contextTypes = {
-  darkBg: PropTypes.bool
-}
-
-const Triangle = (props, { darkBg = false }) => (
-  <svg
-    width="24"
-    height="12"
-    viewBox="191 84 24 12"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+const Triangle = ({ direction }) => (
+  <svg width="24" height="12" viewBox="0 0 24 12">
     <path
-      fill={darkBg ? '#000' : '#fff'}
+      fill="var(--geist-background)"
       strokeWidth="1px"
-      stroke={darkBg ? '#333' : '#eee'}
+      stroke={'var(--dropdown-triangle-stroke)'}
       fillRule="evenodd"
-      d="M215 96l-12-12-12 12"
+      d={direction === 'down' ? 'M20 0l-8 8-12-12' : 'M20 12l-8-8-12 12'}
     />
   </svg>
 )
-
-Triangle.contextTypes = {
-  darkBg: PropTypes.bool
-}
 
 export default Menu

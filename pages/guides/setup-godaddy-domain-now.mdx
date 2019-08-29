@@ -1,11 +1,9 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import { Image } from '~/components/media'
 import Caption from '~/components/text/caption'
 import { GenericLink } from '~/components/text/link'
-import Note from '~/components/text/note'
-import Card from '~/components/card'
 
 export const meta = {
   title: 'Setup a GoDaddy Domain with ZEIT Now',
@@ -15,10 +13,10 @@ export const meta = {
   authors: ['timothy'],
   url: '/guides/setup-godaddy-domain-now',
   editUrl: 'pages/guides/setup-godaddy-domain-now.mdx',
-  lastEdited: '2019-02-07T04:14:32.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
-With Now, you can [assign a domain name](/docs/v2/domains-and-aliases/aliasing-a-deployment/) to any of your [deployments](/docs/v2/deployments/basics/) by aliasing. If you have a domain registered on another service, such as GoDaddy, you must first [point your domain to Now](/docs/v2/domains-and-aliases/zero-downtime-domain-migration/) in order to alias your deployments.
+With Now, you can [assign a domain name](/docs/v2/custom-domains#deploying-with-your-domain) to any of your [deployments](/docs/v2/deployments/basics/) by aliasing. If you have a domain registered on another service, such as GoDaddy, you must first [point your domain to Now](/guides/zero-downtime-domain-migration/) in order to alias your deployments.
 
 This guide will cover **how to point your GoDaddy registered domain towards Now** in order to alias your deployments to that domain.
 
@@ -28,7 +26,7 @@ The first step of pointing an external domain to Now is to add your domain to yo
 
 To add a domain with [Now CLI](/docs/v2/getting-started/installation#now-cli), use the following command in your terminal:
 
-<TerminalInput>{`now domains add <domain>`}</TerminalInput>
+<Snippet dark text="now domains add <domain>" />
 
 Once you have added the domain, Now CLI will present you with some information about verifying it.
 
@@ -48,9 +46,9 @@ This is the fastest method of getting started with your domain on Now. When usin
 
 When using this method, however, if the domain was previously pointing to another host and if you have not yet configured Now for your domain, e.g. generating SSL certificates and aliasing; when it does point to Now, it will invoke downtime until the configuration is done. To avoid this, use [the `TXT` verification method](#verifying-with-a-txt-record).
 
-If you want to verify with nameservers, you must use the intended set of nameservers given to you when you [added the domain with Now CLI](/docs/v2/domains-and-aliases/adding-a-domain/#adding-a-domain). If you need to be reminded of these nameservers, you can use the [following command](/docs/v2/domains-and-aliases/adding-a-domain/#inspecting-a-domain):
+If you want to verify with nameservers, you must use the intended set of nameservers given to you when you [added the domain with Now CLI](/docs/v2/custom-domains). If you need to be reminded of these nameservers, you can use the [following command](/docs/v2/custom-domains):
 
-<TerminalInput>{`now domains inspect <domain>`}</TerminalInput>
+<Snippet dark text="now domains inspect <domain>" />
 
 With the intended set of nameservers, you shall need to apply them to your domain through the GoDaddy through their account dashboard and clicking through to manage your domain.
 
@@ -70,15 +68,15 @@ Apply the nameservers you received from adding your domain or from the inspect c
 
 After GoDaddy has propagated the changed DNS for your domain, your domain is ready to be verified. ZEIT will automatically check the domain periodically for verification, though if you want to verify it yourself, use the following command:
 
-<TerminalInput>{`now domains verify <domain>`}</TerminalInput>
+<Snippet dark text="now domains verify <domain>" />
 
 ### Verifying with a TXT Record
 
-This method is used when you want to verify your domain but you do not yet want to point to Now, for example if you need to configure Now beforehand in order for [zero-downtime](https://zeit.co/docs/v2/domains-and-aliases/zero-downtime-domain-migration/).
+This method is used when you want to verify your domain but you do not yet want to point to Now, for example if you need to configure Now beforehand in order for [zero-downtime](/guides/zero-downtime-domain-migration/).
 
 You can add the TXT record by going to your GoDaddy domains dashboard, as in the [nameservers method](#verifying-with-nameservers), and clicking on `DNS` on the domain you want to migrate, then clicking add in the "Records" section.
 
-Select `TXT` as the record type to add, `_now` as the host, and the value you were given for the record when adding your domain or when using the [`now domains inspect <domain>` Now CLI command](/docs/v2/domains-and-aliases/adding-a-domain/#inspecting-a-domain).
+Select `TXT` as the record type to add, `_now` as the host, and the value you were given for the record when adding your domain or when using the [`now domains inspect <domain>` Now CLI command](/docs/v2/custom-domains).
 
 <Image
   src="https://assets.zeit.co/image/upload/v1548370520/front/guides/godaddy-migration/godaddy-dns-add.png"
@@ -90,7 +88,7 @@ Select `TXT` as the record type to add, `_now` as the host, and the value you we
 
 Once you have added the TXT record, your domain can be verified. ZEIT will periodically check your domain to see if it is verified, but if you do not want to wait and want to start using your domain with Now immediately, use the following command to force a verification check:
 
-<TerminalInput>{`now domains verify <domain>`}</TerminalInput>
+<Snippet dark text="now domains verify <domain>" />
 
 <Image
   src="https://assets.zeit.co/image/upload/v1548370520/front/guides/godaddy-migration/now-cli-verify-domain.png"
@@ -110,23 +108,37 @@ Whether you are matching a previous configuration for your domain for a zero-dow
 
 For example, adding a set of Gmail MX records with the `now dns add` command:
 
-<TerminalInput>{`now dns add <domain> @ MX ASPMX.L.GOOGLE.COM 1
-now dns add <domain> @ MX ALT1.ASPMX.L.GOOGLE.COM 5
-now dns add <domain> @ MX ALT2.ASPMX.L.GOOGLE.COM 5
-now dns add <domain> @ MX ALT3.ASPMX.L.GOOGLE.COM 10
-now dns add <domain> @ MX ALT4.ASPMX.L.GOOGLE.COM 10`}</TerminalInput>
+<Snippet
+  dark
+  text="now dns add <domain> @ MX ASPMX.L.GOOGLE.COM 1 && now dns add <domain> @ MX ALT1.ASPMX.L.GOOGLE.COM 5 && now dns add <domain> @ MX ALT2.ASPMX.L.GOOGLE.COM 5 && now dns add <domain> @ MX ALT3.ASPMX.L.GOOGLE.COM 10 && now dns add <domain> @ MX ALT4.ASPMX.L.GOOGLE.COM 10"
+/>
 
-[Read more about `now dns` to learn about the format of the command](/docs/v2/domains-and-aliases/dns/).
+[Read more about `now dns` to learn about the format of the command](/docs/v2/advanced/domains/dns/).
 
 ### Aliasing a Deployment
 
-ZEIT Now is dedicated to making deployment easy. If you have not yet deployed an application, take a look at the [Deployment Basics](/docs/v2/deployments/basics) documentation or at some other [guides](/guides) or [examples](/examples) to get started. The aliasing process will also generate a free SSL certificate for your domain.
+ZEIT Now is dedicated to making deployment easy. If you have not yet deployed an app, take a look at the [Deployment Basics](/docs/v2/deployments/basics) documentation or at some other [guides](/guides) or [examples](/examples) to get started. The aliasing process will also generate a free SSL certificate for your domain.
 
-When you are ready to deploy and alias, using the [`alias`](/docs/v2/deployments/configuration#alias) property containing your domain, within in your [`now.json`](/docs/v2/deployments/configuration), you can deploy and alias to your domain with one command:
+When you are ready to deploy and alias, using the [`alias`](/docs/v2/advanced/configuration#alias) property containing your domain, within your [`now.json`](/docs/v2/advanced/configuration) file.
 
-<TerminalInput>now --target production</TerminalInput>
+```json
+{
+  "alias": "www.yourdomain.com"
+}
+```
 
-We highly recommend using [the Now for GitHub app](/docs/v2/integrations/now-for-github/) coupled with the same [`alias` configuration option](/docs/v2/deployments/configuration/#alias) which will allow your application to be deployed on push to your GitHub repository and aliased automatically when merged to the default branch.
+<Caption>
+  Adding an{' '}
+  <GenericLink href="/docs/v2/advanced/configuration/#alias">alias</GenericLink>{' '}
+  to your project's <InlineCode>now.json</InlineCode> file.
+</Caption>
+
+You can deploy and set up an alias to your domain with one command:
+
+<Snippet dark text="now --prod" />
+<Caption>Deploying a project to a production alias.</Caption>
+
+We highly recommend using either the [Now for GitHub](/docs/v2/advanced/now-for-github/) or [Now for GitLab](/docs/v2/advanced/now-for-gitlab/) apps coupled with the same [`alias` configuration option](/docs/v2/advanced/configuration/#alias) which will allow your app to be deployed on push to your GitHub repository and aliased automatically when merged to the default branch.
 
 ## Step 3: Pointing to Now
 
@@ -144,27 +156,12 @@ To set your nameservers, on the DNS management page as you added the TXT record,
 />
 <Caption style={{marginTop: '-48px'}}>Changing nameservers with GoDaddy's DNS management settings.</Caption>
 
-Once GoDaddy propagates the changes to the domain with the updated nameservers, your domain will then point to the [application you deployed](#aliasing-a-deployment) before.
+Once GoDaddy propagates the changes to the domain with the updated nameservers, your domain will then point to the [app you deployed](#aliasing-a-deployment) before.
 
-That's all. Your domain is successfully migrated to using ZEIT DNS and pointing to your Now deployed application.
-
-## Read More
-
-For more information on how you can extend your usage of Now, read the following guides and documentation:
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
+That's all. Your domain is successfully migrated to using ZEIT DNS and pointing to your Now deployed app.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

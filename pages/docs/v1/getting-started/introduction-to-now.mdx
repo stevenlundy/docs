@@ -2,9 +2,9 @@ import Doc from '~/components/layout/docs'
 
 import { TerminalInput } from '~/components/text/terminal'
 import { Image } from '~/components/media'
-import { GenericLink } from '~/components/text/link'
 import Caption from '~/components/text/caption'
 import Now from '~/components/text/now'
+import { InlineCode } from '~/components/text/code'
 
 export const meta = {
   title: 'Introduction to Now',
@@ -12,7 +12,7 @@ export const meta = {
     'A quick-start guide to deploying your dynamic and static apps with Now and what you can do with your deployments.',
   date: '30 July 2017',
   editUrl: 'pages/docs/v1/getting-started/introduction-to-now.mdx',
-  lastEdited: '2019-03-05T01:21:32.000Z'
+  lastEdited: '2019-08-06T15:31:27.000Z'
 }
 
 With Now's help, you can deploy and publish any kind of web application (or service) in
@@ -23,36 +23,21 @@ domain name of your choice, and configure an SSL certificate.
 
 ## Step 1: Getting Now
 
-The best way to get started with Now is by downloading [Now Desktop](https://zeit.co/download), a minimal application
-that runs in the menu bar and comes with the following features:
-
-- Installs [Now CLI](https://zeit.co/download#command-line) and keeps it
-  up to date automatically (the command line interface for interacting with Now).
-- Provides a real-time feed of the activity
-  on your account and teams that you've joined.
-- Lets you deploy any kind of application or file by
-  simply dragging and dropping it onto its menubar icon or selecting
-  it using a file picker.
-
-<Image
-  src={`${process.env.IMAGE_ASSETS_URL}/docs/installation/now-desktop.png`}
-  width={600}
-  height={500}
-/>
-
-<Caption>
-  Now Desktop running on macOS. Now Desktop is also{' '}
-  <GenericLink href="/download">available on Windows</GenericLink>.
-</Caption>
-
-Alternatively, you can install Now CLI to use Now in your terminal, using npm:
+The best way to get started with Now is by [installing Now CLI](/download):
 
 <TerminalInput>npm i -g now</TerminalInput>
+<Caption>
+  Installing Now CLI with npm.
+</Caption>
 
 ## Step 2: Signing Up
 
-Once you've downloaded [Now Desktop](/download) open it and follow the
-instructions.
+Once you've installed Now CLI, use the following command to start the registration process:
+
+<TerminalInput>now login</TerminalInput>
+<Caption>
+  Registering with the <InlineCode>now login</InlineCode> command.
+</Caption>
 
 After you've completed the signup process (you can also use the form
 to log in), a window should open with your account's event feed inside.
@@ -79,7 +64,7 @@ After you have added the content, change to the `my-web-app` directory in your t
 
 <TerminalInput>now</TerminalInput>
 
-​<Now color="#000"/> will deploy the app and give you a URL as shown below:
+<Now color="#000"/> will deploy the app and give you a URL as shown below:
 
 <Image
   src={`${

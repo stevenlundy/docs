@@ -1,0 +1,87 @@
+import Doc from '~/components/layout/docs'
+import Snippet from '~/components/snippet'
+import Caption from '~/components/text/caption'
+import Card from '~/components/card'
+
+export const meta = {
+  title: 'Introduction to ZEIT Now',
+  description:
+    'An introduction to the ZEIT Now platform and how to get started deploying any kind of application.',
+  editUrl: 'pages/docs/v2/introduction.mdx',
+  lastEdited: '2019-08-26T20:39:29.000Z'
+}
+
+ZEIT Now is a cloud platform for **static sites** and **serverless functions**. It enables developers to host websites and web services that **deploy instantly**, **scale automatically**, and requires **no supervision**, all with **no configuration**.
+
+Getting started with Now takes just a few steps and lets you get up and running with your new project in less than a minute.
+
+## Install Now CLI
+
+To deploy with ZEIT Now, you will need to install [Now CLI](/download), a frequently updated, and [open-source](https://github.com/zeit/now), command-line interface.
+
+You can get Now CLI from either npm or Yarn. Using npm, run the following command from your terminal:
+
+<Snippet
+  dark
+  text="npm i -g now"
+/>
+<Caption>Installing Now CLI with npm in the terminal.</Caption>
+
+To verify that you have installed Now CLI, try running `now help` from your terminal.
+
+With Now CLI installed, you can now login using the following command:
+
+<Snippet
+  dark
+  text="now login"
+/>
+<Caption>Login with Now CLI from the terminal.</Caption>
+
+## Creating a Project and Deploying
+
+You can create a new Next.js application with the following command using either npm or Yarn:
+
+<Snippet
+  dark
+  text="npx create-next-app my-next-project"
+/>
+<Caption>Creating a new Next.js project with npm.</Caption>
+
+When your Next.js app is created, all you have to do is move into the directory (with `cd my-next-project` in your terminal) and then deploy your app with a single command in your terminal:
+
+<Snippet
+  dark
+  text="now"
+/>
+<Caption>Deploying your new Next.js project with Now CLI.</Caption>
+
+Once deployed, you will get a unique URL to reference the current version of your project, and a staging alias that is assigned on each deployment to share the latest changes under the same address.
+
+These URLs look like the following:
+
+- Unique Deployment URL: <https://my-next-project-6bnjtkazh.now.sh/>
+- Staging Alias: <https://my-next-project.now-examples.now.sh/>
+
+## Related
+
+For more information on what to do next, we recommend the following articles:
+
+<Card title="Git Integration" href="/docs/v2/git-integration">
+  Learn more about how ZEIT Now integrates with Git to make your workflow
+  easier.
+</Card>
+
+<Card
+  title="Aliasing Your Projects"
+  href="/docs/v2/custom-domains#deploying-with-your-domain"
+>
+  Once deployed, your projects can be aliased to a custom domain or specified
+  name or your choice to give it a primary place to see the latest version of
+  your application.
+</Card>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

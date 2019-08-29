@@ -1,7 +1,7 @@
 import { Component } from 'react'
-import Head from 'next/head'
 import PropTypes from 'prop-types'
-import { FONT_FAMILY_SANS, SYNTAX_HIGHLIGHTING } from '~/lib/css-config'
+import { CSSVariables } from '~/lib/css-config'
+import SyntaxHighlightingStyles from '~/lib/syntax-highlighting-css'
 
 export default class Page extends Component {
   static contextTypes = {
@@ -18,6 +18,7 @@ export default class Page extends Component {
     return (
       <div className="page" itemScope itemType="http://schema.org/WebPage">
         {this.props.children}
+        <CSSVariables />
         <style jsx global>{`
           html {
             height: 100%;
@@ -35,7 +36,7 @@ export default class Page extends Component {
           }
 
           body {
-            font-family: ${FONT_FAMILY_SANS};
+            font-family: var(--font-sans);
             margin: 0;
             min-height: 100%;
             position: relative;
@@ -53,6 +54,7 @@ export default class Page extends Component {
             margin: 0 auto;
             max-width: 100%;
             position: relative;
+            padding-top: 80px;
           }
 
           ::selection {
@@ -61,7 +63,7 @@ export default class Page extends Component {
           }
         `}</style>
         <style jsx global>
-          {SYNTAX_HIGHLIGHTING}
+          {SyntaxHighlightingStyles}
         </style>
       </div>
     )

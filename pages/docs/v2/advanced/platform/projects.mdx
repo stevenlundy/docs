@@ -1,0 +1,82 @@
+import Doc from '~/components/layout/docs'
+import { InlineCode } from '~/components/text/code'
+import Snippet from '~/components/snippet'
+import { GenericLink } from '~/components/text/link'
+import Caption from '~/components/text/caption'
+import Note from '~/components/text/note'
+
+export const meta = {
+  title: 'Projects',
+  description: 'Setting up projects with a list of deployments on ZEIT Now.',
+  editUrl: 'pages/docs/v2/advanced/platform/projects.mdx',
+  lastEdited: '2019-08-21T15:24:05.000Z'
+}
+
+A project is a logical structure that groups deployments and aliases inside of an account or team, based on the name of the project. This structure allows easier tracking and managing of deployments.
+
+The projects structure enables faster locating of [deployments logs, source](/docs/v2/advanced/concepts/special-paths), and [aliases](/docs/v2/custom-domains#deploying-with-your-domain).
+
+## Creating a Project
+
+A project can be created either from the ZEIT account or team dashboard, by using [Now CLI](/download), or automatically when [deploying](/docs/v2/build-step).
+
+### 1. From the Dashboard
+
+Simply visit [the ZEIT dashboard](/dashboard)(optionally selecting a team from the team picker), then click on the "Projects" link in the dashboard navigation.
+
+Then, you can create a project by just giving it a name.
+
+### 2. With Now CLI
+
+You can create project by just typing the following command:
+
+<Snippet dark text="now projects add <your-project-name>" />
+<Caption>Creating a project with <GenericLink href="/now">Now CLI</GenericLink>.</Caption>
+
+<Note>
+  You need to download the latest version of Now CLI in order to run the above
+  command.
+</Note>
+
+### 3. Automatic Project Creation
+
+This is simplest way to create a project as it does not require any action from the user. A project will automatically be created when making a deployment using the [defined name](/docs/v2/advanced/concepts/urls#deployment-name).
+
+(To select a project for a deployment, check the following section)
+
+## Selecting an Existing Project for a Deployment
+
+When [deploying an app](/docs/v2/build-step), you can select an existing project for it. To do this, either:
+
+### 1. Select the Project from Now CLI
+
+Use the `--name` option to mention the project name as follows:
+
+<Snippet dark text="now --name <your-project-name>" />
+<Caption>Deploying the current directory with Now CLI and <InlineCode>--name</InlineCode> option.</Caption>
+
+### 2. Automatic Project Selection
+
+If you didn't specify a project name explicitly via one of the above methods, we try to select a project automatically based on following rules:
+
+- If this is GitHub deployment, we use the GitHub repo name as the project
+- If this is a [Now CLI](/download) based deployment, we use the directory name of your app as the project
+- If this is a file or a set of files, we use the `files` project
+
+## Deleting a Project
+
+You can remove a project and all of the deployments contained within it with the following [Now CLI](/download) command:
+
+<Snippet dark text="now projects rm <your-project-name>" />
+
+<Note alert label="Note">
+  This will also delete the deployments from the project. If you have any
+  deployments that are aliased and do not want them to be removed, make sure to
+  deploy them under a different project and alias them there first.
+</Note>
+
+export default ({ children }) => <Doc meta={meta}>{children}</Doc>
+
+export const config = {
+  amp: 'hybrid'
+}

@@ -1,22 +1,21 @@
 import Guide from '~/components/layout/guide'
-import { TerminalInput } from '~/components/text/terminal'
+import Snippet from '~/components/snippet'
 import { InlineCode } from '~/components/text/code'
 import Caption from '~/components/text/caption'
-import Card from '~/components/card'
 
 export const meta = {
-  title: 'Creating and Deploying a VuePress project with Now',
-  description: 'How to deploy your VuePress application to Now',
+  title: 'Creating and Deploying a VuePress App with ZEIT Now',
+  description: 'Create your VuePress app and deploy it with ZEIT Now.',
   published: '2019-01-26T03:00:00.860Z',
   authors: ['unicodeveloper'],
   url: '/guides/deploying-vuepress-to-now',
   editUrl: 'pages/guides/deploying-vuepress-to-now.mdx',
-  lastEdited: '2019-05-01T00:10:23.000Z'
+  lastEdited: '2019-08-23T14:21:42.000Z'
 }
 
 VuePress is a vue-powered static generator. It is used for generating static sites with a focus on writing.
 
-This guide will cover how to create and deploy a VuePress application to ZEIT Now.
+This guide will cover how to create and deploy a VuePress app to ZEIT Now.
 
 Already have a VuePress project? [Skip to deploying](#step-3:-deploy-vuepress-with-now)!
 
@@ -24,11 +23,11 @@ Already have a VuePress project? [Skip to deploying](#step-3:-deploy-vuepress-wi
 
 The first step is to create a project and `cd` into it via your terminal.
 
-<TerminalInput>mkdir vuepress-project && cd vuepress-project</TerminalInput>
+<Snippet dark text="mkdir vuepress-project && cd vuepress-project" />
 
-Next, install VuePress as a [local dev dependency](https://yarnpkg.com/en/docs/usage). Use the following command:
+Next, install VuePress as a [local dev dependency](https://docs.npmjs.com/specifying-dependencies-and-devdependencies-in-a-package-json-file). Use the following command:
 
-<TerminalInput>yarn add --dev vuepress</TerminalInput>
+<Snippet dark text="npm i -D vuepress" />
 
 Once the dependencies are installed, create a `README.md` with the following contents:
 
@@ -58,7 +57,8 @@ module.exports = {
   description: 'A simple VuePress project deployed with ZEIT Now.',
   themeConfig: {
     nav: [{ text: 'Home', link: '/' }, { text: 'Guide', link: '/guides/' }]
-  }
+  },
+  dest: 'public'
 }
 ```
 
@@ -66,99 +66,43 @@ module.exports = {
   A <InlineCode>config.js</InlineCode> configuration file.
 </Caption>
 
-Next, add some development scripts to the `package.json` file in the root project directory.
+Next, add both a development and build script to the `package.json` file in the root project directory.
 
 ```js
 {
     ...
     "scripts": {
       "dev": "vuepress dev",
-      "now-dev": "vuepress dev docs --port=$PORT"
+      "build": "vuepress build"
     }
 }
 ```
 
 <Caption>
-  Adding scripts to a <InlineCode>package.json</InlineCode> file.
+  Adding development and build scripts to the{' '}
+  <InlineCode>package.json</InlineCode> file.
 </Caption>
-
-The [`@now/static-build` Builder](/docs/v2/deployments/official-builders/static-build-now-static-build/#local-development) supports a custom `now-dev` script that allows you to define [custom development behavior](/docs/v2/development/basics/#custom-development-environment) while gaining extra features that mimic the Now platform locally.
-
-Now, you can run VuePress by [replicating the Now environment locally](/docs/v2/development/basics/) with a single command:
-
-<TerminalInput>now dev</TerminalInput>
 
 ## Step 3: Deploy VuePress with Now
 
-First, we need to create a [`now.json` configuration file](/docs/v2/deployments/configuration) to instruct Now on how to build the project.
+With your project set up, you are ready to deploy your VuePress app with [Now](/now).
 
-Add the following code to the `now.json` file:
+If you have not yet installed Now, you can do so by [installing Now CLI](/download).
 
-```js
-{
-  "version": 2,
-  "name": "vuepress",
-  "builds": [
-    { "src": "package.json", "use": "@now/static-build", "config": { "distDir": ".vuepress/dist" } }
-  ]
-}
-```
+You can deploy your VuePress app with **just a single command**:
+
+<Snippet dark text="now" />
 
 <Caption>
-  A <InlineCode>now.json</InlineCode> configuration file that builds a VuePress
-  project.
+  Deploying the app with the <InlineCode>now</InlineCode> command.
 </Caption>
-
-- The `version` property specifies the [Now 2.0](/now) platform version.
-- The [`builds` property](/docs/v2/deployments/builds) allows Now to use a [Builder](/docs/v2/deployments/builders/overview/) with a specific source target. We used the [`@now/static-build`](/docs/v2/deployments/official-builders/static-build-now-static-build/) to build and deploy a static project. This module takes a Node.js `package.json` file, installs its listed dependencies, executes a configured `now-build` script, and exposes the resulting `dist` directory as the [build output](/docs/v2/deployments/builds/#sources-and-outputs) for serving.
-
-The [`distDir` option](/docs/v2/deployments/official-builders/static-build-now-static-build/#configuring-the-build-output-directory) in the build step instructs Now to identify `.vuepress/dist` as the static folder and build output directory.
-
-Next, we need to add a script in the `package.json` file that specifies the command Now will run to "build" the application in the cloud.
-
-```js
-{
-    "scripts": {
-        ...
-        "build": "vuepress build",
-        "now-build": "npm run build && mv docs/.vuepress/dist dist"
-    }
-}
-```
-
-<Caption>
-  A sample of a <InlineCode>package.json</InlineCode> file with scripts for
-  VuePress and a <InlineCode>now-build</InlineCode> script to instruct Now how
-  to build the application.
-</Caption>
-
-Finally, deploy the app with the [Now CLI](/docs/v2/getting-started/installation#now-cli).
-
-<TerminalInput>now</TerminalInput>
-
-Otherwise, if you want your application to deploy automatically, you can [install the Now for GitHub app](/docs/v2/integrations/now-for-github/) and have updates for your GitHub repository deploy and alias on every push.
 
 When your app is deployed, you will receive a deployment URL like the following: <https://vuepress-nv3m85eee.now.sh/>
 
-## Resources
-
-For more information on configuring VuePress, please refer to [their documentation](https://vuepress.vuejs.org/guide/).
-
-To configure Now further, please see these additional topics and guides:
-
-<Card title="Deploying Basics" href="/docs/v2/deployments/basics">
-  Deploy any of your applications with ZEIT Now.
-</Card>
-
-<Card
-  title="Aliasing"
-  href="/docs/v2/domains-and-aliases/aliasing-a-deployment/"
->
-  Learn more about aliasing to your deployments.
-</Card>
-
-<Card title="www. Redirect" href="/guides/redirect-from-www">
-  Create a redirect from the www. subdomain to your naked domain.
-</Card>
+If you want to deploy your VuePress project when you push to a Git repository, you can use either [Now for GitHub](/docs/v2/integrations/now-for-github/) or [Now for GitLab](/docs/v2/integrations/now-for-gitlab/) to have your project automatically deployed on every push, and aliased on push to master.
 
 export default ({ children }) => <Guide meta={meta}>{children}</Guide>
+
+export const config = {
+  amp: 'hybrid'
+}

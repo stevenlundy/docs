@@ -2,7 +2,8 @@
 import { Component } from 'react'
 import { createPortal } from 'react-dom'
 import PropTypes from 'prop-types'
-import isClient from '~/lib/utils/is-client'
+
+const isClient = typeof window !== 'undefined'
 
 class Portal extends Component {
   static propTypes = {
